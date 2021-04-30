@@ -6,3 +6,5 @@ navbar:
       href: index.html
     - text: "About"
       href: about.html
+    - text: "Arlington"
+      href: arlington.html
