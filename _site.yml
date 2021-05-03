@@ -1,10 +1,29 @@
 name: "my-website"
 navbar:
-  title: "My Website"
+  title: "Nathan's Projects"
   left:
     - text: "Home"
       href: index.html
+    - text: "Projects"
+      menu: 
+        - text: "Arlington Bikeometers"
+          href: page-a.html
+        - text: "Menu 2"
+    - text: "Notes"
+      menu:
+        - text: "Page A"
+          href: page-a.html
+        - text: "Page B"
+          href: page-b.html
+        - text: "----------"
+        - text: "Page c"
+          href: page-c.html
+    - text: "Photography"
+      href: photography.html
     - text: "About"
       href: about.html
-    - text: "Arlington"
-      href: arlington.html
+  right:
+    - text: "Github"
+      href: https://github.com/photonathan
+
+    

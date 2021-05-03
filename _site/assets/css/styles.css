@@ -1,0 +1,72 @@
+body {
+  margin: 0 auto;
+  font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
+  font-size: 1rem;
+  font-weight: 400;
+  color: #212529;
+  line-height: 1.5;
+}
+
+h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  border-bottom: 1px solid #f0f0f0;
+  width: 100%;
+  margin-left: 1.66%;
+  margin-bottom: 0 !important;
+  padding-top: 10px;
+}
+
+div {
+  margin-top: .5%;
+  margin-left: 1.66%;
+}
+
+.nav {
+    text-transform: uppercase;
+}
+
+.about {
+  width: 50%;
+}
+
+a {
+  text-decoration: none;
+  color: #000;
+}
+
+a:hover {
+  color: gray;
+}
+
+.selected {
+  color: gray;
+}
+
+img {
+  margin: 1.66%;
+  width: 30%; /* percent relative to body */
+  float: left;
+}
+
+@media only screen and (max-width: 700px) {
+  img {
+    width: 95%;
+  }
+
+  .about {
+    width: 95%;
+  }
+}
+
+@media only screen and (max-width: 1000px) {
+  .about {
+    width: 95%;
+  }
+}
+
+/* My Additions */
+.compare {
+  width: 49% !important;
+}
