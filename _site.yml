@@ -25,5 +25,5 @@ navbar:
   right:
     - text: "Github"
       href: https://github.com/photonathan
-
+output_dir: "."
     
