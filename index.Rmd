@@ -31,7 +31,7 @@ knitr::include_graphics("images/logo.jpg")
 
 ### Welcome
 
-Data can be complicated, my homepage is not.
+Data can be complicated, my homepage is not. Check out my exploration of Arlington, Virginia's bike usage during the Covid-19 pandemic.
 
 </div>
 </div>

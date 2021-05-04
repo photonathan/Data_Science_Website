@@ -1,0 +1,65 @@
+---
+title: "Visualizing Arlington Bikometers"
+subtitle: "Part 2: Query the Bike Arlington API"
+output: 
+  rmdformats::downcute
+---
+
+# Background
+The Official [Bike Arlington](http://counters.bikearlington.com/data-for-developers/) API is accessed through [this URL](http://webservices.commuterpage.com/counters.cfc?wsdl) with multiple endpoints/methods to get everything from the number of bikers or pedestrians passing a Bikeometer that day, longitude/latitude of each Bikeometer, to the weather that day. 
+
+# Goal
+Query the API and return the number of bikers in a date range.
+
+# Step 1: Make a request
+
+We can read [here](http://counters.bikearlington.com/bike/assets/File/Regional_bikearlington_webservices.pdf) about the different methods available when making requests to the Bike Arlington API. 
+
+First, let's get some details on the Bikeometers in the database. There is a method listed 'GetAllCounters' that will return the details of the bikeometers in the database. I'll use the 'requests' library to make a 'GET' request to the base Bike Arlington URL and pass in the 'GetAllCounters' method as a parameter. 
+
+As I will be using chunks of Python code, I'll call the R reticulate package to interface with python from R.
+
+```{python}
+import requests
+# Assign the url of the 
+url = 'http://webservices.commuterpage.com/counters.cfc?wsdl'
+# Defines the method in a dictionary used to make the request
+counter_reqest_methods = {'method': 'GetAllCounters'}
+# Save the GetAllCounters request to memory
+response = requests.get(url, params=counter_reqest_methods)
+response
+```
+
+Great! Response [200] means we got an OK response back. When making a GET request, a 'response object' will be returned. Let's take a look at what's inside our response object. Use the .text method as shown below to look at the data inside our response object. The output is a mess of HTML so I'll leave it to you to take a look at it yourself.
+
+```{python eval=FALSE}
+response.text
+```
+
+# Step 2: Clean the Data
+
+We will use the 're' module to remove some of the extraneous html. From the official Python documentation, "This module provides regular expression matching operations..." A great tutorial on Regular Expressions (RegEx) can be found [here](https://realpython.com/regex-python/)
+
+The code below will substitute any '\n' or '\t' with a blank string (''), esentially deleting them. 
+```{python}
+import re
+string_data = response.text
+clean_string_data = re.sub(r'[\n|\t]', '', string_data)
+clean_string_data
+```
+
+Now it's easier to read! The first part of the data mentions that the data is in XML format. We can use this to our advantage by converting the string to an XML to easily pull out the data we are looking for. 
+
+We will use the module 'xml.etree.ElementTree' to convert the data from a string to XML format. To make it easier to call, we will import the module as 'ET'. We will then call the method 'fromstring' and pass in our 'clean_string_data' as an argument.
+```{python}
+import xml.etree.ElementTree as ET
+root = ET.fromstring(clean_string_data)
+type(root)
+```
+Our object 'root' is now an 'xml.etree.ElementTree.Element' object that we can slice into to get the data.
+```{python}
+root.text
+```
+
+
+The Bike Arlington API allows for queries of 1 year or less. This limitation can be managed by making requests in 1 year increments and adding them to the database or concatenating each 1 year request into a list then adding the data to the database all at once.

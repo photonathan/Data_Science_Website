@@ -1,0 +1,66 @@
+```{R}
+library(dplyr)
+```
+
+Connect the database tables to similarly named objects in R
+```{R}
+counts_daily <- tbl(con, 'counts_daily')
+```
+
+Using dplyr to convert these R commands into SQL commands
+This will not download the entire table into R.
+```{R}
+counts_daily_2019 <- counts_daily %>% filter(Date >= '2019-01-01' & Date <= '2019-12-31' & CounterID == '3')
+```
+This WILL download the entire table into R
+
+```{R}
+counts_daily_2019 <- counts_daily %>% filter(Date >= '2019-01-01' & Date <= '2019-12-31' & CounterID == '25') %>% collect()
+```
+
+To convert this lazy table into a dataframe
+```{R}
+df <- as.data.frame(counts_daily_2019)
+```
+
+```{R}
+table <-
+```
+
+Issue SQL queries directly
+```{R}
+sql_cmd <- 'SELECT * FROM counts.counts_daily WHERE year(Date) = 2019 AND CounterID = 7 GROUP BY Date'
+# creates a lazy table
+my_table <- dbGetQuery(con, sql_cmd)
+# pulls all the data
+my_table <- dbGet
+```
+Yoonsie SQL commands
+```{sql}
+select * from number_of_counts_2019 order by NumberOfRows desc;
+select CounterId, sum(Count) as numBikers from counts_daily where CounterId in 
+	(select CounterId from number_of_counts_2019 where NumberOfRows =732)
+group by CounterId;
+select * from vw_counter_date_count where YEAR(Date) = 2020 ;
+select counterid, sum(Count) as numBikers from counts_daily where counterID=2 and YEAR(Date)=2020;
+```
+
+To execute the SQL statement and pull data into R
+```{R}
+count_data <- tbl(con, sql_cmd)
+```
+
+```{R}
+# Arrange defaults to ascending order
+data <- data %>%  arrange(Count)
+# To make it decending order
+data <- data %>% arrange(desc(Count))
+```
+
+Close the database when we are done with it.
+```{R}
+dbDisconnect(con)
+```
+
+ctrl + shift + m = %>% 
+

@@ -1,0 +1,160 @@
+---
+title: "Plotting 2019 and 2020 data for Arlington Bikeometer Counters"
+output:
+  html_document:
+    df_print: paged
+---
+
+Connect to your database 'counts'
+```{r}
+library(dplyr)
+library(odbc)
+con <- dbConnect(odbc::odbc(), .connection_string = "Driver={MySQL ODBC 8.0 Unicode Driver};", 
+                 server = "localhost", db = "counts", user = "root", password = rstudioapi::askForPassword("Database password"))
+
+# Imports to a lazy table
+counts_daily <- tbl(con, 'counts_daily')
+counts_hourly <- tbl(con, 'counts_hourly')
+```
+
+Uses plot() function to plot tables
+```{r}
+# Imports to a lazy table
+counts_daily <- tbl(con, 'counts_daily')
+for (id in c(7,8)){#2,3,7, 8, 10, 11, 25, 26,28, 31, 39, 43, 47, 54, 56, 57)){
+  for (year in c(2017, 2018, 2019, 2020, 2021)){
+    start_date <- paste(year, '-01-01', sep = '', collapse = '-')
+    end_date <- paste(year, '-12-31', sep = '', collapse = '-')
+    my_path <- file.path('C:', 'Test', paste('ID ', id, ' Year ', year,' counts ', '.jpg', sep = ''))
+    jpeg(file = my_path)
+    counts_daily_2019 <- counts_daily %>% filter(date >= start_date & date <= end_date & counter_id == id & direction == 'I') %>% collect()
+    
+    plot(counts_daily_2019$date, counts_daily_2019$count, xlab = 'Months', ylab = paste('counts_daily', year, sep = '_'), main=print(paste('CounterID = ', id, '  ', 'Year = ', year, sep = '')))
+    dev.off()
+  } 
+}
+```
+
+Using ggplot2
+```{r}
+library(ggplot2)
+library(ggthemes)
+counts_daily <- tbl(con, 'counts_daily')
+for (id in c(28)){#2,3,7, 8, 10,11, 25, 26,28, 31, 39, 43, 47, 54, 56, 57)){
+  for (year in c(2017,2018,2019,2020,2021)){
+start_date <- paste(year, '-01-01', sep = '', collapse = '-')
+end_date <- paste(year, '-12-31', sep = '', collapse = '-')
+counts_daily_2019 <- counts_daily %>% filter(date >= start_date & date <= end_date & counter_id == id & direction == 'I') %>% collect()
+
+p <- counts_daily_2019 %>% ggplot(aes(date, count)) +
+geom_point() +
+xlab('Months')+
+ylab(paste('counts_daily', year, sep = '_')) +
+ylim(0, 1000)
+ggtitle('Daily Bicycle Counts') +
+theme_economist()
+ggsave(filename = paste('ID ', id, ' Year ', year,' counts', '.svg', sep = ''), device = 'svg', dpi = 'retina')
+}}
+```
+
+
+Direction = A
+```{r}
+library(dplyr)
+# Imports to a lazy table
+counts_daily <- tbl(con, 'counts_daily')
+for (id in c(14,15, 16, 18, 19, 20, 22, 60, 61, 62)){
+  for (year in c(2019, 2020)){
+    start_date <- paste(year, '-01-01', sep = '', collapse = '-')
+    end_date <- paste(year, '-12-31', sep = '', collapse = '-')
+    my_path <- file.path('C:', 'R', paste('ID ', id, ' Year ', year,' counts ', '.jpg', sep = ''))
+
+    counts_daily_2019 <- counts_daily %>% filter(date >= start_date & date <= end_date & counter_id == id & direction == 'A') %>% collect()
+    
+    #counts_daily_2019 <- counts_daily_2019 %>% collect()
+   
+    plot(counts_daily_2019$date, counts_daily_2019$count, xlab = 'Months', ylab = paste('counts_daily', year, sep = '_'), main=print(paste('Direction = A CounterID = ', id, '  ', 'Year = ', year, sep = '')))
+
+  } 
+}
+```
+
+Automates grid
+```{r}
+library(dplyr)
+# Imports to a lazy table
+library(gridExtra)
+library(ggplot2)
+library(ggthemes)
+counts_daily <- tbl(con, 'counts_daily')
+plist <- list()
+
+for (id in c(14, 15)){#, 16, 18, 19, 20, 22, 60, 61, 62)){
+  for (year in c(2019, 2020)){
+    start_date <- paste(year, '-01-01', sep = '', collapse = '-')
+    end_date <- paste(year, '-12-31', sep = '', collapse = '-')
+    counts_daily_2019 <- counts_daily %>% filter(date >= start_date & date <= end_date & counter_id == id & direction == 'A') %>% collect()
+    #assign(paste('p', year, id, sep = '_'),  plot(counts_daily_2019$date, counts_daily_2019$count, xlab = 'Months', ylab = paste('counts_daily', year, sep = '_'), main=print(paste('Direction = A CounterID = ', id, '  ', 'Year = ', year, sep = '')))) 
+    #new_plot <- plot(counts_daily_2019$date, counts_daily_2019$count, xlab = 'Months', ylab = paste('counts_daily', year, sep = '_'), main=print(paste('Direction = A CounterID = ', id, '  ', 'Year = ', year, sep = ''))) 
+    #append(plist, paste('p', year, id, sep = '_'))
+    #plist <- c(plist, new_plot)
+    plist[[id]] <- counts_daily_2019 %>% ggplot(aes(date, count)) +
+      geom_point() +
+      xlab('Months')+
+      ylab(paste('counts_daily', year, sep = '_')) +
+      ggtitle('Daily Bicycle Counts')+
+      theme_economist()
+      print(plist[[id]])
+  }}
+#n <- length(plist)
+#nCol <- floor(sqrt(n))
+#grid.arrange(grobs = plist, ncol = 2)
+#grid.arrange(plist, ncol = 5, top='Main Title')
+#ggsave(file = OutFileName, arrangeGrob(grobs = plist, ncol = 2))  ## save plot
+
+```
+
+```{r}
+counts_daily <- tbl(con, 'counts_daily')
+plist <- list()
+for (id in c(14,15, 16, 18, 19, 20, 22, 60, 61, 62)){
+  for (year in c(2019, 2020)){
+    start_date <- paste(year, '-01-01', sep = '', collapse = '-')
+    end_date <- paste(year, '-12-31', sep = '', collapse = '-')
+    my_path <- file.path('C:', 'R', paste('ID ', id, ' Year ', year,' counts ', '.jpg', sep = ''))
+
+    counts_daily_2019 <- counts_daily %>% filter(date >= start_date & date <= end_date & counter_id == id & direction == 'A') %>% collect()
+    
+    #counts_daily_2019 <- counts_daily_2019 %>% collect()
+
+    y2019i14 <- counts_daily %>% filter(date >= '2019-01-01' & date <= '2019-12-31' & counter_id == 14 & direction == 'A') %>% collect()
+    y2020i14 <- counts_daily %>% filter(date >= '2020-01-01' & date <= '2020-12-31' & counter_id == 14 & direction == 'A') %>% collect()
+    y2019i15 <- counts_daily %>% filter(date >= '2019-01-01' & date <= '2019-12-31' & counter_id == 15 & direction == 'A') %>% collect()
+    y2020i15 <-counts_daily %>% filter(date >= '2020-01-01' & date <= '2020-12-31' & counter_id == 15 & direction == 'A') %>% collect()
+    y2019i16 <-counts_daily %>% filter(date >= '2019-01-01' & date <= '2019-12-31' & counter_id == 16 & direction == 'A') %>% collect()
+    y2020i16 <-counts_daily %>% filter(date >= '2020-01-01' & date <= '2020-12-31' & counter_id == 16 & direction == 'A') %>% collect()
+    y2019i18 <-counts_daily %>% filter(date >= '2019-01-01' & date <= '2019-12-31' & counter_id == 18 & direction == 'A') %>% collect()
+    y2020i18 <-counts_daily %>% filter(date >= '2020-01-01' & date <= '2020-12-31' & counter_id == 18 & direction == 'A') %>% collect()
+    y2019i19<- counts_daily %>% filter(date >= '2019-01-01' & date <= '2019-12-31' & counter_id == 19 & direction == 'A') %>% collect()
+    y2020i19 <-counts_daily %>% filter(date >= '2020-01-01' & date <= '2020-12-31' & counter_id == 19 & direction == 'A') %>% collect()
+    y2019i20 <-counts_daily %>% filter(date >= '2019-01-01' & date <= '2019-12-31' & counter_id == 20 & direction == 'A') %>% collect()
+    y2020i20 <-counts_daily %>% filter(date >= '2020-01-01' & date <= '2020-12-31' & counter_id == 20 & direction == 'A') %>% collect()
+    y2019i22 <-counts_daily %>% filter(date >= '2019-01-01' & date <= '2019-12-31' & counter_id == 22 & direction == 'A') %>% collect()
+    y2020i22 <-counts_daily %>% filter(date >= '2020-01-01' & date <= '2020-12-31' & counter_id == 22 & direction == 'A') %>% collect()
+    y2019i60 <- counts_daily %>% filter(date >= '2019-01-01' & date <= '2019-12-31' & counter_id == 60 & direction == 'A') %>% collect()
+    y2020i60 <- counts_daily %>% filter(date >= '2020-01-01' & date <= '2020-12-31' & counter_id == 60 & direction == 'A') %>% collect()
+    y2019i61 <- counts_daily %>% filter(date >= '2019-01-01' & date <= '2019-12-31' & counter_id == 61 & direction == 'A') %>% collect()
+    y2020i61 <- counts_daily %>% filter(date >= '2020-01-01' & date <= '2020-12-31' & counter_id == 61 & direction == 'A') %>% collect()
+    y2019i62 <- counts_daily %>% filter(date >= '2019-01-01' & date <= '2019-12-31' & counter_id == 62 & direction == 'A') %>% collect()
+    y2020i62 <- counts_daily %>% filter(date >= '2020-01-01' & date <= '2020-12-31' & counter_id == 62 & direction == 'A') %>% collect()
+  
+   plot(counts_daily_2019$date, counts_daily_2019$count, xlab = 'Months', ylab = paste('counts_daily', year, sep = '_'), main=print(paste('Direction = A CounterID = ', id, '  ', 'Year = ', year, sep = '')))
+
+   
+    
+  } 
+}
+
+```
+
+
