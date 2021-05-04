@@ -146,6 +146,13 @@ for child in root:
     # Appends tuples to the list
     bikeometer_details.append(single_tuple)
 ```
+Takeing a look inside our bikeometer_details object, we see a list of tuples, where each tuple is a seperate Bikeometer. 
+
+Each tuple contains: ('bikeometer_id', 'bikeometer_name', 'latitude', 'longitude', 'region', 'region_id')
+
+```{python}
+bikeometer_details
+```
 
 
 The Bike Arlington API allows for queries of 1 year or less. This limitation can be managed by making requests in 1 year increments and adding them to the database or concatenating each 1 year request into a list then adding the data to the database all at once.
