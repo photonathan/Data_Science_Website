@@ -56,9 +56,63 @@ import xml.etree.ElementTree as ET
 root = ET.fromstring(clean_string_data)
 type(root)
 ```
-Our object 'root' is now an 'xml.etree.ElementTree.Element' object that we can slice into to get the data.
+Our object 'root' is now an 'xml.etree.ElementTree.Element' object that we can iterate over.
 ```{python}
-root.text
+list(root)
+```
+
+```{python}
+child = root[0]
+list(child)
+```
+
+```{python}
+for item in root:
+  print(item)
+
+```
+
+Iterating over it, we can see there are a lot of "Element 'counter'..." objects, each representing a different Bikeometer with details of its own. 
+
+We can use item.getchildren() to see the child elements of each Bikeometer.
+
+```{python}
+item.getchildren()
+```
+
+However, we get a DepricationWarning that we should use list(elm) instead.
+
+```{python}
+list(item)
+```
+
+We can see each Bikeometer has children: name, description, trail_id, trail_name, latitude, longitude, and region.
+
+For each Bikeometer, I'll put it
+
+```{python}
+item.get('name')
+```
+
+
+```{python}
+for item in root:
+        # From child 'counter' gets the attribute 'id' of the counter and adds it to single_list
+        single_list = [item.get('id')]
+        # Loops through the grandchildren of root
+        for grandchild in list(item):   
+            if grandchild.text != None and grandchild.tag != 'description' and grandchild.tag != 'trail_id' and grandchild.tag != 'trail_name':
+                # If the grandchild is region, loop through region and grab the grandchildren data
+                if grandchild.tag == 'region':  
+                    for great_grandchild in list(grandchild): 
+                        single_list.append(great_grandchild.text)
+                # If the grandchild is not region, the data is available in grandchild.text
+                else: 
+                    single_list.append(grandchild.text)
+        # Cast the list into a tuple making it easier to migrate data to the database
+        single_tuple = tuple(single_list)
+        # Appends tuples to the list
+        bikeometer_details.append(single_tuple)
 ```
 
 
