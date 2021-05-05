@@ -2,7 +2,9 @@
 title: "Visualizing Arlington Bikometers"
 subtitle: "Part 2: Query the Bike Arlington API"
 output: 
-  rmdformats::downcute
+  html_document:
+    toc: true
+    toc_float: true
 ---
 
 # Background
