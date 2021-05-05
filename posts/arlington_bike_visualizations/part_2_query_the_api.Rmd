@@ -6,15 +6,12 @@ output:
 ---
 
 # Background
-
 The Official [Bike Arlington](http://counters.bikearlington.com/data-for-developers/) API is accessed through [this URL](http://webservices.commuterpage.com/counters.cfc?wsdl) with multiple endpoints/methods to get everything from the number of bikers or pedestrians passing a Bikeometer that day, longitude/latitude of each Bikeometer, to the weather that day.
 
 # Goal
-
-Query the API and return the number of bikers in a date range.
+Query the API and return the details of each Bikeometer and the number of bikers in a date range.
 
 # Step 1: Make a request
-
 We can read [here](http://counters.bikearlington.com/bike/assets/File/Regional_bikearlington_webservices.pdf) about the different methods available when making requests to the Bike Arlington API.
 
 First, let's get some details on the Bikeometers in the database. There is a method listed 'GetAllCounters' that will return the details of the bikeometers in the database. I'll use the 'requests' library to make a 'GET' request to the base Bike Arlington URL and pass in the 'GetAllCounters' method as a parameter.
@@ -39,7 +36,6 @@ response.text
 ```
 
 # Step 2: Clean the Data
-
 We will use the 're' module to remove some of the extraneous html. From the official Python documentation, "This module provides regular expression matching operations..." A great tutorial on Regular Expressions (RegEx) can be found [here](https://realpython.com/regex-python/)
 
 The code below will substitute any '\n' or '\t' with a blank string (''), essentially deleting them.
@@ -53,7 +49,6 @@ clean_string_data = re.sub(r'[\n|\t]', '', string_data)
 Now it's easier to read! The first part of the data mentions that the data is in XML format. We can use this to our advantage by converting the string to an XML to easily pull out the data we are looking for.
 
 # Step 3: Convert data to XML
-
 We will use the module 'xml.etree.ElementTree' to convert the data from a string to XML format. By converting this to XML, finding the data we need will be faster because we don't have to iterate over the entire string looking for the specific data we need, we can use the hierarchical structure of an XML file to drill down to the specific data we are looking for.
 
 To make it easier to call, we will import the module as 'ET'. We will then call the function 'fromstring' and pass in our 'clean_string_data' as an argument.
@@ -65,6 +60,7 @@ type(root)
 ```
 
 Our object 'root' is now an 'xml.etree.ElementTree.Element' object that we can iterate over with a *for loop* or we can use the *getchildren* function.
+
 # Step 4: Explore XML Data
 ```{python}
 root.getchildren()
@@ -118,7 +114,7 @@ grandchild.text
 ```
 '110 Trail' is the name! If you want, try pulling some data yourself. Below, I describe how I automated pulling the data.
 
-# Step 5: Automate Data Finding
+# Step 5: Automate Data Pull
 In order to automate pulling all this data, I'll create a *for loop* to iterate through the XML data. Each Bikeometer's data will be saved in a tuple and those tuples will be saved all together in a list.
 
 First, I'll create the empty list that will house the Bikeometer tuples.
