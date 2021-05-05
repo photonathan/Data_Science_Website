@@ -8,7 +8,7 @@ navbar:
       menu: 
         - text: "Part 1: The Plan"
           href: posts/arlington_bike_visualizations/part_1_the_plan.html
-        - text: "Part 2: Query the API""
+        - text: "Part 2: Query the API"
           href: posts/arlington_bike_visualizations/part_2_query_the_api.html
         
     - text: "Notes"

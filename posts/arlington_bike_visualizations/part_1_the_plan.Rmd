@@ -2,7 +2,8 @@
 title: "Visualizing Arlington Bikometers"
 subtitle: "Part 1: The Plan"
 output: 
-  rmdformats::downcute
+  rmdformats::downcute:
+    toc_depth: 2
 ---
 
 # Background
