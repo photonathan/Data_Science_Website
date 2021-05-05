@@ -1,11 +1,11 @@
 ---
 title: "Visualizing Arlington Bikometers"
 subtitle: "Part 2: Query the Bike Arlington API"
-output: 
-  html_document:
-    toc: true
-    toc_float: true
 ---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(cache = TRUE)
+```
 
 # Background
 The Official [Bike Arlington](http://counters.bikearlington.com/data-for-developers/) API is accessed through [this URL](http://webservices.commuterpage.com/counters.cfc?wsdl) with multiple endpoints/methods to get everything from the number of bikers or pedestrians passing a Bikeometer that day, longitude/latitude of each Bikeometer, to the weather that day.
@@ -22,6 +22,7 @@ As I will be using chunks of Python code, I'll call the R reticulate package to 
 
 ```{python}
 import requests
+
 # Assign the url of the 
 url = 'http://webservices.commuterpage.com/counters.cfc?wsdl'
 # Defines the method in a dictionary used to make the request
@@ -44,6 +45,7 @@ The code below will substitute any '\n' or '\t' with a blank string (''), essent
 
 ```{python}
 import re
+
 string_data = response.text
 clean_string_data = re.sub(r'[\n|\t]', '', string_data)
 ```
@@ -57,24 +59,21 @@ To make it easier to call, we will import the module as 'ET'. We will then call 
 
 ```{python}
 import xml.etree.ElementTree as ET
+
 root = ET.fromstring(clean_string_data)
 type(root)
 ```
 
-Our object 'root' is now an 'xml.etree.ElementTree.Element' object that we can iterate over with a *for loop* or we can use the *getchildren* function.
+Our object 'root' is now an 'xml.etree.ElementTree.Element' object that we can iterate over with a **for loop** or we can use the **list** function.
 
 # Step 4: Explore XML Data
-```{python}
-root.getchildren()
-```
 
-However, we get a **DepricationWarning** that we should use *list(elm)* instead.
-
+Using the **list** function allows us to take a look inside **root** to see its children.
 ```{python}
 list(root)
 ```
 
-Using the *list* function we can see there are a lot of "Element 'counter'..." objects, each representing a different Bikeometer with details of its own.
+We can see there are a lot of "Element 'counter'..." objects, each representing a different Bikeometer with details of its own.
 
 Now, we could go in blind and do lots of slicing to see the hierarchy of the file but realistically we have access to a web browser and can use the below URL to make the API call and see where the data that we need is located.
 
@@ -90,18 +89,18 @@ We can see that 'child' contains many elements that we can access such as name, 
 
 However, we also know that 'child' contains the information for 'id'. Let's access that 'id' information.
 
-We can use the *items* method to return a list of a single tuple.
+We can use the **items** method to return a list of a single tuple.
 ```{python}
 child.items()
 ```
 However, we really want to isolate the important information '33'. 
 
-So, We can use the *keys* function to even though this is not a dictionary.
+So, We can use the **keys** function to even though this is not a dictionary.
 
 ```{python}
 child.keys()
 ```
-We know that the *key* is so we can use the *get* function and pass in 'id' to get the "value".
+We know that the **key** is so we can use the **get** function and pass in 'id' to get the "value".
 ```{python}
 child.get('id')
 ```
@@ -117,13 +116,13 @@ grandchild.text
 '110 Trail' is the name! If you want, try pulling some data yourself. Below, I describe how I automated pulling the data.
 
 # Step 5: Automate Data Pull
-In order to automate pulling all this data, I'll create a *for loop* to iterate through the XML data. Each Bikeometer's data will be saved in a tuple and those tuples will be saved all together in a list.
+In order to automate pulling all this data, I'll create a **for loop** to iterate through the XML data. Each Bikeometer's data will be saved in a tuple and those tuples will be saved all together in a list.
 
 First, I'll create the empty list that will house the Bikeometer tuples.
 ```{python}
 bikeometer_details = []
 ```
-Next, I'll create a Russian nesting doll of a *for loop* to dive into the appropriate sections to pull the information I want.
+Next, I'll create a Russian nesting doll of a **for loop** to dive into the appropriate sections to pull the information I want.
 ```{python}
 # Iterate through the children, grandchildren, and great-grandchildren and grab req data  
 for child in root:

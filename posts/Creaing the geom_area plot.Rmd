@@ -8,7 +8,9 @@ output:
     number_sections: false
     toc_depth: 2
 ---
-
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(cache = TRUE)
+```
 # Goal
 
 To match the plot of the MnDOT, I'll use an area plot, so I use the same code but instead of geom_point(), I'll use geom_area(). I'll also need to plot two different sets of data on one plot: '2017-2019 Daily Average' and '2020 Daily Total'. To do this, I'll create a new view in SQL that calculates 2017-2019 daily averages in one column and includes the 2020 counts in a second new column. However, before I do that, the MnDOT report combined the 'In' and 'Out' directions for each day, so I'll start by doing that.

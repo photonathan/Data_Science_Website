@@ -259,6 +259,7 @@ div.tocify {
 <p>First, let’s get some details on the Bikeometers in the database. There is a method listed ‘GetAllCounters’ that will return the details of the bikeometers in the database. I’ll use the ‘requests’ library to make a ‘GET’ request to the base Bike Arlington URL and pass in the ‘GetAllCounters’ method as a parameter.</p>
 <p>As I will be using chunks of Python code, I’ll call the R reticulate package to interface with python from R.</p>
 <pre class="python"><code>import requests
+
 # Assign the url of the 
 url = &#39;http://webservices.commuterpage.com/counters.cfc?wsdl&#39;
 # Defines the method in a dictionary used to make the request
@@ -275,6 +276,7 @@ response</code></pre>
 <p>We will use the ‘re’ module to remove some of the extraneous html. From the official Python documentation, “This module provides regular expression matching operations…” A great tutorial on Regular Expressions (RegEx) can be found <a href="https://realpython.com/regex-python/">here</a></p>
 <p>The code below will substitute any ‘’ or ‘ with a blank string (’’), essentially deleting them.</p>
 <pre class="python"><code>import re
+
 string_data = response.text
 clean_string_data = re.sub(r&#39;[\n|\t]&#39;, &#39;&#39;, string_data)</code></pre>
 <p>Now it’s easier to read! The first part of the data mentions that the data is in XML format. We can use this to our advantage by converting the string to an XML to easily pull out the data we are looking for.</p>
@@ -284,41 +286,40 @@ clean_string_data = re.sub(r&#39;[\n|\t]&#39;, &#39;&#39;, string_data)</code></
 <p>We will use the module ‘xml.etree.ElementTree’ to convert the data from a string to XML format. By converting this to XML, finding the data we need will be faster because we don’t have to iterate over the entire string looking for the specific data we need, we can use the hierarchical structure of an XML file to drill down to the specific data we are looking for.</p>
 <p>To make it easier to call, we will import the module as ‘ET’. We will then call the function ‘fromstring’ and pass in our ‘clean_string_data’ as an argument.</p>
 <pre class="python"><code>import xml.etree.ElementTree as ET
+
 root = ET.fromstring(clean_string_data)
 type(root)</code></pre>
 <pre><code>## &lt;class &#39;xml.etree.ElementTree.Element&#39;&gt;</code></pre>
-<p>Our object ‘root’ is now an ‘xml.etree.ElementTree.Element’ object that we can iterate over with a <em>for loop</em> or we can use the <em>getchildren</em> function.</p>
+<p>Our object ‘root’ is now an ‘xml.etree.ElementTree.Element’ object that we can iterate over with a <strong>for loop</strong> or we can use the <strong>list</strong> function.</p>
 </div>
 <div id="step-4-explore-xml-data" class="section level1">
 <h1>Step 4: Explore XML Data</h1>
-<pre class="python"><code>root.getchildren()</code></pre>
-<pre><code>## [&lt;Element &#39;counter&#39; at 0x000000002B21D5E8&gt;, &lt;Element &#39;counter&#39; at 0x000000002B32B598&gt;, &lt;Element &#39;counter&#39; at 0x000000002B32B8B8&gt;, &lt;Element &#39;counter&#39; at 0x000000002B32BBD8&gt;, &lt;Element &#39;counter&#39; at 0x000000002B32BEF8&gt;, &lt;Element &#39;counter&#39; at 0x000000002B32F278&gt;, &lt;Element &#39;counter&#39; at 0x000000002B32F598&gt;, &lt;Element &#39;counter&#39; at 0x000000002B32F908&gt;, &lt;Element &#39;counter&#39; at 0x000000002B32FC78&gt;, &lt;Element &#39;counter&#39; at 0x000000002B32FF98&gt;, &lt;Element &#39;counter&#39; at 0x000000002B330318&gt;, &lt;Element &#39;counter&#39; at 0x000000002B330638&gt;, &lt;Element &#39;counter&#39; at 0x000000002B330958&gt;, &lt;Element &#39;counter&#39; at 0x000000002B330C78&gt;, &lt;Element &#39;counter&#39; at 0x000000002B330F98&gt;, &lt;Element &#39;counter&#39; at 0x000000002B332318&gt;, &lt;Element &#39;counter&#39; at 0x000000002B332638&gt;, &lt;Element &#39;counter&#39; at 0x000000002B332958&gt;, &lt;Element &#39;counter&#39; at 0x000000002B332C78&gt;, &lt;Element &#39;counter&#39; at 0x000000002B332F98&gt;, &lt;Element &#39;counter&#39; at 0x000000002B335318&gt;, &lt;Element &#39;counter&#39; at 0x000000002B335638&gt;, &lt;Element &#39;counter&#39; at 0x000000002B335958&gt;, &lt;Element &#39;counter&#39; at 0x000000002B335C78&gt;, &lt;Element &#39;counter&#39; at 0x000000002B335F98&gt;, &lt;Element &#39;counter&#39; at 0x000000002B337318&gt;, &lt;Element &#39;counter&#39; at 0x000000002B337638&gt;, &lt;Element &#39;counter&#39; at 0x000000002B337958&gt;, &lt;Element &#39;counter&#39; at 0x000000002B337C78&gt;, &lt;Element &#39;counter&#39; at 0x000000002B337F98&gt;, &lt;Element &#39;counter&#39; at 0x000000002B33A318&gt;, &lt;Element &#39;counter&#39; at 0x000000002B33A638&gt;, &lt;Element &#39;counter&#39; at 0x000000002B33A9A8&gt;, &lt;Element &#39;counter&#39; at 0x000000002B33ACC8&gt;, &lt;Element &#39;counter&#39; at 0x000000002B33D048&gt;, &lt;Element &#39;counter&#39; at 0x000000002B33D368&gt;, &lt;Element &#39;counter&#39; at 0x000000002B33D688&gt;, &lt;Element &#39;counter&#39; at 0x000000002B33D9A8&gt;, &lt;Element &#39;counter&#39; at 0x000000002B33DCC8&gt;, &lt;Element &#39;counter&#39; at 0x000000002B33F048&gt;, &lt;Element &#39;counter&#39; at 0x000000002B33F368&gt;, &lt;Element &#39;counter&#39; at 0x000000002B33F688&gt;, &lt;Element &#39;counter&#39; at 0x000000002B33F9A8&gt;, &lt;Element &#39;counter&#39; at 0x000000002B33FCC8&gt;, &lt;Element &#39;counter&#39; at 0x000000002B360048&gt;, &lt;Element &#39;counter&#39; at 0x000000002B360368&gt;, &lt;Element &#39;counter&#39; at 0x000000002B360688&gt;, &lt;Element &#39;counter&#39; at 0x000000002B3609A8&gt;, &lt;Element &#39;counter&#39; at 0x000000002B360CC8&gt;]</code></pre>
-<p>However, we get a <strong>DepricationWarning</strong> that we should use <em>list(elm)</em> instead.</p>
+<p>Using the <strong>list</strong> function allows us to take a look inside <strong>root</strong> to see its children.</p>
 <pre class="python"><code>list(root)</code></pre>
-<pre><code>## [&lt;Element &#39;counter&#39; at 0x000000002B21D5E8&gt;, &lt;Element &#39;counter&#39; at 0x000000002B32B598&gt;, &lt;Element &#39;counter&#39; at 0x000000002B32B8B8&gt;, &lt;Element &#39;counter&#39; at 0x000000002B32BBD8&gt;, &lt;Element &#39;counter&#39; at 0x000000002B32BEF8&gt;, &lt;Element &#39;counter&#39; at 0x000000002B32F278&gt;, &lt;Element &#39;counter&#39; at 0x000000002B32F598&gt;, &lt;Element &#39;counter&#39; at 0x000000002B32F908&gt;, &lt;Element &#39;counter&#39; at 0x000000002B32FC78&gt;, &lt;Element &#39;counter&#39; at 0x000000002B32FF98&gt;, &lt;Element &#39;counter&#39; at 0x000000002B330318&gt;, &lt;Element &#39;counter&#39; at 0x000000002B330638&gt;, &lt;Element &#39;counter&#39; at 0x000000002B330958&gt;, &lt;Element &#39;counter&#39; at 0x000000002B330C78&gt;, &lt;Element &#39;counter&#39; at 0x000000002B330F98&gt;, &lt;Element &#39;counter&#39; at 0x000000002B332318&gt;, &lt;Element &#39;counter&#39; at 0x000000002B332638&gt;, &lt;Element &#39;counter&#39; at 0x000000002B332958&gt;, &lt;Element &#39;counter&#39; at 0x000000002B332C78&gt;, &lt;Element &#39;counter&#39; at 0x000000002B332F98&gt;, &lt;Element &#39;counter&#39; at 0x000000002B335318&gt;, &lt;Element &#39;counter&#39; at 0x000000002B335638&gt;, &lt;Element &#39;counter&#39; at 0x000000002B335958&gt;, &lt;Element &#39;counter&#39; at 0x000000002B335C78&gt;, &lt;Element &#39;counter&#39; at 0x000000002B335F98&gt;, &lt;Element &#39;counter&#39; at 0x000000002B337318&gt;, &lt;Element &#39;counter&#39; at 0x000000002B337638&gt;, &lt;Element &#39;counter&#39; at 0x000000002B337958&gt;, &lt;Element &#39;counter&#39; at 0x000000002B337C78&gt;, &lt;Element &#39;counter&#39; at 0x000000002B337F98&gt;, &lt;Element &#39;counter&#39; at 0x000000002B33A318&gt;, &lt;Element &#39;counter&#39; at 0x000000002B33A638&gt;, &lt;Element &#39;counter&#39; at 0x000000002B33A9A8&gt;, &lt;Element &#39;counter&#39; at 0x000000002B33ACC8&gt;, &lt;Element &#39;counter&#39; at 0x000000002B33D048&gt;, &lt;Element &#39;counter&#39; at 0x000000002B33D368&gt;, &lt;Element &#39;counter&#39; at 0x000000002B33D688&gt;, &lt;Element &#39;counter&#39; at 0x000000002B33D9A8&gt;, &lt;Element &#39;counter&#39; at 0x000000002B33DCC8&gt;, &lt;Element &#39;counter&#39; at 0x000000002B33F048&gt;, &lt;Element &#39;counter&#39; at 0x000000002B33F368&gt;, &lt;Element &#39;counter&#39; at 0x000000002B33F688&gt;, &lt;Element &#39;counter&#39; at 0x000000002B33F9A8&gt;, &lt;Element &#39;counter&#39; at 0x000000002B33FCC8&gt;, &lt;Element &#39;counter&#39; at 0x000000002B360048&gt;, &lt;Element &#39;counter&#39; at 0x000000002B360368&gt;, &lt;Element &#39;counter&#39; at 0x000000002B360688&gt;, &lt;Element &#39;counter&#39; at 0x000000002B3609A8&gt;, &lt;Element &#39;counter&#39; at 0x000000002B360CC8&gt;]</code></pre>
-<p>Using the <em>list</em> function we can see there are a lot of “Element ‘counter’…” objects, each representing a different Bikeometer with details of its own.</p>
+<pre><code>## [&lt;Element &#39;counter&#39; at 0x000000002B5BB728&gt;, &lt;Element &#39;counter&#39; at 0x000000002B6DB6D8&gt;, &lt;Element &#39;counter&#39; at 0x000000002B6DB9F8&gt;, &lt;Element &#39;counter&#39; at 0x000000002B6DBD18&gt;, &lt;Element &#39;counter&#39; at 0x000000002B6DF098&gt;, &lt;Element &#39;counter&#39; at 0x000000002B6DF3B8&gt;, &lt;Element &#39;counter&#39; at 0x000000002B6DF6D8&gt;, &lt;Element &#39;counter&#39; at 0x000000002B6DFA48&gt;, &lt;Element &#39;counter&#39; at 0x000000002B6DFDB8&gt;, &lt;Element &#39;counter&#39; at 0x000000002B6E0138&gt;, &lt;Element &#39;counter&#39; at 0x000000002B6E0458&gt;, &lt;Element &#39;counter&#39; at 0x000000002B6E0778&gt;, &lt;Element &#39;counter&#39; at 0x000000002B6E0A98&gt;, &lt;Element &#39;counter&#39; at 0x000000002B6E0DB8&gt;, &lt;Element &#39;counter&#39; at 0x000000002B6E2138&gt;, &lt;Element &#39;counter&#39; at 0x000000002B6E2458&gt;, &lt;Element &#39;counter&#39; at 0x000000002B6E2778&gt;, &lt;Element &#39;counter&#39; at 0x000000002B6E2A98&gt;, &lt;Element &#39;counter&#39; at 0x000000002B6E2DB8&gt;, &lt;Element &#39;counter&#39; at 0x000000002B6E4138&gt;, &lt;Element &#39;counter&#39; at 0x000000002B6E4458&gt;, &lt;Element &#39;counter&#39; at 0x000000002B6E4778&gt;, &lt;Element &#39;counter&#39; at 0x000000002B6E4A98&gt;, &lt;Element &#39;counter&#39; at 0x000000002B6E4DB8&gt;, &lt;Element &#39;counter&#39; at 0x000000002B6E6138&gt;, &lt;Element &#39;counter&#39; at 0x000000002B6E6458&gt;, &lt;Element &#39;counter&#39; at 0x000000002B6E6778&gt;, &lt;Element &#39;counter&#39; at 0x000000002B6E6A98&gt;, &lt;Element &#39;counter&#39; at 0x000000002B6E6DB8&gt;, &lt;Element &#39;counter&#39; at 0x000000002B6EA138&gt;, &lt;Element &#39;counter&#39; at 0x000000002B6EA458&gt;, &lt;Element &#39;counter&#39; at 0x000000002B6EA778&gt;, &lt;Element &#39;counter&#39; at 0x000000002B6EAAE8&gt;, &lt;Element &#39;counter&#39; at 0x000000002B6EAE08&gt;, &lt;Element &#39;counter&#39; at 0x000000002B6ED188&gt;, &lt;Element &#39;counter&#39; at 0x000000002B6ED4A8&gt;, &lt;Element &#39;counter&#39; at 0x000000002B6ED7C8&gt;, &lt;Element &#39;counter&#39; at 0x000000002B6EDAE8&gt;, &lt;Element &#39;counter&#39; at 0x000000002B6EDE08&gt;, &lt;Element &#39;counter&#39; at 0x000000002B6EE188&gt;, &lt;Element &#39;counter&#39; at 0x000000002B6EE4A8&gt;, &lt;Element &#39;counter&#39; at 0x000000002B6EE7C8&gt;, &lt;Element &#39;counter&#39; at 0x000000002B6EEAE8&gt;, &lt;Element &#39;counter&#39; at 0x000000002B6EEE08&gt;, &lt;Element &#39;counter&#39; at 0x000000002B710188&gt;, &lt;Element &#39;counter&#39; at 0x000000002B7104A8&gt;, &lt;Element &#39;counter&#39; at 0x000000002B7107C8&gt;, &lt;Element &#39;counter&#39; at 0x000000002B710AE8&gt;, &lt;Element &#39;counter&#39; at 0x000000002B710E08&gt;]</code></pre>
+<p>We can see there are a lot of “Element ‘counter’…” objects, each representing a different Bikeometer with details of its own.</p>
 <p>Now, we could go in blind and do lots of slicing to see the hierarchy of the file but realistically we have access to a web browser and can use the below URL to make the API call and see where the data that we need is located.</p>
 <p><a href="http://webservices.commuterpage.com/counters.cfc?wsdl&amp;method=GetAllCounters" class="uri">http://webservices.commuterpage.com/counters.cfc?wsdl&amp;method=GetAllCounters</a></p>
 <p>Let’s slice into the list of counters and assign the first counter to the variable ‘child’ then take a look inside.</p>
 <pre class="python"><code>child = root[0]
 list(child)</code></pre>
-<pre><code>## [&lt;Element &#39;name&#39; at 0x000000002B3013B8&gt;, &lt;Element &#39;description&#39; at 0x000000002B311DB8&gt;, &lt;Element &#39;trail_id&#39; at 0x000000002B311E08&gt;, &lt;Element &#39;trail_name&#39; at 0x000000002B3244A8&gt;, &lt;Element &#39;latitude&#39; at 0x000000002B32B408&gt;, &lt;Element &#39;longitude&#39; at 0x000000002B32B458&gt;, &lt;Element &#39;region&#39; at 0x000000002B32B4A8&gt;]</code></pre>
+<pre><code>## [&lt;Element &#39;name&#39; at 0x000000002B6144F8&gt;, &lt;Element &#39;description&#39; at 0x000000002B6C0EF8&gt;, &lt;Element &#39;trail_id&#39; at 0x000000002B6C0F48&gt;, &lt;Element &#39;trail_name&#39; at 0x000000002B6D45E8&gt;, &lt;Element &#39;latitude&#39; at 0x000000002B6DB548&gt;, &lt;Element &#39;longitude&#39; at 0x000000002B6DB598&gt;, &lt;Element &#39;region&#39; at 0x000000002B6DB5E8&gt;]</code></pre>
 <p>We can see that ‘child’ contains many elements that we can access such as name, description, trail_id…etc.</p>
 <p>However, we also know that ‘child’ contains the information for ‘id’. Let’s access that ‘id’ information.</p>
-<p>We can use the <em>items</em> method to return a list of a single tuple.</p>
+<p>We can use the <strong>items</strong> method to return a list of a single tuple.</p>
 <pre class="python"><code>child.items()</code></pre>
 <pre><code>## [(&#39;id&#39;, &#39;33&#39;)]</code></pre>
 <p>However, we really want to isolate the important information ‘33’.</p>
-<p>So, We can use the <em>keys</em> function to even though this is not a dictionary.</p>
+<p>So, We can use the <strong>keys</strong> function to even though this is not a dictionary.</p>
 <pre class="python"><code>child.keys()</code></pre>
 <pre><code>## [&#39;id&#39;]</code></pre>
-<p>We know that the <em>key</em> is so we can use the <em>get</em> function and pass in ‘id’ to get the “value”.</p>
+<p>We know that the <strong>key</strong> is so we can use the <strong>get</strong> function and pass in ‘id’ to get the “value”.</p>
 <pre class="python"><code>child.get(&#39;id&#39;)</code></pre>
 <pre><code>## &#39;33&#39;</code></pre>
 <p>To access the ‘name’ element we will slice into the list and access the first object. We will assign that object to the variable ‘grandchild’.</p>
 <pre class="python"><code>grandchild = child[0]
 grandchild</code></pre>
-<pre><code>## &lt;Element &#39;name&#39; at 0x000000002B3013B8&gt;</code></pre>
+<pre><code>## &lt;Element &#39;name&#39; at 0x000000002B6144F8&gt;</code></pre>
 <p>Now that we have the ‘name’ object assigned, let’s see what the name of the first Bikeometer in our XML file is.</p>
 <pre class="python"><code>grandchild.text</code></pre>
 <pre><code>## &#39;110 Trail&#39;</code></pre>
@@ -326,10 +327,10 @@ grandchild</code></pre>
 </div>
 <div id="step-5-automate-data-pull" class="section level1">
 <h1>Step 5: Automate Data Pull</h1>
-<p>In order to automate pulling all this data, I’ll create a <em>for loop</em> to iterate through the XML data. Each Bikeometer’s data will be saved in a tuple and those tuples will be saved all together in a list.</p>
+<p>In order to automate pulling all this data, I’ll create a <strong>for loop</strong> to iterate through the XML data. Each Bikeometer’s data will be saved in a tuple and those tuples will be saved all together in a list.</p>
 <p>First, I’ll create the empty list that will house the Bikeometer tuples.</p>
 <pre class="python"><code>bikeometer_details = []</code></pre>
-<p>Next, I’ll create a Russian nesting doll of a <em>for loop</em> to dive into the appropriate sections to pull the information I want.</p>
+<p>Next, I’ll create a Russian nesting doll of a <strong>for loop</strong> to dive into the appropriate sections to pull the information I want.</p>
 <pre class="python"><code># Iterate through the children, grandchildren, and great-grandchildren and grab req data  
 for child in root:
     # From child &#39;counter&#39; gets the attribute &#39;id&#39; of the counter and adds it to single_list
@@ -401,7 +402,7 @@ $(document).ready(function ()  {
 
     // establish options
     var options = {
-      selectors: "h1,h2,h3",
+      selectors: "h1,h2",
       theme: "bootstrap3",
       context: '.toc-content',
       hashGenerator: function (text) {
