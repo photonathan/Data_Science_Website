@@ -1,7 +1,7 @@
 ---
-title: "Crump Lab"
+title: "Nathan's Projects"
 cover-image: "/images/logo2.png"
-description: "Computational Cognition Lab"
+description: "Data Science et al."
 output: 
   html_document:
     includes:
@@ -31,7 +31,9 @@ knitr::include_graphics("images/logo.jpg")
 
 ### Welcome
 
-Data can be complicated, my homepage is not. Check out my exploration of Arlington, Virginia's bike usage during the Covid-19 pandemic.
+Data can be complicated, my homepage is not. 
+
+Check out my [Visualization of Arlington, Virginia's bike usage during Covid-19](https://nathansprojects.com/posts/arlington_bike_visualizations/part_1_the_plan.html).
 
 </div>
 </div>
