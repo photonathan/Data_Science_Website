@@ -7,9 +7,9 @@ navbar:
     - text: "Visualizing Arlington Bikeometers"
       menu: 
         - text: "Part 1: The Plan"
-          href: posts/arlington_bike_visualizations/part_1_the_plan.html
+          href: part_1_the_plan.html
         - text: "Part 2: Query the API"
-          href: posts/arlington_bike_visualizations/part_2_query_the_api.htm
+          href: part_2_query_the_api.htm
         
     - text: "Notes"
       menu:
@@ -22,10 +22,5 @@ navbar:
   right:
     - text: "Github"
       href: https://github.com/photonathan
-output_dir: "."
-output:
-  html_document:
-    include:
-      in_header: header.html
-      after_body: footer.html
+
     

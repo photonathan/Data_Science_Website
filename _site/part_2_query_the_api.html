@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Visualizing Arlington Bikometers</title>
+
+<script src="site_libs/header-attrs-2.7/header-attrs.js"></script>
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+<style type="text/css">
+  code {
+    white-space: pre;
+  }
+  .sourceCode {
+    overflow: visible;
+  }
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  { color: #cccccc; background-color: #303030; }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ffcfaf; } /* Alert */
+code span.an { color: #7f9f7f; font-weight: bold; } /* Annotation */
+code span.at { } /* Attribute */
+code span.bn { color: #dca3a3; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #f0dfaf; } /* ControlFlow */
+code span.ch { color: #dca3a3; } /* Char */
+code span.cn { color: #dca3a3; font-weight: bold; } /* Constant */
+code span.co { color: #7f9f7f; } /* Comment */
+code span.cv { color: #7f9f7f; font-weight: bold; } /* CommentVar */
+code span.do { color: #7f9f7f; } /* Documentation */
+code span.dt { color: #dfdfbf; } /* DataType */
+code span.dv { color: #dcdccc; } /* DecVal */
+code span.er { color: #c3bf9f; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #c0bed1; } /* Float */
+code span.fu { color: #efef8f; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #7f9f7f; font-weight: bold; } /* Information */
+code span.kw { color: #f0dfaf; } /* Keyword */
+code span.op { color: #f0efd0; } /* Operator */
+code span.ot { color: #efef8f; } /* Other */
+code span.pp { color: #ffcfaf; font-weight: bold; } /* Preprocessor */
+code span.sc { color: #dca3a3; } /* SpecialChar */
+code span.ss { color: #cc9393; } /* SpecialString */
+code span.st { color: #cc9393; } /* String */
+code span.va { } /* Variable */
+code span.vs { color: #cc9393; } /* VerbatimString */
+code span.wa { color: #7f9f7f; font-weight: bold; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.tab('show');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-sm-12 col-md-4 col-lg-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-sm-12 col-md-8 col-lg-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Nathan's Projects</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Visualizing Arlington Bikeometers
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="part_1_the_plan.html">Part 1: The Plan</a>
+    </li>
+    <li>
+      <a href="part_2_query_the_api.htm">Part 2: Query the API</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Notes
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a></a>
+    </li>
+  </ul>
+</li>
+<li>
+  <a href="photography.html">Photography</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/photonathan">Github</a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Visualizing Arlington Bikometers</h1>
+<h3 class="subtitle">Part 2: Query the Bike Arlington API</h3>
+
+</div>
+
+
+<div id="background" class="section level1">
+<h1>Background</h1>
+<p>The Official <a href="http://counters.bikearlington.com/data-for-developers/">Bike Arlington</a> API is accessed through <a href="http://webservices.commuterpage.com/counters.cfc?wsdl">this URL</a> with multiple endpoints/methods to get everything from the number of bikers or pedestrians passing a Bikeometer that day, longitude/latitude of each Bikeometer, to the weather that day.</p>
+</div>
+<div id="goal" class="section level1">
+<h1>Goal</h1>
+<p>Use Python to query the API and return the details of each Bikeometer and the number of bikers in a date range.</p>
+</div>
+<div id="requesting-bikeometer-details" class="section level1">
+<h1>Requesting Bikeometer Details</h1>
+<div id="step-1-make-a-request" class="section level2">
+<h2>Step 1: Make a request</h2>
+<p>We can read <a href="http://counters.bikearlington.com/bike/assets/File/Regional_bikearlington_webservices.pdf">here</a> about the different methods available when making requests to the Bike Arlington API.</p>
+<p>First, let’s get some details on the Bikeometers in the database. There is a method listed ‘GetAllCounters’ that will return the details of the bikeometers in the database. I’ll use the ‘requests’ library to make a ‘GET’ request to the base Bike Arlington URL and pass in the ‘GetAllCounters’ method as a parameter.</p>
+<p>As I will be using chunks of Python code, I’ll call the R reticulate package to interface with python from R.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> requests</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Assign the url of the </span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>url <span class="op">=</span> <span class="st">&#39;http://webservices.commuterpage.com/counters.cfc?wsdl&#39;</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Defines the method in a dictionary used to make the request</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>counter_reqest_methods <span class="op">=</span> {<span class="st">&#39;method&#39;</span>: <span class="st">&#39;GetAllCounters&#39;</span>}</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Save the GetAllCounters request to memory</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>response <span class="op">=</span> requests.get(url, params<span class="op">=</span>counter_reqest_methods)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>response</span></code></pre></div>
+<pre><code>## &lt;Response [200]&gt;</code></pre>
+<p>Great! Response [200] means we got an OK response back. When making a GET request, a ‘response object’ will be returned. Let’s take a look at what’s inside our response object. Use the .text method as shown below to look at the data inside our response object. The output is a mess of HTML so I’ll leave it to you to take a look at it yourself.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>response.text</span></code></pre></div>
+</div>
+<div id="step-2-clean-the-data" class="section level2">
+<h2>Step 2: Clean the Data</h2>
+<p>We will use the ‘re’ module to remove some of the extraneous html. From the official Python documentation, “This module provides regular expression matching operations…” A great tutorial on Regular Expressions (RegEx) can be found <a href="https://realpython.com/regex-python/">here</a></p>
+<p>The code below will substitute any ‘’ or ‘ with a blank string (’’), essentially deleting them.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> re</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>string_data <span class="op">=</span> response.text</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>clean_string_data <span class="op">=</span> re.sub(<span class="vs">r&#39;[\n|\t]&#39;</span>, <span class="st">&#39;&#39;</span>, string_data)</span></code></pre></div>
+<p>Now it’s easier to read! The first part of the data mentions that the data is in XML format. We can use this to our advantage by converting the string to an XML to easily pull out the data we are looking for.</p>
+</div>
+<div id="step-3-convert-data-to-xml" class="section level2">
+<h2>Step 3: Convert data to XML</h2>
+<p>We will use the module ‘xml.etree.ElementTree’ to convert the data from a string to XML format. By converting this to XML, finding the data we need will be faster because we don’t have to iterate over the entire string looking for the specific data we need, we can use the hierarchical structure of an XML file to drill down to the specific data we are looking for.</p>
+<p>To make it easier to call, we will import the module as ‘ET’. We will then call the function ‘fromstring’ and pass in our ‘clean_string_data’ as an argument.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> xml.etree.ElementTree <span class="im">as</span> ET</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>root <span class="op">=</span> ET.fromstring(clean_string_data)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="bu">type</span>(root)</span></code></pre></div>
+<pre><code>## &lt;class &#39;xml.etree.ElementTree.Element&#39;&gt;</code></pre>
+<p>Our object ‘root’ is now an ‘xml.etree.ElementTree.Element’ object that we can iterate over with a <strong>for loop</strong> or we can use the <strong>list</strong> function.</p>
+</div>
+<div id="step-4-explore-xml-data" class="section level2">
+<h2>Step 4: Explore XML Data</h2>
+<p>Using the <strong>list</strong> function allows us to take a look inside <strong>root</strong> to see its children.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="bu">list</span>(root)</span></code></pre></div>
+<pre><code>## [&lt;Element &#39;counter&#39; at 0x0000000060D42680&gt;, &lt;Element &#39;counter&#39; at 0x0000000060D42A90&gt;, &lt;Element &#39;counter&#39; at 0x0000000060D42E50&gt;, &lt;Element &#39;counter&#39; at 0x0000000060D45220&gt;, &lt;Element &#39;counter&#39; at 0x0000000060D455E0&gt;, &lt;Element &#39;counter&#39; at 0x0000000060D459A0&gt;, &lt;Element &#39;counter&#39; at 0x0000000060D45D60&gt;, &lt;Element &#39;counter&#39; at 0x0000000060D471D0&gt;, &lt;Element &#39;counter&#39; at 0x0000000060D475E0&gt;, &lt;Element &#39;counter&#39; at 0x0000000060D47950&gt;, &lt;Element &#39;counter&#39; at 0x0000000060D47D10&gt;, &lt;Element &#39;counter&#39; at 0x0000000060D48130&gt;, &lt;Element &#39;counter&#39; at 0x0000000060D48590&gt;, &lt;Element &#39;counter&#39; at 0x0000000060D48950&gt;, &lt;Element &#39;counter&#39; at 0x0000000060D48D10&gt;, &lt;Element &#39;counter&#39; at 0x0000000060D4A0E0&gt;, &lt;Element &#39;counter&#39; at 0x0000000060D4A450&gt;, &lt;Element &#39;counter&#39; at 0x0000000060D4A7C0&gt;, &lt;Element &#39;counter&#39; at 0x0000000060D4AB80&gt;, &lt;Element &#39;counter&#39; at 0x0000000060D4AEF0&gt;, &lt;Element &#39;counter&#39; at 0x0000000060D4C310&gt;, &lt;Element &#39;counter&#39; at 0x0000000060D4C680&gt;, &lt;Element &#39;counter&#39; at 0x0000000060D4CA40&gt;, &lt;Element &#39;counter&#39; at 0x0000000060D4CE00&gt;, &lt;Element &#39;counter&#39; at 0x0000000060D4E1D0&gt;, &lt;Element &#39;counter&#39; at 0x0000000060D4E590&gt;, &lt;Element &#39;counter&#39; at 0x0000000060D4E900&gt;, &lt;Element &#39;counter&#39; at 0x0000000060D4EC70&gt;, &lt;Element &#39;counter&#39; at 0x0000000060D51040&gt;, &lt;Element &#39;counter&#39; at 0x0000000060D513B0&gt;, &lt;Element &#39;counter&#39; at 0x0000000060D517C0&gt;, &lt;Element &#39;counter&#39; at 0x0000000060D51BD0&gt;, &lt;Element &#39;counter&#39; at 0x0000000060D51F90&gt;, &lt;Element &#39;counter&#39; at 0x0000000060D533B0&gt;, &lt;Element &#39;counter&#39; at 0x0000000060D53770&gt;, &lt;Element &#39;counter&#39; at 0x0000000060D53B30&gt;, &lt;Element &#39;counter&#39; at 0x0000000060D53EF0&gt;, &lt;Element &#39;counter&#39; at 0x0000000060D4F310&gt;, &lt;Element &#39;counter&#39; at 0x0000000060D4F6D0&gt;, &lt;Element &#39;counter&#39; at 0x0000000060D4FA90&gt;, &lt;Element &#39;counter&#39; at 0x0000000060D4FE50&gt;, &lt;Element &#39;counter&#39; at 0x0000000060D56270&gt;, &lt;Element &#39;counter&#39; at 0x0000000060D56680&gt;, &lt;Element &#39;counter&#39; at 0x0000000060D56A90&gt;, &lt;Element &#39;counter&#39; at 0x0000000060D56E50&gt;, &lt;Element &#39;counter&#39; at 0x0000000060D57270&gt;, &lt;Element &#39;counter&#39; at 0x0000000060D57630&gt;, &lt;Element &#39;counter&#39; at 0x0000000060D579A0&gt;, &lt;Element &#39;counter&#39; at 0x0000000060D57D10&gt;]</code></pre>
+<p>We can see there are a lot of “Element ‘counter’…” objects, each representing a different Bikeometer with details of its own.</p>
+<p>Now, we could go in blind and do lots of slicing to see the hierarchy of the file but realistically we have access to a web browser and can use the below URL to make the API call and see where the data that we need is located.</p>
+<p><a href="http://webservices.commuterpage.com/counters.cfc?wsdl&amp;method=GetAllCounters" class="uri">http://webservices.commuterpage.com/counters.cfc?wsdl&amp;method=GetAllCounters</a></p>
+<p>Let’s slice into the list of counters and assign the first counter to the variable ‘child’ then take a look inside.</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>child <span class="op">=</span> root[<span class="dv">0</span>]</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="bu">list</span>(child)</span></code></pre></div>
+<pre><code>## [&lt;Element &#39;name&#39; at 0x0000000060D42770&gt;, &lt;Element &#39;description&#39; at 0x0000000060D427C0&gt;, &lt;Element &#39;trail_id&#39; at 0x0000000060D42810&gt;, &lt;Element &#39;trail_name&#39; at 0x0000000060D42860&gt;, &lt;Element &#39;latitude&#39; at 0x0000000060D428B0&gt;, &lt;Element &#39;longitude&#39; at 0x0000000060D42900&gt;, &lt;Element &#39;region&#39; at 0x0000000060D42950&gt;]</code></pre>
+<p>We can see that ‘child’ contains many elements that we can access such as name, description, trail_id…etc.</p>
+<p>However, we also know that ‘child’ contains the information for ‘id’. Let’s access that ‘id’ information.</p>
+<p>We can use the <strong>items</strong> method to return a list of a single tuple.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>child.items()</span></code></pre></div>
+<pre><code>## [(&#39;id&#39;, &#39;33&#39;)]</code></pre>
+<p>However, we really want to isolate the important information ‘33’.</p>
+<p>So, We can use the <strong>keys</strong> function to even though this is not a dictionary.</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>child.keys()</span></code></pre></div>
+<pre><code>## [&#39;id&#39;]</code></pre>
+<p>We know that the <strong>key</strong> is so we can use the <strong>get</strong> function and pass in ‘id’ to get the “value”.</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>child.get(<span class="st">&#39;id&#39;</span>)</span></code></pre></div>
+<pre><code>## &#39;33&#39;</code></pre>
+<p>To access the ‘name’ element we will slice into the list and access the first object. We will assign that object to the variable ‘grandchild’.</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>grandchild <span class="op">=</span> child[<span class="dv">0</span>]</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>grandchild</span></code></pre></div>
+<pre><code>## &lt;Element &#39;name&#39; at 0x0000000060D42770&gt;</code></pre>
+<p>Now that we have the ‘name’ object assigned, let’s see what the name of the first Bikeometer in our XML file is.</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>grandchild.text</span></code></pre></div>
+<pre><code>## &#39;110 Trail&#39;</code></pre>
+<p>‘110 Trail’ is the name! If you want, try pulling some data yourself. Below, I describe how I automated pulling the data.</p>
+</div>
+<div id="step-5-automate-data-pull" class="section level2">
+<h2>Step 5: Automate Data Pull</h2>
+<p>In order to automate pulling all this data, I’ll create a <strong>for loop</strong> to iterate through the XML data. Each Bikeometer’s data will be saved in a tuple and those tuples will be saved all together in a list.</p>
+<p>First, I’ll create the empty list that will house the Bikeometer tuples.</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>bikeometer_details <span class="op">=</span> []</span></code></pre></div>
+<p>Next, I’ll create a Russian nesting doll of a <strong>for loop</strong> to dive into the appropriate sections to pull the information I want.</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Iterate through the children, grandchildren, and great-grandchildren and grab req data  </span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> child <span class="kw">in</span> root:</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># From child &#39;counter&#39; gets the attribute &#39;id&#39; of the counter and adds it to single_list</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>    single_list <span class="op">=</span> [child.get(<span class="st">&#39;id&#39;</span>)]</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Loops through the grandchildren of root</span></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> grandchild <span class="kw">in</span> <span class="bu">list</span>(child):   </span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> grandchild.text <span class="op">!=</span> <span class="va">None</span> <span class="kw">and</span> grandchild.tag <span class="op">!=</span> <span class="st">&#39;description&#39;</span> <span class="kw">and</span> grandchild.tag <span class="op">!=</span> <span class="st">&#39;trail_id&#39;</span> <span class="kw">and</span> grandchild.tag <span class="op">!=</span> <span class="st">&#39;trail_name&#39;</span>:</span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>            <span class="co"># If the grandchild is region, loop through region and grab the grandchildren data</span></span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> grandchild.tag <span class="op">==</span> <span class="st">&#39;region&#39;</span>:  </span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>                <span class="cf">for</span> great_grandchild <span class="kw">in</span> <span class="bu">list</span>(grandchild): </span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>                    single_list.append(great_grandchild.text)</span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>            <span class="co"># If the grandchild is not region, the data is available in grandchild.text</span></span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>            <span class="cf">else</span>: </span>
+<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a>                single_list.append(grandchild.text)</span>
+<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Cast the list into a tuple making it easier to migrate data to the database</span></span>
+<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a>    single_tuple <span class="op">=</span> <span class="bu">tuple</span>(single_list)</span>
+<span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Appends tuples to the list</span></span>
+<span id="cb22-18"><a href="#cb22-18" aria-hidden="true" tabindex="-1"></a>    bikeometer_details.append(single_tuple)</span></code></pre></div>
+<p>Taking a look inside our bikeometer_details object, we see a list of tuples, where each tuple is a seperate Bikeometer.</p>
+<p>Each tuple contains: (‘bikeometer_id’, ‘bikeometer_name’, ‘latitude’, ‘longitude’, ‘region’, ‘region_id’)</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>bikeometer_details</span></code></pre></div>
+<pre><code>## [(&#39;33&#39;, &#39;110 Trail&#39;, &#39;38.885315&#39;, &#39;-77.065022&#39;, &#39;Arlington&#39;, &#39;1&#39;), (&#39;30&#39;, &#39;14th Street Bridge&#39;, &#39;38.874260&#39;, &#39;-77.044610&#39;, &#39;Arlington&#39;, &#39;1&#39;), (&#39;43&#39;, &#39;15th Street NW&#39;, &#39;38.907470&#39;, &#39;-77.034610&#39;, &#39;DC&#39;, &#39;3&#39;), (&#39;24&#39;, &#39;Ballston Connector&#39;, &#39;38.882950&#39;, &#39;-77.121235&#39;, &#39;Arlington&#39;, &#39;1&#39;), (&#39;59&#39;, &#39;Bluemont Connector&#39;, &#39;38.880440&#39;, &#39;-77.119290&#39;, &#39;Arlington&#39;, &#39;1&#39;), (&#39;56&#39;, &#39;BWP Counter&#39;, &#39;38.933140&#39;, &#39;-76.938320&#39;, &quot;Prince George&#39;s County&quot;, &#39;5&#39;), (&#39;47&#39;, &#39;Capital Crescent Trail #1&#39;, &#39;38.979500&#39;, &#39;-77.096760&#39;, &#39;Montgomery County&#39;, &#39;4&#39;), (&#39;48&#39;, &#39;Capital Crescent Trail #2&#39;, &#39;38.943070&#39;, &#39;-77.115660&#39;, &#39;Montgomery County&#39;, &#39;4&#39;), (&#39;10&#39;, &#39;CC Connector&#39;, &#39;38.857702&#39;, &#39;-77.047373&#39;, &#39;Arlington&#39;, &#39;1&#39;), (&#39;20&#39;, &#39;Clarendon EB bike lane&#39;, &#39;38.888780&#39;, &#39;-77.090421&#39;, &#39;Arlington&#39;, &#39;1&#39;), (&#39;35&#39;, &#39;Commonwealth Bike Lanes&#39;, &#39;38.831730&#39;, &#39;-77.059280&#39;, &#39;Alexandria&#39;, &#39;2&#39;), (&#39;57&#39;, &#39;Cottage City Counter&#39;, &#39;38.939700&#39;, &#39;-76.944710&#39;, &quot;Prince George&#39;s County&quot;, &#39;5&#39;), (&#39;18&#39;, &#39;Crystal NB bike lane&#39;, &#39;38.857315&#39;, &#39;-77.049152&#39;, &#39;Arlington&#39;, &#39;1&#39;), (&#39;3&#39;, &#39;Custis Bon Air Park&#39;, &#39;38.879199&#39;, &#39;-77.138420&#39;, &#39;Arlington&#39;, &#39;1&#39;), (&#39;58&#39;, &#39;Custis Rosslyn&#39;, &#39;38.897110&#39;, &#39;-77.083410&#39;, &#39;Arlington&#39;, &#39;1&#39;), (&#39;61&#39;, &#39;Eads NB&#39;, &#39;38.857970&#39;, &#39;-77.053040&#39;, &#39;Arlington&#39;, &#39;1&#39;), (&#39;62&#39;, &#39;Eads SB&#39;, &#39;38.859450&#39;, &#39;-77.053500&#39;, &#39;Arlington&#39;, &#39;1&#39;), (&#39;38&#39;, &#39;Eisenhower Trail&#39;, &#39;38.802950&#39;, &#39;-77.088350&#39;, &#39;Alexandria&#39;, &#39;2&#39;), (&#39;44&#39;, &#39;Eye Street SW&#39;, &#39;38.879260&#39;, &#39;-77.015580&#39;, &#39;DC&#39;, &#39;3&#39;), (&#39;14&#39;, &#39;Fairfax EB bike lane&#39;, &#39;38.882767&#39;, &#39;-77.104615&#39;, &#39;Arlington&#39;, &#39;1&#39;), (&#39;60&#39;, &#39;Fairfax WB&#39;, &#39;38.883330&#39;, &#39;-77.103780&#39;, &#39;Arlington&#39;, &#39;1&#39;), (&#39;5&#39;, &#39;Four Mile Run (piezo)&#39;, &#39;38.843262&#39;, &#39;-77.080860&#39;, &#39;Arlington&#39;, &#39;1&#39;), (&#39;6&#39;, &#39;Four Mile Run (pyro)&#39;, &#39;38.843353&#39;, &#39;-77.080581&#39;, &#39;Arlington&#39;, &#39;1&#39;), (&#39;42&#39;, &#39;Four Mile Trail&#39;, &#39;38.840070&#39;, &#39;-77.053290&#39;, &#39;Alexandria&#39;, &#39;2&#39;), (&#39;37&#39;, &#39;Holmes Run Trail&#39;, &#39;38.817830&#39;, &#39;-77.123570&#39;, &#39;Alexandria&#39;, &#39;2&#39;), (&#39;27&#39;, &#39;Joyce St NB&#39;, &#39;38.867264&#39;, &#39;-77.062829&#39;, &#39;Arlington&#39;, &#39;1&#39;), (&#39;26&#39;, &#39;Joyce St SB&#39;, &#39;38.867271&#39;, &#39;-77.063054&#39;, &#39;Arlington&#39;, &#39;1&#39;), (&#39;8&#39;, &#39;Key Bridge East&#39;, &#39;38.900468&#39;, &#39;-77.070656&#39;, &#39;Arlington&#39;, &#39;1&#39;), (&#39;7&#39;, &#39;Key Bridge West&#39;, &#39;38.900539&#39;, &#39;-77.070900&#39;, &#39;Arlington&#39;, &#39;1&#39;), (&#39;51&#39;, &#39;Matthew Henson Trail 1&#39;, &#39;39.081660&#39;, &#39;-77.047360&#39;, &#39;Montgomery County&#39;, &#39;4&#39;), (&#39;52&#39;, &#39;Matthew Henson Trail 2&#39;, &#39;39.058320&#39;, &#39;-77.091600&#39;, &#39;Montgomery County&#39;, &#39;4&#39;), (&#39;45&#39;, &#39;Metropolitan Branch Trail North&#39;, &#39;38.923040&#39;, &#39;-76.995700&#39;, &#39;DC&#39;, &#39;3&#39;), (&#39;22&#39;, &#39;Military NB bike lane&#39;, &#39;38.905509&#39;, &#39;-77.109349&#39;, &#39;Arlington&#39;, &#39;1&#39;), (&#39;21&#39;, &#39;Military SB bike lane&#39;, &#39;38.905732&#39;, &#39;-77.109698&#39;, &#39;Arlington&#39;, &#39;1&#39;), (&#39;36&#39;, &#39;Mount Vernon Trail #1&#39;, &#39;38.839570&#39;, &#39;-77.046630&#39;, &#39;Alexandria&#39;, &#39;2&#39;), (&#39;34&#39;, &#39;Mount Vernon Trail #2&#39;, &#39;38.827310&#39;, &#39;-77.042830&#39;, &#39;Alexandria&#39;, &#39;2&#39;), (&#39;41&#39;, &#39;Mount Vernon Trail #3&#39;, &#39;38.790290&#39;, &#39;-77.050940&#39;, &#39;Alexandria&#39;, &#39;2&#39;), (&#39;9&#39;, &#39;MVT Airport South&#39;, &#39;38.844471&#39;, &#39;-77.048923&#39;, &#39;Arlington&#39;, &#39;1&#39;), (&#39;39&#39;, &#39;Potomac Yard Trail #1&#39;, &#39;38.829850&#39;, &#39;-77.047850&#39;, &#39;Alexandria&#39;, &#39;2&#39;), (&#39;16&#39;, &#39;Quincy NB bike lane&#39;, &#39;38.885457&#39;, &#39;-77.108055&#39;, &#39;Arlington&#39;, &#39;1&#39;), (&#39;15&#39;, &#39;Quincy SB bike lane&#39;, &#39;38.884877&#39;, &#39;-77.108075&#39;, &#39;Arlington&#39;, &#39;1&#39;), (&#39;54&#39;, &#39;Rock Creek Trail 1&#39;, &#39;39.016130&#39;, &#39;-77.094200&#39;, &#39;Montgomery County&#39;, &#39;4&#39;), (&#39;55&#39;, &#39;Rock Creek Trail 2&#39;, &#39;39.090260&#39;, &#39;-77.113820&#39;, &#39;Montgomery County&#39;, &#39;4&#39;), (&#39;31&#39;, &#39;Roosevelt Bridge&#39;, &#39;38.893822&#39;, &#39;-77.065737&#39;, &#39;Arlington&#39;, &#39;1&#39;), (&#39;28&#39;, &#39;Rosslyn Bikeometer&#39;, &#39;38.899080&#39;, &#39;-77.070980&#39;, &#39;Arlington&#39;, &#39;1&#39;), (&#39;11&#39;, &#39;TR Island Bridge&#39;, &#39;38.897960&#39;, &#39;-77.067721&#39;, &#39;Arlington&#39;, &#39;1&#39;), (&#39;2&#39;, &#39;W&amp;OD Bon Air Park&#39;, &#39;38.878949&#39;, &#39;-77.138546&#39;, &#39;Arlington&#39;, &#39;1&#39;), (&#39;25&#39;, &#39;W&amp;OD Bon Air West&#39;, &#39;38.879330&#39;, &#39;-77.139250&#39;, &#39;Arlington&#39;, &#39;1&#39;), (&#39;19&#39;, &#39;Wilson WB bike lane&#39;, &#39;38.889855&#39;, &#39;-77.090175&#39;, &#39;Arlington&#39;, &#39;1&#39;)]</code></pre>
+</div>
+<div id="step-6-put-the-data-into-a-data-frame" class="section level2">
+<h2>Step 6: Put the data into a data frame</h2>
+<p>First, we will load that <strong>Pandas</strong> module so we can turn our list of tuples into a data frame.</p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span></code></pre></div>
+<p>Next, we will define the columns of the data frame according to the data in our tuples.</p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>columns <span class="op">=</span> (<span class="st">&#39;bikeometer_id&#39;</span>, <span class="st">&#39;name&#39;</span>, <span class="st">&#39;latitude&#39;</span>, <span class="st">&#39;longitude&#39;</span>, <span class="st">&#39;region&#39;</span>, <span class="st">&#39;region_id&#39;</span>)</span></code></pre></div>
+<p>With our columns defined, we will create a dataframe using the <strong>Pandas DataFrame</strong> function, pass in our <strong>bikeometer_details</strong> list into the <strong>data</strong> parameter and pass in our <strong>columns</strong> variable to the <strong>columns</strong> parameter.</p>
+<div class="sourceCode" id="cb27"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame(data<span class="op">=</span>bikeometer_details, columns <span class="op">=</span> columns)</span></code></pre></div>
+<p>Finally, we will assign a <em>type</em> to each column by using the <strong>.astype()</strong> function.</p>
+<div class="sourceCode" id="cb28"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>df[[<span class="st">&quot;name&quot;</span>, <span class="st">&quot;latitude&quot;</span>, <span class="st">&quot;longitude&quot;</span>, <span class="st">&quot;region&quot;</span>, <span class="st">&#39;region_id&#39;</span>]] <span class="op">=</span> df[[<span class="st">&quot;name&quot;</span>, <span class="st">&quot;latitude&quot;</span>, <span class="st">&quot;longitude&quot;</span>, <span class="st">&quot;region&quot;</span>, <span class="st">&#39;region_id&#39;</span>]].astype(<span class="st">&#39;string&#39;</span>)</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>df[[<span class="st">&quot;bikeometer_id&quot;</span>]] <span class="op">=</span> df[[<span class="st">&quot;bikeometer_id&quot;</span>]].astype(<span class="st">&#39;int&#39;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb29"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>df</span></code></pre></div>
+<pre><code>##     bikeometer_id  ... region_id
+## 0              33  ...         1
+## 1              30  ...         1
+## 2              43  ...         3
+## 3              24  ...         1
+## 4              59  ...         1
+## 5              56  ...         5
+## 6              47  ...         4
+## 7              48  ...         4
+## 8              10  ...         1
+## 9              20  ...         1
+## 10             35  ...         2
+## 11             57  ...         5
+## 12             18  ...         1
+## 13              3  ...         1
+## 14             58  ...         1
+## 15             61  ...         1
+## 16             62  ...         1
+## 17             38  ...         2
+## 18             44  ...         3
+## 19             14  ...         1
+## 20             60  ...         1
+## 21              5  ...         1
+## 22              6  ...         1
+## 23             42  ...         2
+## 24             37  ...         2
+## 25             27  ...         1
+## 26             26  ...         1
+## 27              8  ...         1
+## 28              7  ...         1
+## 29             51  ...         4
+## 30             52  ...         4
+## 31             45  ...         3
+## 32             22  ...         1
+## 33             21  ...         1
+## 34             36  ...         2
+## 35             34  ...         2
+## 36             41  ...         2
+## 37              9  ...         1
+## 38             39  ...         2
+## 39             16  ...         1
+## 40             15  ...         1
+## 41             54  ...         4
+## 42             55  ...         4
+## 43             31  ...         1
+## 44             28  ...         1
+## 45             11  ...         1
+## 46              2  ...         1
+## 47             25  ...         1
+## 48             19  ...         1
+## 
+## [49 rows x 6 columns]</code></pre>
+<p>Now that it’s in a data frame, we have many options about what to do with it. We can picke it for later, manipulate it with pandas, or what I’m going to do in the next post: save it in my database.</p>
+<p>Now that we have the Bikeometer data in a usable format # Requesting Bike Counts</p>
+</div>
+<div id="step-1-make-a-request-1" class="section level2">
+<h2>Step 1: Make a Request</h2>
+</div>
+<div id="step-2-clean-the-data-1" class="section level2">
+<h2>Step 2: Clean the Data</h2>
+</div>
+<div id="step-3-convert-data-to-xml-1" class="section level2">
+<h2>Step 3: Convert data to XML</h2>
+</div>
+<div id="step-4-explore-xml-data-1" class="section level2">
+<h2>Step 4: Explore XML Data</h2>
+</div>
+<div id="step-5-automate-data-pull-1" class="section level2">
+<h2>Step 5: Automate Data Pull</h2>
+</div>
+<div id="step-6-put-the-data-into-a-data-frame-1" class="section level2">
+<h2>Step 6: Put the data into a data frame</h2>
+<p>The Bike Arlington API allows for queries of 1 year or less. This limitation can be managed by making requests in 1 year increments and adding them to the database or concatenating each 1 year request into a list then adding the data to the database all at once.</p>
+</div>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,17 @@
+---
+title: "The best resources I used to learn Python"
+output: github_document
+---
+
+Do I have to say that 'best' is subjective and these are *my* best resources that I used to learn Python? Apparently I do.
+
+The sheer number of free resources available to learn Python is both a blessing and a curse. Sorting through the internet for the answer to your question is an important skill to learn as a Data Scientist, I used it almost every day. However, I've compiled this list because even though everyone learns differently, this list would have saved me literal hours of trying and ranking various online resources. 
+
+The resources I have listed below have a well thought out curriculum, where there is sensible progression and uniformity of teaching style starting from knowing nothing about Python.
+
+# Do these first
+
+These two resources, the MIT introduction course and the RealPython write-ups follow a similar progression and cover roughly the same topics in different ways, enabling for better comprehension. Obviously, you don't have access to the MIT Teaching Assistants to ask questions so the RealPython write-ups serve to explain the topics in different ways.
+
+Start at this link and at the bottom of each page is a link to the next topic. This curriculum isn't easily accessible so when you are done for the day, bookmark the page you left off on so you can easily pick it back up next time.  
+https://realpython.com/python-introduction

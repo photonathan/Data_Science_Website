@@ -1,0 +1,138 @@
+# Details for Table of averages
+
+Average of March 12, 2017, 2018, 2019 = 
+Average of March 13, 2017, 2018, 2019 = 
+Average of March 14, 2017, 2018, 2019 =
+...
+Average of May 15, 2017, 2018, 2019 = 
+
+Compare those averages to March 12 2020 - May 15 2020 in same table
+
+Take the totals per week between March 12, 2020 - May 15, 2020
+
+Make seperate date for month date = 0312
+
+# Creates new view that combines the I and O direction and groups by date and counter ID
+CREATE OR REPLACE VIEW counts_daily_total AS
+SELECT 
+cd.counter_id AS counter_id,
+cd.date AS date,
+SUM(cd.count) AS count,
+cd.is_weekend AS is_weekend
+FROM counts_daily cd 
+GROUP BY cd.date, cd.counter_id;
+
+CREATE TABLE no_missing_values AS 
+SELECT * FROM counts.counts_daily 
+WHERE counter_id IN (14,15,16,18,22,31,39) 
+AND Year(Date) in (2017,2018,2019,2020);
+
+ALTER TABLE no_missing_values ADD COLUMN month_day VARCHAR(5) AFTER DATE;
+ALTER TABLE no_missing_values ADD COLUMN year INT AFTER DATE;
+select * from no_missing_values;
+# Turn off SQL Safe Updates
+SET SQL_SAFE_UPDATES = 0;
+# Fills in column month_day with the extracted month and day from the date column and adds it where month_day is null
+UPDATE no_missing_values SET month_day = DATE_FORMAT(date, '%m-%d') WHERE month_day is null;
+# Fills in column year with the extracted year from the date column and adds it where year is null
+UPDATE no_missing_values SET year = Year(Date) WHERE year is null;
+
+
+# Template for creating a view and joining
+CREATE OR REPLACE VIEW view_name AS
+SELECT
+## These are the coulmns you want in your new view. Must reference them by alias even though alias isn't initalized until below
+mtAlias.column1,
+ot2Alias.column2
+## Choose table you want to use data from and initalize an alias by writing table_name <space> alias_name
+FROM main_table mtAlias
+## You can innerjoin more than once as long as the columns contain the same values. Best practice to name columns same but isn't technically necessary
+INNER JOIN other_table otAlias ON otAlias.sharedColumn = mtAlias.sharedColumn
+INNER JOIN other_table2 ot2Alias ON ot2Alias.sharedColumn = otAlias.sharedColumn
+
+# Limit Avg table to be in certain 
+
+
+# How to join tables
+select {}
+FROM TABLEA A 
+INNER JOIN TABLEB B  ON B.COLUMN = A.COLUMN
+INNER JOIN TABLEC C on C.COLUMN = B.COLUMN
+
+# SQL commands to make table of averages
+CREATE TABLE counts_daily_I AS SELECT * FROM counts.counts_daily WHERE direction = 'I';
+desc counts_daily;
+ALTER TABLE counts_daily_I ADD COLUMN month_day VARCHAR(5) AFTER DATE;
+select * from counts_daily_I;
+
+
+UPDATE counts_daily_I SET month_day = DATE_FORMAT(date, '%m-%d') WHERE month_day is null;
+
+CREATE OR REPLACE VIEW counts_daily_average_2017_to_2019
+AS select 
+cd.month_day as month_day,
+AVG(cd.count) as average
+from counts_daily_I cd
+left join counts_daily_I a ON cd.month_day = a.month_day
+where YEAR(cd.date) IN (2017,2018,2019)
+group by cd.month_day;
+
+SELECT * FROM counts_daily_average_2017_to_2019
+
+# Adds column 'is_weekend' with datatype tinyint to table counts_daily
+ALTER TABLE counts_daily ADD `is_weekend` TINYINT;
+
+# Converts the coulmn Date in table counts_daily to be type DATE, not DATETIME
+ALTER TABLE counts_daily modify date DATE;
+
+# Turns off SQL_SAFE_UPDATES, use '=1' to turn back on
+SET SQL_SAFE_UPDATES=0;
+
+# Adds values to the 'is_weekend' column in table 'counts_daily' and uses the function WEEKDAY().() 
+# The fucntion WEEKDAY() takes an argument Date and returns the day # of the week 
+# (Monday = 0, Tueday = 1... Sunday = 6)
+# Less than or equal to 4 is a weekday
+UPDATE counts_daily SET is_weekend=0 WHERE WEEKDAY(Date)<=4;
+# Greater than or equal to 5 is a weekend
+UPDATE counts_daily SET is_weekend=1 WHERE WEEKDAY(Date)>=5;
+
+
+
+###### YOONSIE CODE I NEED TO LEARN ########
+#SELECT cd.CounterID, ctr.Name, sum(cd.Count) FROM counts_daily cd  
+#INNER JOIN counters ctr ON ctr.CounterID = cd.CounterID 
+#WHERE year(Date) = 2019
+#GROUP BY cd.CounterID, ctr.Name; 
+
+CREATE OR REPLACE VIEW number_of_counts_2019 as SELECT cd.CounterID, ctr.Name, count(*) FROM counts_daily cd  
+INNER JOIN counters ctr ON ctr.CounterID = cd.CounterID 
+WHERE year(Date) = 2019
+GROUP BY cd.CounterID, ctr.Name; 
+select * from number_of_counts_2019;
+
+
+select * from number_of_counts_2019 order by NumberOfRows desc;
+select CounterId, sum(Count) as numBikers from counts_daily
+where CounterId in 
+	(select CounterId from number_of_counts_2019 where NumberOfRows >= 657)
+group by CounterId;
+select * from vw_counter_date_count where YEAR(Date) = 2020 AND CounterID = 35;
+select counterid, sum(Count) as numBikers from counts_daily where counterID=39 and YEAR(Date)=2019;
+
+# Error Code: 2013. Lost connection to MySQL server during query	30.000 sec
+# Fix:
+Edit → Preferences → SQL Editor → DBMS connection read timeout interval (in seconds): 30
+Changed the value to 600
+
+# "Error in plot.window(...) : need finite 'xlim' values" 
+# When running the plot() function over every counter, I got a "Error in plot.window(...) : need finite 'xlim' values" error which  meant that there were no dates found for that counter in that date range.
+
+# Counters where Direction = A and have enough data
+14, 15, 16, 18, 19, 20, 22, 60, 61, 62
+# Direction A but not enough data
+21
+
+# Counters that have some Inbound data for 2019 and 2020 data for April - October
+2,3,7, 8, 10,11, 25, 26,28, 31, 39, 43, 47, 54, 56, 57, 
+#Not enough data Inbound
+# 27, 30, 33 35, 37, 38, 41, 44, 51, 55, 59
