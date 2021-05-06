@@ -13,7 +13,3 @@ RnwWeave: knitr
 LaTeX: pdfLaTeX
 
 BuildType: Website
-
-PythonType: conda
-PythonVersion: 3.8.8
-PythonPath: C:\Users\MDNat\miniconda3/python.exe
