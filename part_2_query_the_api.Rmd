@@ -7,20 +7,21 @@ output:
     toc_depth: 2
     toc_float: yes
     highlight: zenburn
-    df_print: paged
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(cache = TRUE)
+library(reticulate)
 ```
 
-# Background
+# Introduction 
+
+## Background
 
 The Official [Bike Arlington](http://counters.bikearlington.com/data-for-developers/) API is accessed through [this URL](http://webservices.commuterpage.com/counters.cfc?wsdl) with multiple endpoints/methods to get everything from the number of bikers or pedestrians passing a Bikeometer that day, longitude/latitude of each Bikeometer, to the weather that day.
 
-# Goal
+## Goal
 
-Use Python to query the API and return the details of each Bikeometer and the number of bikers in a date range.
+Use Python to query the API and return the details of each Bikeometer and the number of bikers in a date range. With that information, create a pandas data frame.
 
 # Requesting Bikeometer Details
 
@@ -59,7 +60,6 @@ import re
 
 string_data = response.text
 clean_string_data = re.sub(r'[\n|\t]', '', string_data)
-
 ```
 
 Now it's easier to read! The first part of the data mentions that the data is in XML format. We can use this to our advantage by converting the string to an XML to easily pull out the data we are looking for.
@@ -182,7 +182,7 @@ Each tuple contains: ('bikeometer_id', 'bikeometer_name', 'latitude', 'longitude
 bikeometer_details
 ```
 
-## Step 6: Put the data into a data frame
+## Step 6: Data into a data frame
 
 First, we will load that **Pandas** module so we can turn our list of tuples into a data frame.
 
@@ -213,7 +213,8 @@ df
 
 Now that it's in a data frame, we have many options about what to do with it. We can picke it for later, manipulate it with pandas, or what I'm going to do in the next post: save it in my database.
 
-Now that we have the Bikeometer data in a usable format
+Now that we can easily pull the Bikeometer data to usable format, we will pull the data for the actual daily bike counts. 
+
 # Requesting Bike Counts
 
 ## Step 1: Make a request
@@ -363,7 +364,7 @@ First, I'll create the empty list that will house the 'count' tuples.
 count_in_date_range_list = []
 ```
 
-Next, I'll create a list of the Bikeometer ID's that I'd like to pull data for.
+Next, I'll create a list of the Bikeometer ID's that I'd like to pull data for. My function will iterate over this list using a **for loop**.
 
 ```{python}
 bikeometer_id_list = ['33','30','43','24','59','56','47','48','10','20',
@@ -374,39 +375,49 @@ bikeometer_id_list = ['33','30','43','24','59','56','47','48','10','20',
 ```
 
 
-Next, I'll create a Russian nesting doll of a **for loop** to dive into the appropriate sections to pull the information I want.
+Next, I'll create a Russian nesting doll of a **for loop** to dive into the appropriate sections to pull the information I want. I'll use the **datetime** module to separate out the 
 
 ```{python}
-# Iterate through the children, grandchildren, and great-grandchildren and grab req data  
-for child in root:
-    # From child 'counter' gets the attribute 'id' of the counter and adds it to single_list
-    single_list = [child.get('id')]
-    # Loops through the grandchildren of root
-    for grandchild in list(child):   
-        if grandchild.text != None and grandchild.tag != 'description' and grandchild.tag != 'trail_id' and grandchild.tag != 'trail_name':
-            # If the grandchild is region, loop through region and grab the grandchildren data
-            if grandchild.tag == 'region':  
-                for great_grandchild in list(grandchild): 
-                    single_list.append(great_grandchild.text)
-            # If the grandchild is not region, the data is available in grandchild.text
-            else: 
-                single_list.append(grandchild.text)
-    # Cast the list into a tuple making it easier to migrate data to the database
-    single_tuple = tuple(single_list)
-    # Appends tuples to the list
-    bikeometer_details.append(single_tuple)
+from datetime import date, datetime, timedelta
 
+def api_counts_to_list(): 
+  for bikeometer_id in bikeometer_id_list:
+    request_parameters = {'method': 'GetCountInDateRange',
+                      'counterID': bikeometer_id,
+                      'startDate': '07/22/2015' ,
+                      'endDate': '07/22/2015',
+                      'mode': 'B',
+                      'interval': 'D',
+                      'direction': ''}
+    response = requests.get(url, params=request_parameters)
+    string_data = response.text
+    clean_string_data = re.sub(r'[\n|\t]', '', string_data)
+    root = ET.fromstring(clean_string_data)
+    for type_tag in root.findall('count'):
+        count = type_tag.get('count')
+        date = type_tag.get('date')
+        # Converts counter date to a date object
+        date = datetime.strptime(date, '%m/%d/%Y').date()
+        year = date.year
+        month = date.month
+        day = date.day
+        month_day = f'{month}_{day}'
+        direction = type_tag.get('direction')
+        if date.weekday() <= 4:
+            is_weekend = 0
+        else:
+            is_weekend = 1
+        single_tuple = (bikeometer_id, date, direction, count, is_weekend, year, month, day, month_day)
+        count_in_date_range_list.append(single_tuple)
+  return count_in_date_range_list
+all_id_list = api_counts_to_list()
+all_id_list
 ```
+Each tuple contains: (bikeometer_id, date, direction, count, is_weekend, year, month, day, month_day).
 
-Taking a look inside our bikeometer_details object, we see a list of tuples, where each tuple is a seperate Bikeometer.
+I added a few more variables by manipulating the date a bit in order to make the analysis later easier.
 
-Each tuple contains: ('bikeometer_id', 'bikeometer_name', 'latitude', 'longitude', 'region', 'region_id')
-
-```{python}
-bikeometer_details
-```
-
-## Step 6: Put the data into a data frame
+## Step 6: Data into a data frame
 
 First, we will load that **Pandas** module so we can turn our list of tuples into a data frame.
 
@@ -416,21 +427,13 @@ import pandas as pd
 
 Next, we will define the columns of the data frame according to the data in our tuples. 
 ```{python}
-columns = ('bikeometer_id', 'name', 'latitude', 'longitude', 'region', 'region_id')
+columns = ('bikeometer_id', 'date', 'direction', 'count', 'is_weekend', 'year', 'month', 'day', 'month_day')
 ```
 
 With our columns defined, we will create a dataframe using the **Pandas DataFrame** function, pass in our **bikeometer_details** list into the **data** parameter and pass in our **columns** variable to the **columns** parameter.
 ```{python}
-df = pd.DataFrame(data=bikeometer_details, columns = columns)
-```
-
-Finally, we will assign a *type* to each column by using the **.astype()** function.
-```{python}
-df[["name", "latitude", "longitude", "region", 'region_id']] = df[["name", "latitude", "longitude", "region", 'region_id']].astype('string')
-df[["bikeometer_id"]] = df[["bikeometer_id"]].astype('int')
-```
-
-```{python}
+df = pd.DataFrame(all_id_list, columns=columns)
 df
 ```
 
+Now that we are able to automate pulling the data into a data frame, in the next post, we can set up our database which we will use to store the data for analysis. 
