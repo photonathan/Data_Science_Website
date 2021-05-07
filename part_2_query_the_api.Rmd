@@ -114,13 +114,13 @@ child.items()
 
 However, we really want to isolate the important information '33'.
 
-So, We can use the **keys** function to even though this is not a dictionary.
+So, We can use the **keys** method to even though this is not a dictionary.
 
 ```{python}
 child.keys()
 ```
 
-We know that the **key** is so we can use the **get** function and pass in 'id' to get the "value".
+We know that the **key** is so we can use the **get** method and pass in 'id' to get the "value".
 
 ```{python}
 child.get('id')
@@ -202,7 +202,7 @@ With our columns defined, we will create a dataframe using the **Pandas DataFram
 df = pd.DataFrame(data=bikeometer_details, columns = columns)
 ```
 
-Finally, we will assign a *type* to each column by using the **.astype()** function.
+Finally, we will assign a *type* to each column by using the **.astype()** method.
 ```{python}
 df[["name", "latitude", "longitude", "region", 'region_id']] = df[["name", "latitude", "longitude", "region", 'region_id']].astype('str')
 df[["bikeometer_id"]] = df[["bikeometer_id"]].astype('int')
@@ -279,7 +279,7 @@ The first date for Bikeometer 33 is 07/22/2015.
 
 Just to test, let's make the end date the same as the start date, 07/22/2015. For 'mode', we have the option to request data for Bikers, Pedestrians, or Both. I'll choose Bikers, so the mode will be 'B'. For 'interval' we can choose 'minute', 'hourly', or 'daily'. I'll choose 'daily'. I'll leave 'direction' blank to pull both the Inbound and Outbound direction.
 
-We will organize all these parameters in a dictionary and pass that dictionary to the GET function.
+We will organize all these parameters in a dictionary and pass that dictionary to the GET method.
 
 ```{python}
 request_parameters = {'method': 'GetCountInDateRange',
@@ -316,7 +316,7 @@ This step is the same as above but I'll repeat it again for those that skipped r
 
 We will use the module 'xml.etree.ElementTree' to convert the data from a string to XML format. By converting this to XML, finding the data we need will be faster because we don't have to iterate over the entire string looking for the specific data we need, we can use the hierarchical structure of an XML file to drill down to the specific data we are looking for.
 
-To make it easier to call, we will import the module as 'ET'. We will then call the function 'fromstring' and pass in our 'clean_string_data' as an argument.
+To make it easier to call, we will import the module as 'ET'. We will then call the method 'fromstring' and pass in our 'clean_string_data' as an argument.
 
 ```{python}
 import xml.etree.ElementTree as ET
@@ -346,7 +346,7 @@ child.items()
 
 We can see that 'child' contains the 'count', 'date', 'direction', and 'mode'.
 
-To isolate the important information we can use the **get** function and pass in 'count', 'date', 'direction', or 'mode' to get the value.
+To isolate the important information we can use the **get** method and pass in 'count', 'date', 'direction', or 'mode' to get the value.
 
 ```{python}
 child.get('count')
@@ -432,7 +432,7 @@ Next, we will define the columns of the data frame according to the data in our 
 columns = ('bikeometer_id', 'date', 'direction', 'count', 'is_weekend', 'year', 'month', 'day', 'month_day')
 ```
 
-With our columns defined, we will create a dataframe using the **Pandas DataFrame** function, pass in our **bikeometer_details** list into the **data** parameter and pass in our **columns** variable to the **columns** parameter.
+With our columns defined, we will create a dataframe using the pandas **DataFrame** method, pass in our **bikeometer_details** list into the **data** parameter and pass in our **columns** variable to the **columns** parameter.
 ```{python}
 df = pd.DataFrame(all_id_list, columns=columns)
 df
