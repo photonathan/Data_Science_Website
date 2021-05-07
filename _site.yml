@@ -9,7 +9,7 @@ navbar:
         - text: "Part 1: The Plan"
           href: part_1_the_plan.html
         - text: "Part 2: Query the API"
-          href: part_2_query_the_api.htm
+          href: part_2_query_the_api.html
         
     - text: "Notes"
       menu:
