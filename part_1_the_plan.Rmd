@@ -18,6 +18,11 @@ Similarly explore Arlington, Virginia's bicycle ridership numbers around Virgini
 ## Follow along or explore on your own
 Subsequent posts on this topic will outline step by step how I went about creating similar visualizations to the Minnesota DOT. I believe this is a great project for those new to Python, R, or databases. If you have any questions, comments, or are working on your own analysis, send me an email!
 
+## Requirements
+To start the project, the only requirements are listed below. I'll document as best I can how to set up the MySQL database and connect everything together in [part 3](https://nathansprojects.com/part_3_setup_your_database.html).
+1. Python 3.6 or later
+2. R Studio
+
 # The Datasets
 One of the best parts of living in Arlington, Virginia is its beautiful paved bike paths, particularly the [Arlington Loop](https://www.bikearlington.com/wp-content/uploads/2017/04/Self-Guided-Route-Map_Arlington-Loop-min.pdf). Riders of the loop probably have noticed the [Bikeometer](https://www.bikearlington.com/wp-content/uploads/2017/03/bikeometer-min.jpg) near the Francis Scott Key Memorial Bridge displaying the daily, monthly, and yearly bicycle counts. To my delight, these numbers are not only [publicly available](http://counters.bikearlington.com/), but also easily requested using an API and [detailed documentation](http://counters.bikearlington.com/bike/assets/File/Regional_bikearlington_webservices.pdf). Additionally, Covid-19 case/vaccine data from the [Virginia Health Department](https://www.vdh.virginia.gov/coronavirus/) will be used to visualize how trail usage is affected by major events like a global pandemic.
 
