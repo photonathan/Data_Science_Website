@@ -28,7 +28,48 @@ One of my aims for this project was to create a pipeline that foregoes saving in
 
 # Step 1: Install MySQL
 
-I followed [these instructions](https://dev.mysql.com/doc/mysql-installation-excerpt/5.7/en/installing.html) to download MySQL for my operating system (Windows). 
+I followed [these instructions](https://dev.mysql.com/doc/mysql-installation-excerpt/5.7/en/installing.html) to download MySQL for my operating system (Windows). I chose the 'Developer Default' setup type to get the server, the MySQL Workbench, and the odbc/MySQL connector. If you are a pro at MySQL, you may not need the Workbench, but the other two are essential. 
+
+Under the 'Type and Networking' section, I chose the 'Standalone MySQL Server/ Classic MySQL Replication. I left the default *config type: development machine*, set the 'root' password and applied the configuration. 
+
+# Step 2: Create the Database
+
+We need to run some SQL commands and you have a few options as to where you run it. I usually use the MySQL workbench but the GUI is a little slow so if you can manage it, using the *MySQL Command Line Client* will be more responsive.
+
+First let's create the database.
+```{sql eval=FALSE}
+CREATE DATABASE bikeometers_db
+```
+
+Now that we have the database created, we can connect it to Python and RStudio.
+
+# Step _: Install the SQLAlchemy module in Python
+
+If you are confused about how to install Python modules, [here](https://realpython.com/what-is-pip/) is a great article about it.
+
+For me, I don't have stand-alone Python installed on Windows, I just have my conda environment installed from the Anaconda Suite so I can't install python packages from the Windows command line. However, I can type 'pip install SQLAlchemy' directly from my Spyder IDE and it will install the module.
+
+In Python let's connect to the database.
+
+Before creating the connection, we will first import the built-in Python module **getpass** which we will use to enter our database password. 
+
+```{python}
+from getpass import getpass
+```
+
+Now, using the SQLAlchemy **create_engine** function, pass in the name of your database as an [f-string](https://realpython.com/python-f-strings/).
+```{python}
+from sqlalchemy import create_engine
+
+engine = create_engine(f'mysql+mysqldb://{input("Enter username: ")}:{getpass("Enter password: ")}@localhost/{bikeometers_db}', echo=False)
+
+# Tests the connection and throws an error if not established
+engine.connect()
+
+```
+```{python}
+engine.dispose()
+```
 
 # Step _: Install the MySQL Python Connector
 

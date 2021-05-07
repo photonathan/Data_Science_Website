@@ -22,6 +22,9 @@ Subsequent posts on this topic will outline step by step how I went about creati
 To start the project, the only requirements are listed below. I'll document as best I can how to set up the MySQL database and connect everything together in [part 3](https://nathansprojects.com/part_3_setup_your_database.html).
 1. Python 3.6 or later
 2. R Studio
+3. Very basic [Python](https://ocw.mit.edu/courses/electrical-engineering-and-computer-science/6-0001-introduction-to-computer-science-and-programming-in-python-fall-2016/) and [R](https://www.edx.org/course/data-science-r-basics) knowledge
+
+Note: To make my life easier, I installed the [full Anaconda suite](https://www.anaconda.com/products/individual) and use the Spyder IDE when working in Python. I played around with installing [Miniconda](https://docs.conda.io/en/latest/miniconda.html) but when it comes to managing the conda environments in R using the [Reticulate library](https://rstudio.github.io/reticulate/), it gave me a headache. 
 
 # The Datasets
 One of the best parts of living in Arlington, Virginia is its beautiful paved bike paths, particularly the [Arlington Loop](https://www.bikearlington.com/wp-content/uploads/2017/04/Self-Guided-Route-Map_Arlington-Loop-min.pdf). Riders of the loop probably have noticed the [Bikeometer](https://www.bikearlington.com/wp-content/uploads/2017/03/bikeometer-min.jpg) near the Francis Scott Key Memorial Bridge displaying the daily, monthly, and yearly bicycle counts. To my delight, these numbers are not only [publicly available](http://counters.bikearlington.com/), but also easily requested using an API and [detailed documentation](http://counters.bikearlington.com/bike/assets/File/Regional_bikearlington_webservices.pdf). Additionally, Covid-19 case/vaccine data from the [Virginia Health Department](https://www.vdh.virginia.gov/coronavirus/) will be used to visualize how trail usage is affected by major events like a global pandemic.
