@@ -1,6 +1,10 @@
 ---
 title: "Nathan's Projects"
 description: "Data Science et al."
+output:
+  html_document: 
+    includes:
+      in_header: header.html
 ---
 
 <style type="text/css">
