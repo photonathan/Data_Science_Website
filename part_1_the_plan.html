@@ -33,6 +33,8 @@
 <link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
 <script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<script src="site_libs/navigation-1.1/sourceembed.js"></script>
 
 <style type="text/css">
   code{white-space: pre-wrap;}
@@ -46,6 +48,11 @@
 
 
 
+<style type="text/css">
+#rmd-source-code {
+  display: none;
+}
+</style>
 
 
 
@@ -206,6 +213,9 @@ $(document).ready(function () {
 </style>
 
 <!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
 
 
 
@@ -353,6 +363,13 @@ div.tocify {
 
 <div id="header">
 
+<div class="btn-group pull-right float-right">
+<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
+<li><a id="rmd-download-source" href="#">Download Rmd</a></li>
+</ul>
+</div>
+
 
 
 <h1 class="title toc-ignore">Visualizing Arlington Bikometers</h1>
@@ -372,6 +389,11 @@ div.tocify {
 <h2>Follow along or explore on your own</h2>
 <p>Subsequent posts on this topic will outline step by step how I went about creating similar visualizations to the Minnesota DOT. I believe this is a great project for those new to Python, R, or databases. If you have any questions, comments, or are working on your own analysis, send me an email!</p>
 </div>
+<div id="requirements" class="section level2">
+<h2>Requirements</h2>
+<p>To start the project, the only requirements are listed below. I’ll document as best I can how to set up the MySQL database and connect everything together in <a href="https://nathansprojects.com/part_3_setup_your_database.html">part 3</a>. 1. Python 3.6 or later 2. R Studio 3. Very basic <a href="https://ocw.mit.edu/courses/electrical-engineering-and-computer-science/6-0001-introduction-to-computer-science-and-programming-in-python-fall-2016/">Python</a> and <a href="https://www.edx.org/course/data-science-r-basics">R</a> knowledge</p>
+<p>Note: To make my life easier, I installed the <a href="https://www.anaconda.com/products/individual">full Anaconda suite</a> and use the Spyder IDE when working in Python. I played around with installing <a href="https://docs.conda.io/en/latest/miniconda.html">Miniconda</a> but when it comes to managing the conda environments in R using the <a href="https://rstudio.github.io/reticulate/">Reticulate library</a>, it gave me a headache.</p>
+</div>
 </div>
 <div id="the-datasets" class="section level1">
 <h1>The Datasets</h1>
@@ -386,7 +408,7 @@ div.tocify {
 </div>
 <div id="mysql" class="section level2">
 <h2>MySQL</h2>
-<p>One of my aims for this project was to create a pipeline that foregoes saving individual csv files to the computer and instead used a database to store the data. After reading over <a href="https://realpython.com/python-mysql/">this great article</a> that gives a good overview of SQLite, PostgreSQL, and MySQL, I decided on MySQL to handle my database. A second factor in my decision was because my favorite Udemy instructor Colt Steele had a MySQL course on sale <a href="https://www.udemy.com/course/the-ultimate-mysql-bootcamp-go-from-sql-beginner-to-expert/">The Ultimate MySQL Bootcamp: Go from SQL Beginner to Expert</a> recommend I highly recommend.</p>
+<p>One of my aims for this project was to create a pipeline that foregoes saving individual ‘data’ files (e.g. csv, xml, json, txt) to the computer and instead used a database to store the data. After reading over <a href="https://realpython.com/python-mysql/">this great article</a> that gives a good overview of SQLite, PostgreSQL, and MySQL, I decided on MySQL to handle my database. A second factor in my decision was because my favorite Udemy instructor Colt Steele had a MySQL course on sale <a href="https://www.udemy.com/course/the-ultimate-mysql-bootcamp-go-from-sql-beginner-to-expert/">The Ultimate MySQL Bootcamp: Go from SQL Beginner to Expert</a> recommend I highly recommend.</p>
 </div>
 <div id="r" class="section level2">
 <h2>R</h2>
@@ -399,6 +421,7 @@ div.tocify {
 <p>Later that day, I visited the local used bike shop and was excitedly told that for $400, I could have a refurbished 1997 Bianchi Timber Wolf, a bike which according to BikePedia.com, originally sold for $300. Either this bike had a <a href="https://www.polygon.com/22356401/holographic-charizard-ebay-300k-sold-pokemon-cards">holographic Charizard</a> in its spokes, or demand for bikes is still very high.</p>
 </div>
 
+<div id="rmd-source-code">LS0tDQp0aXRsZTogIlZpc3VhbGl6aW5nIEFybGluZ3RvbiBCaWtvbWV0ZXJzIg0Kc3VidGl0bGU6ICJQYXJ0IDE6IFRoZSBQbGFuIg0Kb3V0cHV0Og0KICBodG1sX2RvY3VtZW50Og0KICAgIHRvYzogdHJ1ZQ0KICAgIHRvY19kZXB0aDogMg0KICAgIHRvY19mbG9hdDogdHJ1ZQ0KICAgIGhpZ2hsaWdodDogemVuYnVybg0KICAgIGNvZGVfZG93bmxvYWQ6IHRydWUNCi0tLQ0KDQojIEJhY2tncm91bmQNCkluIDIwMjAsIE1pbm5lc290YSdzIERlcGFydG1lbnQgb2YgVHJhbnNwb3J0YWlvbiBwdXQgb3V0IGEgW2dyZWF0IHZpc3VhbGl6YXRpb25dKGh0dHBzOi8vc3RvcnltYXBzLmFyY2dpcy5jb20vc3Rvcmllcy83MGEzYTU3MDAzYjU0MWVkOGU5MTFjZDExMTAzZGM2YSkgb2YgTWlubmVhcG9saXMnIHN1cmdlIGluIGJpY3ljbGUgYW5kIHBlZGVzdHJpYW4gdXNhZ2Ugc29vbiBhZnRlciBNaW5uZWFwb2xpcyBnb3Zlcm5vciBUaW0gV2FseiBkZWNsYXJlZCBhICdQZWFjZXRpbWUgRW1lcmdlbmN5JyBvbiBNYXJjaCAxMywgMjAyMCBhbmQgYSAnU3RheSBhdCBIb21lJyBvcmRlciB0d2VsdmUgZGF5cyBsYXRlciBvbiBNYXJjaCANCg0KIyBHb2FsDQpTaW1pbGFybHkgZXhwbG9yZSBBcmxpbmd0b24sIFZpcmdpbmlhJ3MgYmljeWNsZSByaWRlcnNoaXAgbnVtYmVycyBhcm91bmQgVmlyZ2luaWEgR292ZXJub3IgTm9ydGhyYW0ncyBbU3RhdGUgb2YgRW1lcmdlbmN5XShodHRwczovL3d3dy5nb3Zlcm5vci52aXJnaW5pYS5nb3YvbmV3c3Jvb20vYWxsLXJlbGVhc2VzLzIwMjAvbWFyY2gvaGVhZGxpbmUtODUzNTM3LWVuLmh0bWwpIERlY2xhcmF0aW9uIG9uIE1hcmNoIDEyLCAyMDIwIGFuZCBbU3RheSBhdCBIb21lIG9yZGVyXShodHRwczovL3d3dy5nb3Zlcm5vci52aXJnaW5pYS5nb3YvbmV3c3Jvb20vYWxsLXJlbGVhc2VzLzIwMjAvbWFyY2gvaGVhZGxpbmUtODU1NzAyLWVuLmh0bWwpIG9uIE1hcmNoIDMwLCAyMDIwLg0KDQojIyBGb2xsb3cgYWxvbmcgb3IgZXhwbG9yZSBvbiB5b3VyIG93bg0KU3Vic2VxdWVudCBwb3N0cyBvbiB0aGlzIHRvcGljIHdpbGwgb3V0bGluZSBzdGVwIGJ5IHN0ZXAgaG93IEkgd2VudCBhYm91dCBjcmVhdGluZyBzaW1pbGFyIHZpc3VhbGl6YXRpb25zIHRvIHRoZSBNaW5uZXNvdGEgRE9ULiBJIGJlbGlldmUgdGhpcyBpcyBhIGdyZWF0IHByb2plY3QgZm9yIHRob3NlIG5ldyB0byBQeXRob24sIFIsIG9yIGRhdGFiYXNlcy4gSWYgeW91IGhhdmUgYW55IHF1ZXN0aW9ucywgY29tbWVudHMsIG9yIGFyZSB3b3JraW5nIG9uIHlvdXIgb3duIGFuYWx5c2lzLCBzZW5kIG1lIGFuIGVtYWlsIQ0KDQojIyBSZXF1aXJlbWVudHMNClRvIHN0YXJ0IHRoZSBwcm9qZWN0LCB0aGUgb25seSByZXF1aXJlbWVudHMgYXJlIGxpc3RlZCBiZWxvdy4gSSdsbCBkb2N1bWVudCBhcyBiZXN0IEkgY2FuIGhvdyB0byBzZXQgdXAgdGhlIE15U1FMIGRhdGFiYXNlIGFuZCBjb25uZWN0IGV2ZXJ5dGhpbmcgdG9nZXRoZXIgaW4gW3BhcnQgM10oaHR0cHM6Ly9uYXRoYW5zcHJvamVjdHMuY29tL3BhcnRfM19zZXR1cF95b3VyX2RhdGFiYXNlLmh0bWwpLg0KMS4gUHl0aG9uIDMuNiBvciBsYXRlcg0KMi4gUiBTdHVkaW8NCjMuIFZlcnkgYmFzaWMgW1B5dGhvbl0oaHR0cHM6Ly9vY3cubWl0LmVkdS9jb3Vyc2VzL2VsZWN0cmljYWwtZW5naW5lZXJpbmctYW5kLWNvbXB1dGVyLXNjaWVuY2UvNi0wMDAxLWludHJvZHVjdGlvbi10by1jb21wdXRlci1zY2llbmNlLWFuZC1wcm9ncmFtbWluZy1pbi1weXRob24tZmFsbC0yMDE2LykgYW5kIFtSXShodHRwczovL3d3dy5lZHgub3JnL2NvdXJzZS9kYXRhLXNjaWVuY2Utci1iYXNpY3MpIGtub3dsZWRnZQ0KDQpOb3RlOiBUbyBtYWtlIG15IGxpZmUgZWFzaWVyLCBJIGluc3RhbGxlZCB0aGUgW2Z1bGwgQW5hY29uZGEgc3VpdGVdKGh0dHBzOi8vd3d3LmFuYWNvbmRhLmNvbS9wcm9kdWN0cy9pbmRpdmlkdWFsKSBhbmQgdXNlIHRoZSBTcHlkZXIgSURFIHdoZW4gd29ya2luZyBpbiBQeXRob24uIEkgcGxheWVkIGFyb3VuZCB3aXRoIGluc3RhbGxpbmcgW01pbmljb25kYV0oaHR0cHM6Ly9kb2NzLmNvbmRhLmlvL2VuL2xhdGVzdC9taW5pY29uZGEuaHRtbCkgYnV0IHdoZW4gaXQgY29tZXMgdG8gbWFuYWdpbmcgdGhlIGNvbmRhIGVudmlyb25tZW50cyBpbiBSIHVzaW5nIHRoZSBbUmV0aWN1bGF0ZSBsaWJyYXJ5XShodHRwczovL3JzdHVkaW8uZ2l0aHViLmlvL3JldGljdWxhdGUvKSwgaXQgZ2F2ZSBtZSBhIGhlYWRhY2hlLiANCg0KIyBUaGUgRGF0YXNldHMNCk9uZSBvZiB0aGUgYmVzdCBwYXJ0cyBvZiBsaXZpbmcgaW4gQXJsaW5ndG9uLCBWaXJnaW5pYSBpcyBpdHMgYmVhdXRpZnVsIHBhdmVkIGJpa2UgcGF0aHMsIHBhcnRpY3VsYXJseSB0aGUgW0FybGluZ3RvbiBMb29wXShodHRwczovL3d3dy5iaWtlYXJsaW5ndG9uLmNvbS93cC1jb250ZW50L3VwbG9hZHMvMjAxNy8wNC9TZWxmLUd1aWRlZC1Sb3V0ZS1NYXBfQXJsaW5ndG9uLUxvb3AtbWluLnBkZikuIFJpZGVycyBvZiB0aGUgbG9vcCBwcm9iYWJseSBoYXZlIG5vdGljZWQgdGhlIFtCaWtlb21ldGVyXShodHRwczovL3d3dy5iaWtlYXJsaW5ndG9uLmNvbS93cC1jb250ZW50L3VwbG9hZHMvMjAxNy8wMy9iaWtlb21ldGVyLW1pbi5qcGcpIG5lYXIgdGhlIEZyYW5jaXMgU2NvdHQgS2V5IE1lbW9yaWFsIEJyaWRnZSBkaXNwbGF5aW5nIHRoZSBkYWlseSwgbW9udGhseSwgYW5kIHllYXJseSBiaWN5Y2xlIGNvdW50cy4gVG8gbXkgZGVsaWdodCwgdGhlc2UgbnVtYmVycyBhcmUgbm90IG9ubHkgW3B1YmxpY2x5IGF2YWlsYWJsZV0oaHR0cDovL2NvdW50ZXJzLmJpa2Vhcmxpbmd0b24uY29tLyksIGJ1dCBhbHNvIGVhc2lseSByZXF1ZXN0ZWQgdXNpbmcgYW4gQVBJIGFuZCBbZGV0YWlsZWQgZG9jdW1lbnRhdGlvbl0oaHR0cDovL2NvdW50ZXJzLmJpa2Vhcmxpbmd0b24uY29tL2Jpa2UvYXNzZXRzL0ZpbGUvUmVnaW9uYWxfYmlrZWFybGluZ3Rvbl93ZWJzZXJ2aWNlcy5wZGYpLiBBZGRpdGlvbmFsbHksIENvdmlkLTE5IGNhc2UvdmFjY2luZSBkYXRhIGZyb20gdGhlIFtWaXJnaW5pYSBIZWFsdGggRGVwYXJ0bWVudF0oaHR0cHM6Ly93d3cudmRoLnZpcmdpbmlhLmdvdi9jb3JvbmF2aXJ1cy8pIHdpbGwgYmUgdXNlZCB0byB2aXN1YWxpemUgaG93IHRyYWlsIHVzYWdlIGlzIGFmZmVjdGVkIGJ5IG1ham9yIGV2ZW50cyBsaWtlIGEgZ2xvYmFsIHBhbmRlbWljLg0KDQojIFByb2plY3QgcmVxdWlyZW1lbnRzDQpQeXRob24sIFNRTChNeVNRTCksIFIgDQoNCiMjIFB5dGhvbg0KUHl0aG9uIHdpbGwgYmUgdXNlZCB0byBhdXRvbWF0ZSBhIG51bWJlciBvZiBhY3Rpb25zOg0KMS4gIFJlcXVlc3QgcmlkZXJzaGlwIGNvdW50cyBmcm9tIHRoZSBbQmlrZUFybGluZ3RvbiBBUEldKGh0dHA6Ly9jb3VudGVycy5iaWtlYXJsaW5ndG9uLmNvbS9jb3VudGVyLWRhc2hib2FyZC8pDQoyLiAgUmVxdWVzdCBDb3ZpZC0xOSBkYXRhIGZyb20gdGhlIFZpcmdpbmlhIEhlYWx0aCBEZXBhcnRtZW50IG9uIFtUb3RhbCBOdW1iZXIgb2YgQ2FzZXMgcGVyIExvY2FsaXR5XShodHRwczovL2RhdGEudmlyZ2luaWEuZ292L0dvdmVybm1lbnQvVkRILUNPVklELTE5LVB1YmxpY1VzZURhdGFzZXQtQ2FzZXMvYnJlOS1hcXFyKSBhbmQgW1RvdGFsIFZhY2NpbmVzIEFkbWluaXN0ZXJlZF0oaHR0cHM6Ly9kYXRhLnZpcmdpbmlhLmdvdi9kYXRhc2V0L1ZESC1DT1ZJRC0xOS1QdWJsaWNVc2VEYXRhc2V0LVZhY2NpbmVzLURvc2VzQWRtaW5pLzI4azIteDJyaikNCjMuICBDbGVhbiBhbmQgZm9ybWF0IHRoZSBkYXRhDQo0LiAgU3RvcmUgdGhlIGRhdGEgaW4gYSBkYXRhYmFzZQ0KNS4gIEF1dG9tYXRlIHN0ZXBzIDEtMyBmb3IgbmV3IGRhdGENCg0KIyMgTXlTUUwNCk9uZSBvZiBteSBhaW1zIGZvciB0aGlzIHByb2plY3Qgd2FzIHRvIGNyZWF0ZSBhIHBpcGVsaW5lIHRoYXQgZm9yZWdvZXMgc2F2aW5nIGluZGl2aWR1YWwgJ2RhdGEnIGZpbGVzIChlLmcuIGNzdiwgeG1sLCBqc29uLCB0eHQpIHRvIHRoZSBjb21wdXRlciBhbmQgaW5zdGVhZCB1c2VkIGEgZGF0YWJhc2UgdG8gc3RvcmUgdGhlIGRhdGEuIEFmdGVyIHJlYWRpbmcgb3ZlciBbdGhpcyBncmVhdCBhcnRpY2xlXShodHRwczovL3JlYWxweXRob24uY29tL3B5dGhvbi1teXNxbC8pIHRoYXQgZ2l2ZXMgYSBnb29kIG92ZXJ2aWV3IG9mIFNRTGl0ZSwgUG9zdGdyZVNRTCwgYW5kIE15U1FMLCBJIGRlY2lkZWQgb24gTXlTUUwgdG8gaGFuZGxlIG15IGRhdGFiYXNlLiBBIHNlY29uZCBmYWN0b3IgaW4gbXkgZGVjaXNpb24gd2FzIGJlY2F1c2UgbXkgZmF2b3JpdGUgVWRlbXkgaW5zdHJ1Y3RvciBDb2x0IFN0ZWVsZSBoYWQgYSBNeVNRTCBjb3Vyc2Ugb24gc2FsZSBbVGhlIFVsdGltYXRlIE15U1FMIEJvb3RjYW1wOiBHbyBmcm9tIFNRTCBCZWdpbm5lciB0byBFeHBlcnRdKGh0dHBzOi8vd3d3LnVkZW15LmNvbS9jb3Vyc2UvdGhlLXVsdGltYXRlLW15c3FsLWJvb3RjYW1wLWdvLWZyb20tc3FsLWJlZ2lubmVyLXRvLWV4cGVydC8pIHJlY29tbWVuZCBJIGhpZ2hseSByZWNvbW1lbmQuDQoNCiMjIFINClIgd2lsbCBiZSB1c2VkIHRvIHB1bGwgZGF0YSBvdXQgb2YgdGhlIE15U1FMIGRhdGFiYXNlIGFuZCBjcmVhdGUgdmlzdWFsaXphdGlvbnMuIEFjY29yZGluZyB0byB0aGUgTWlubmVzb3RhIERlcGFydG1lbnQgb2YgVHJhbnNwb3J0YXRpb24ncyByZXBvcnQ6IFsqTWlubmVzb3RhJ3MgV2Fsa2luZyBhbmQgQmljeWNsaW5nIERhdGEgQ29sbGVjdGlvbiBSZXBvcnQgVXBkYXRlIEFubnVhbCBEYXRhIGZyb20gMjAxNCB0byAyMDE5Kl0oaHR0cHM6Ly93d3cuZG90LnN0YXRlLm1uLnVzL2Jpa2UtcGVkLWNvdW50aW5nL3JlcG9ydHMvMjAxOC0yMDE5JTIwTWlubmVzb3RhUGVkQmlrZUNvdW50UmVwb3J0LnBkZiksICJXaGVuIGlycmVndWxhcml0aWVzIGFyZSBmb3VuZCwgdGhlIGRhdGEgYXJlIHJ1biB0aHJvdWdoIGEgc3RhdGlzdGljYWwgbW9kZWwgaW4gJ1IgU3R1ZGlvJyBhbmQgY2xlYW5lZCB1cC4iIEkgaG9wZSB0byBlbXBsb3kgc2ltaWxhciBtZXRob2RzIHRvIGFuYWx5emUgYW5kIGNsZWFuIHRoZSBkYXRhIGluIFIuIA0KDQojIFNob3J0IEJpa2UgU3RvcnkNClJlY2VudGx5LCBhZnRlciBoZWxwaW5nIHRlYWNoIG15IGZyaWVuZCBob3cgdG8gcmlkZSBhIGJpa2UsIHdlIGV4Y2l0ZWRseSB2aXNpdGVkIHRoZSBsb2NhbCBiaWtlIHNob3AgdG8gcGljayBvdXQgYSBiaWtlIG9mIHRoZWlyIG93bi4gVW5mb3J0dW5hdGVseSwgb3ZlciBhIHllYXIgaW50byB0aGUgcGFuZGVtaWMsIHdlIHdlcmUgdG9sZCBpZiB3ZSBvcmRlcmVkIHRvZGF5LCB0aGUgYmlrZSB3b3VsZCBiZSBkZWxpdmVyZWQgaW4gNiBtb250aHMuDQoNCkxhdGVyIHRoYXQgZGF5LCBJIHZpc2l0ZWQgdGhlIGxvY2FsIHVzZWQgYmlrZSBzaG9wIGFuZCB3YXMgZXhjaXRlZGx5IHRvbGQgdGhhdCBmb3IgXCQ0MDAsIEkgY291bGQgaGF2ZSBhIHJlZnVyYmlzaGVkIDE5OTcgQmlhbmNoaSBUaW1iZXIgV29sZiwgYSBiaWtlIHdoaWNoIGFjY29yZGluZyB0byBCaWtlUGVkaWEuY29tLCBvcmlnaW5hbGx5IHNvbGQgZm9yIFwkMzAwLiBFaXRoZXIgdGhpcyBiaWtlIGhhZCBhIFtob2xvZ3JhcGhpYyBDaGFyaXphcmRdKGh0dHBzOi8vd3d3LnBvbHlnb24uY29tLzIyMzU2NDAxL2hvbG9ncmFwaGljLWNoYXJpemFyZC1lYmF5LTMwMGstc29sZC1wb2tlbW9uLWNhcmRzKSBpbiBpdHMgc3Bva2VzLCBvciBkZW1hbmQgZm9yIGJpa2VzIGlzIHN0aWxsIHZlcnkgaGlnaC4NCg0KDQo=</div>
 
 
 </div>
@@ -434,6 +457,11 @@ $(document).ready(function () {
 </script>
 
 <!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeSourceEmbed("part_1_the_plan.Rmd");
+});
+</script>
 
 <script>
 $(document).ready(function ()  {
