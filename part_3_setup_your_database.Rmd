@@ -7,6 +7,7 @@ output:
     toc_depth: 2
     toc_float: yes
     highlight: zenburn
+    code_download: true
     includes:
       in_header: header.html
 ---
@@ -20,8 +21,7 @@ One of my aims for this project was to create a pipeline that foregoes saving in
 1. Install MySQL
 2. Create the Database
 3. Connect Python to MySQL with SQLAlchemy
-4. Connect R to MySQL using MySQL Connector/odbc follow instructions here to connect to MySQL (https://db.rstudio.com/databases/my-sql/)
-    Install the odbc/MySQL connector at (https://dev.mysql.com/downloads/connector/odbc/)
+4. Connect R to MySQL
 
 . Connect MySQL to python using the MySQL Python Connector
 . Install the ODBC
@@ -32,45 +32,115 @@ I followed [these instructions](https://dev.mysql.com/doc/mysql-installation-exc
 
 Under the 'Type and Networking' section, I chose the 'Standalone MySQL Server/ Classic MySQL Replication. I left the default *config type: development machine*, set the 'root' password and applied the configuration. 
 
-# Step 2: Create the Database
+# Step 2: Create the MySQL Database
 
 We need to run some SQL commands and you have a few options as to where you run it. I usually use the MySQL workbench but the GUI is a little slow so if you can manage it, using the *MySQL Command Line Client* will be more responsive.
 
 First let's create the database.
+
 ```{sql eval=FALSE}
-CREATE DATABASE bikeometers_db
+CREATE DATABASE bikeometers_db;
 ```
 
 Now that we have the database created, we can connect it to Python and RStudio.
 
-# Step _: Install the SQLAlchemy module in Python
+# Step 3: Connect Python to MySQL
+
+We will need to install the Python modules: SQLAlchemy and MySQLdb
 
 If you are confused about how to install Python modules, [here](https://realpython.com/what-is-pip/) is a great article about it.
 
-For me, I don't have stand-alone Python installed on Windows, I just have my conda environment installed from the Anaconda Suite so I can't install python packages from the Windows command line. However, I can type 'pip install SQLAlchemy' directly from my Spyder IDE and it will install the module.
+For me, I don't have stand-alone Python installed on Windows, I just have my conda environment installed from the Anaconda Suite so I can't install python packages from the Windows command line. However, I can type 'pip install SQLAlchemy mysqlclient' directly from my Spyder IDE and it will install the modules **SQLAlchemy** and **MySQLdb** respectively.
 
-In Python let's connect to the database.
+Next, we will import two modules into Python: **SQLAlchemy** and the built-in Python module **getpass** which we will use to enter our database password.
 
-Before creating the connection, we will first import the built-in Python module **getpass** which we will use to enter our database password. 
-
-```{python}
-from getpass import getpass
-```
-
-Now, using the SQLAlchemy **create_engine** function, pass in the name of your database as an [f-string](https://realpython.com/python-f-strings/).
 ```{python}
 from sqlalchemy import create_engine
+from getpass import getpass
+```
+Now, let's connect to the database.
 
-engine = create_engine(f'mysql+mysqldb://{input("Enter username: ")}:{getpass("Enter password: ")}@localhost/{bikeometers_db}', echo=False)
+Using the SQLAlchemy **create_engine** function, pass in the name of your database of your database as an [f-string](https://realpython.com/python-f-strings/).
 
-# Tests the connection and throws an error if not established
+Note: below is the how the function is supposed to look when using Python. However, to create this post I'm actually using R and executing the Python code using an R library called 'reticulate' and I couldn't get the the python module **getpass** to work. However, I've tried this code in Python and it works like a charm.
+
+```{python eval=FALSE}
+engine = create_engine(f'mysql+mysqldb://{input("Enter username: ")}:{getpass("Enter password: ")}@localhost/bikeometers_db')
+```
+
+Below is the work-around version that doesn't use the **getpass** module.
+```{python}
+engine = create_engine(f'mysql+mysqldb://{input("Enter username: ")}:{input("Enter password: ")}@localhost/bikeometers_db', echo=False)
+```
+However, SQLAlchemy is 'lazy' and won't actually try to make the connection until we explicitly tell it. So, the below code will test the connection and throw an error if a connection cannot be made.
+
+```{python}
 engine.connect()
+```
+If a 'sqlalchemy.engine.base.Connection object' is returned, that means you have successfully connected to your database!
+
+```{sql}
+SHOW DATABASES;
+```
+
+Let's make our first request from Python to MySQL.
+
+First, we will assign the connection to the variable 'con'.
+```{python}
+con = engine.connect()
+```
+Next, we will use the **execute** method from SQLAlchemy on our 'con' variable and pass in a SQL command as an argument.
+```{python}
+databases = con.execute('SHOW DATABASES;')
+databases
+```
+We can look inside our 'cursor' object to see the data we want with a *for loop*.
+```{python}
+for item in databases:
+  print(item[0])
 
 ```
+These are the databases currently on my computer.
+
+When we are done with our SQL commands, best practice is to close the connection with the following code.
+
 ```{python}
 engine.dispose()
 ```
 
-# Step _: Install the MySQL Python Connector
+Great! Now that Python can talk to MySQL, we will connect R to MySQL.
 
-Following [these](https://dev.mysql.com/doc/connector-python/en/connector-python-installation.html) offical MySQL instructions, I downloaded the  
+# Step 4: Connect R to MySQL
+
+First, we will need to install the MySQL/obdc Connector. The RStudio has a great website about connecting R and MySQL [here](https://db.rstudio.com/databases/my-sql/) that you can use if you are having trouble installing the connector. I'll outline the steps I used below.
+
+I installed the odbc/MySQL connector driver from [here](https://dev.mysql.com/downloads/connector/odbc/).After installation, I restarted my computer to ensure it is properly recognized.
+
+Once installed, make sure that both the **odbc** and **DBI** packages are installed in R.
+
+First, we will load the **odbc** and **DBI** package.
+```{r}
+library(odbc)
+library(DBI)
+```
+
+Next, we will assign the connection to the variable 'con'. You will notice that another password package is used to enter your database password. This *'rstudioapi::askForPassword'* code will call the **askForPassword** function inside the *rstudioapi* package.
+
+```{r}
+con <- dbConnect(odbc::odbc(), .connection_string = "Driver={MySQL ODBC 8.0 Unicode Driver};", 
+                 server = "localhost", db = "bikeometers_db", user = readline(prompt = 'Enter user name: '), password = rstudioapi::askForPassword("Database password"))
+```
+
+If you are using RStudio, and your connection is successful, you will now see a list of your MySQL databases in your 'Connections' tab.
+
+Let's send a MySQL Command from R to MySQL to confirm the two can communicate.
+
+We will send the same MySQL command as before but using R code.
+```{r}
+sql_cmd <- "SHOW DATABASES;"
+bikeometers_db <- dbGetQuery(con, sql_cmd)
+bikeometers_db
+```
+If you see a table of your databases, congratulations!
+
+In the next post, we will save the data we pull from the Bike Arlington API into our MySQL database. 
