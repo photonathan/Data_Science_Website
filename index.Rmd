@@ -1,6 +1,5 @@
 ---
 title: "Nathan's Projects"
-cover-image: "/images/logo2.png"
 description: "Data Science et al."
 ---
 
@@ -32,4 +31,4 @@ Data can be complicated, my homepage is not.
 Check out my [Visualization of Arlington, Virginia's bike usage during Covid-19](https://nathansprojects.com/posts/arlington_bike_visualizations/part_1_the_plan.html).
 
 </div>
-</div
+</div>

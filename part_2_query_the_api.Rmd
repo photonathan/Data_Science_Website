@@ -10,7 +10,7 @@ output:
 ---
 
 ```{r setup, include=FALSE}
-library(reticulate)
+knitr::opts_chunk$set(cache = TRUE)
 ```
 
 # Introduction 
@@ -202,7 +202,7 @@ df = pd.DataFrame(data=bikeometer_details, columns = columns)
 
 Finally, we will assign a *type* to each column by using the **.astype()** function.
 ```{python}
-df[["name", "latitude", "longitude", "region", 'region_id']] = df[["name", "latitude", "longitude", "region", 'region_id']].astype('string')
+df[["name", "latitude", "longitude", "region", 'region_id']] = df[["name", "latitude", "longitude", "region", 'region_id']].astype('str')
 df[["bikeometer_id"]] = df[["bikeometer_id"]].astype('int')
 ```
 

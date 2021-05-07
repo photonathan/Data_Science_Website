@@ -1,4 +1,0 @@
-Exploring Arlington Bikeometers Part 2 (Save the data in a MySQL
-Database)
-================
-
