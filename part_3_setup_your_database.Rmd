@@ -1,0 +1,35 @@
+---
+title: "Visualizing Arlington Bikometers"
+subtitle: "Part 3: Setup Your Database"
+output:
+  html_document: 
+    toc: yes
+    toc_depth: 2
+    toc_float: yes
+    highlight: zenburn
+    includes:
+      in_header: header.html
+---
+
+# Introduction
+
+One of my aims for this project was to create a pipeline that foregoes saving individual 'data' files (e.g. csv, xml, json, txt) to the computer and instead used a database to store the data. After reading over [this great article](https://realpython.com/python-mysql/) that gives a good overview of SQLite, PostgreSQL, and MySQL, I decided on MySQL to handle my database. A second factor in my decision was because my favorite Udemy instructor Colt Steele had a MySQL course on sale [The Ultimate MySQL Bootcamp: Go from SQL Beginner to Expert](https://www.udemy.com/course/the-ultimate-mysql-bootcamp-go-from-sql-beginner-to-expert/) recommend I highly recommend.
+
+## Goal
+
+1. Install MySQL
+2. Create the Database
+3. Connect Python to MySQL with SQLAlchemy
+4. Connect R to MySQL using MySQL Connector/odbc follow instructions here to connect to MySQL (https://db.rstudio.com/databases/my-sql/)
+    Install the odbc/MySQL connector at (https://dev.mysql.com/downloads/connector/odbc/)
+
+. Connect MySQL to python using the MySQL Python Connector
+. Install the ODBC
+
+# Step 1: Install MySQL
+
+I followed [these instructions](https://dev.mysql.com/doc/mysql-installation-excerpt/5.7/en/installing.html) to download MySQL for my operating system (Windows). 
+
+# Step _: Install the MySQL Python Connector
+
+Following [these](https://dev.mysql.com/doc/connector-python/en/connector-python-installation.html) offical MySQL instructions, I downloaded the  
