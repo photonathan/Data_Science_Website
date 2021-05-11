@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Visualizing Arlington Bikometers</title>
+
+<script src="site_libs/header-attrs-2.7/header-attrs.js"></script>
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<script src="site_libs/navigation-1.1/sourceembed.js"></script>
+<link rel="apple-touch-icon" sizes="180x180" href="~/assets/favicon/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon/favicon-16x16.png">
+<link rel="manifest" href="/assets/favicon/site.webmanifest">
+<link rel="mask-icon" href="/assets/favicon/safari-pinned-tab.svg" color="#5bbad5">
+<link rel="shortcut icon" href="/assets/favicon/favicon.ico">
+<meta name="msapplication-TileColor" content="#da532c">
+<meta name="msapplication-config" content="/assets/favicon/browserconfig.xml">
+<meta name="theme-color" content="#ffffff">
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+<style type="text/css">
+  code {
+    white-space: pre;
+  }
+  .sourceCode {
+    overflow: visible;
+  }
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  { color: #cccccc; background-color: #303030; }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ffcfaf; } /* Alert */
+code span.an { color: #7f9f7f; font-weight: bold; } /* Annotation */
+code span.at { } /* Attribute */
+code span.bn { color: #dca3a3; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #f0dfaf; } /* ControlFlow */
+code span.ch { color: #dca3a3; } /* Char */
+code span.cn { color: #dca3a3; font-weight: bold; } /* Constant */
+code span.co { color: #7f9f7f; } /* Comment */
+code span.cv { color: #7f9f7f; font-weight: bold; } /* CommentVar */
+code span.do { color: #7f9f7f; } /* Documentation */
+code span.dt { color: #dfdfbf; } /* DataType */
+code span.dv { color: #dcdccc; } /* DecVal */
+code span.er { color: #c3bf9f; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #c0bed1; } /* Float */
+code span.fu { color: #efef8f; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #7f9f7f; font-weight: bold; } /* Information */
+code span.kw { color: #f0dfaf; } /* Keyword */
+code span.op { color: #f0efd0; } /* Operator */
+code span.ot { color: #efef8f; } /* Other */
+code span.pp { color: #ffcfaf; font-weight: bold; } /* Preprocessor */
+code span.sc { color: #dca3a3; } /* SpecialChar */
+code span.ss { color: #cc9393; } /* SpecialString */
+code span.st { color: #cc9393; } /* String */
+code span.va { } /* Variable */
+code span.vs { color: #cc9393; } /* VerbatimString */
+code span.wa { color: #7f9f7f; font-weight: bold; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+<style type="text/css">
+#rmd-source-code {
+  display: none;
+}
+</style>
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.tab('show');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-sm-12 col-md-4 col-lg-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-sm-12 col-md-8 col-lg-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Nathan's Projects</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Visualizing Arlington Bikeometers
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="part_1_the_plan.html">Part 1: The Plan</a>
+    </li>
+    <li>
+      <a href="part_2_query_the_api.html">Part 2: Query the API</a>
+    </li>
+    <li>
+      <a href="part_3_setup_your_database.html">Part 3: Setup and Connect Your Database</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Notes
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a></a>
+    </li>
+  </ul>
+</li>
+<li>
+  <a href="photography.html">Photography</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/photonathan">Github</a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+<div class="btn-group pull-right float-right">
+<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
+<li><a id="rmd-download-source" href="#">Download Rmd</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">Visualizing Arlington Bikometers</h1>
+<h3 class="subtitle">Part 3: Setup Your Database and Connections</h3>
+
+</div>
+
+
+<p>   </p>
+<div id="introduction" class="section level1">
+<h1>Introduction</h1>
+<p>One of the aims for this project was to create a pipeline that foregoes saving individual ‘data’ files (e.g. csv, xml, json, txt) to the computer and instead uses a database to store the data. After reading over <a href="https://realpython.com/python-mysql/">this great article</a> that gives a good overview of SQLite, PostgreSQL, and MySQL, I decided on MySQL to handle my database. Also, my favorite Udemy instructor Colt Steele had a MySQL course on sale <a href="https://www.udemy.com/course/the-ultimate-mysql-bootcamp-go-from-sql-beginner-to-expert/">The Ultimate MySQL Bootcamp: Go from SQL Beginner to Expert</a> that I highly recommend.</p>
+<div id="goal" class="section level2">
+<h2>Goal</h2>
+<p>Setup MySQL database locally and connect Python and R to the databases directly.</p>
+</div>
+<div id="steps" class="section level2">
+<h2>Steps</h2>
+<ol style="list-style-type: decimal">
+<li>Install MySQL</li>
+<li>Create the Database</li>
+<li>Connect Python to MySQL with SQLAlchemy and MySQLdb</li>
+<li>Connect R to MySQL with odbc</li>
+</ol>
+<p> </p>
+</div>
+</div>
+<div id="step-1-install-mysql" class="section level1">
+<h1>Step 1: Install MySQL</h1>
+<p>I followed <a href="https://dev.mysql.com/doc/mysql-installation-excerpt/5.7/en/installing.html">these instructions</a> to download MySQL for my operating system (Windows). I chose the ‘Developer Default’ setup type to get the server, the MySQL Workbench, and the odbc/MySQL connector. If you are a pro at MySQL, you may not need the Workbench, but the other two are essential.</p>
+<p>Under the ‘Type and Networking’ section, I chose the ‘Standalone MySQL Server/ Classic MySQL Replication. I left the default <em>config type: development machine</em>, set the ’root’ password and applied the configuration.</p>
+</div>
+<div id="step-2-create-the-mysql-database" class="section level1">
+<h1>Step 2: Create the MySQL Database</h1>
+<p>We need to run some SQL commands. I usually use the MySQL workbench to run the MySQL statements but the GUI is a little slow so if you can manage it, using the <em>MySQL Command Line Client</em> will be more responsive.</p>
+<p>First let’s create the database and call it <em>bikeometers_db</em>.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">DATABASE</span> bikeometers_db;</span></code></pre></div>
+<p>Now that we have the database created, let’s connect it to Python.</p>
+</div>
+<div id="step-3-connect-python-to-mysql" class="section level1">
+<h1>Step 3: Connect Python to MySQL</h1>
+<p>We will need to install the Python modules: SQLAlchemy and MySQLdb</p>
+<p>If you are confused about how to install Python modules, <a href="https://realpython.com/what-is-pip/">this</a> is a great article.</p>
+<p>For me, I don’t have stand-alone Python installed on Windows, I just have my conda environment installed from the Anaconda Suite, so using python from the Windows command line is out of the question. Instead, I can type ‘pip install SQLAlchemy mysqlclient’ directly from my Spyder IDE and it will install the modules <strong>SQLAlchemy</strong> and <strong>MySQLdb</strong> respectively.</p>
+<p>Next, we will import the two modules into Python: <strong>SQLAlchemy</strong> and the built-in Python module <strong>getpass</strong> which we will use to enter our database password.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sqlalchemy <span class="im">import</span> create_engine</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> getpass <span class="im">import</span> getpass</span></code></pre></div>
+<p>Now, let’s make the connection to the database.</p>
+<p>Using the SQLAlchemy <strong>create_engine</strong> function, pass in the name of your database of your database as an <a href="https://realpython.com/python-f-strings/">f-string</a> like I do below.</p>
+<p>Note: below is the how the function is supposed to look when using Python. However, to create this post I’m actually using R and executing the Python code using an R library called ‘reticulate’ and I couldn’t get the the python module <strong>getpass</strong> to work. However, I’ve tried this code in Python and it works like a charm.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>engine <span class="op">=</span> create_engine(<span class="ss">f&#39;mysql+mysqldb://</span><span class="sc">{</span><span class="bu">input</span>(<span class="st">&quot;Enter username: &quot;</span>)<span class="sc">}</span><span class="ss">:</span><span class="sc">{</span>getpass(<span class="st">&quot;Enter password: &quot;</span>)<span class="sc">}</span><span class="ss">@localhost/bikeometers_db&#39;</span>)</span></code></pre></div>
+<p>However, SQLAlchemy is ‘lazy’ and won’t actually try to make the connection until we explicitly tell it. So, the below code will test the connection and throw an error if a connection cannot be made.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>engine.<span class="ex">connect</span>()</span></code></pre></div>
+<pre><code>## &lt;sqlalchemy.engine.base.Connection object at 0x000000002C5AE438&gt;</code></pre>
+<p>If a <em>‘sqlalchemy.engine.base.Connection object’</em> is returned, that means you have successfully connected to your database!</p>
+<p>Let’s make our first request from Python to MySQL.</p>
+<p>First, we will assign the connection to the variable ‘con’.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>con <span class="op">=</span> engine.<span class="ex">connect</span>()</span></code></pre></div>
+<p>Next, we will use the <strong>execute</strong> method from SQLAlchemy on our ‘con’ variable and pass in a SQL command as an argument.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>databases <span class="op">=</span> con.execute(<span class="st">&#39;SHOW DATABASES;&#39;</span>)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>databases</span></code></pre></div>
+<pre><code>## &lt;sqlalchemy.engine.cursor.LegacyCursorResult object at 0x000000002C5D9D68&gt;</code></pre>
+<p>We can look inside our ‘cursor’ object to see the data using a <em>for loop</em>.</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> item <span class="kw">in</span> databases:</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="bu">print</span>(item[<span class="dv">0</span>])</span></code></pre></div>
+<pre><code>## bikeometers_db
+## counts
+## information_schema
+## mysql
+## performance_schema
+## sys</code></pre>
+<p>These are the databases currently on my computer.</p>
+<p>When we are done with our SQL commands, best practice is to close the connection with the following code.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>engine.dispose()</span></code></pre></div>
+<p>Great! Now that Python can talk to MySQL, we will connect R to MySQL.</p>
+</div>
+<div id="step-4-connect-r-to-mysql" class="section level1">
+<h1>Step 4: Connect R to MySQL</h1>
+<p>RStudio has a great website about connecting R and MySQL <a href="https://db.rstudio.com/databases/my-sql/">here</a> that you can use if you are having trouble making the connection. I’ll outline the steps I used below.</p>
+<p>In step 1, we installed the MySQL/odbc Connector when we installed MySQL. If you didn’t install the connector, you can find it <a href="https://dev.mysql.com/downloads/connector/odbc/">here</a>. After installation, you will want to restart your computer to ensure it is properly recognized.</p>
+<p>Once installed, make sure that both the <strong>odbc</strong> and <strong>DBI</strong> packages are installed in R.</p>
+<p>First, we will load the <strong>odbc</strong> and <strong>DBI</strong> package in R.</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(odbc)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(DBI)</span></code></pre></div>
+<p>Next, we will assign the connection to the variable ‘con’. You will notice that another password package is used to enter your database password. This <em>‘rstudioapi::askForPassword’</em> code will call the <strong>askForPassword</strong> function inside the <em>rstudioapi</em> package.</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>con <span class="ot">&lt;-</span> <span class="fu">dbConnect</span>(odbc<span class="sc">::</span><span class="fu">odbc</span>(), <span class="at">.connection_string =</span> <span class="st">&quot;Driver={MySQL ODBC 8.0 Unicode Driver};&quot;</span>, </span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>                 <span class="at">server =</span> <span class="st">&quot;localhost&quot;</span>, <span class="at">db =</span> <span class="st">&quot;bikeometers_db&quot;</span>, <span class="at">user =</span> <span class="fu">readline</span>(<span class="at">prompt =</span> <span class="st">&#39;Enter user name: &#39;</span>), <span class="at">password =</span> rstudioapi<span class="sc">::</span><span class="fu">askForPassword</span>(<span class="st">&quot;Database password&quot;</span>))</span></code></pre></div>
+<p>If you are using RStudio, and your connection is successful, you will now see a list of your MySQL databases in your ‘Connections’ tab.</p>
+<p>Let’s send a MySQL Command from R to MySQL to confirm the two can communicate.</p>
+<p>We will use R to send the same MySQL command as before.</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>sql_cmd <span class="ot">&lt;-</span> <span class="st">&quot;SHOW DATABASES;&quot;</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>bikeometers_db <span class="ot">&lt;-</span> <span class="fu">dbGetQuery</span>(con, sql_cmd)</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>bikeometers_db</span></code></pre></div>
+<pre><code>##             Database
+## 1     bikeometers_db
+## 2             counts
+## 3 information_schema
+## 4              mysql
+## 5 performance_schema
+## 6                sys</code></pre>
+<p>If you see a table of your databases, congratulations!</p>
+<p>In the <a href="https://nathansprojects.com/part_4_save_the_data_in_a_mysql_database.html">next post</a>, we will save the data we pull from the Bike Arlington API into our MySQL database.</p>
+</div>
+
+<div id="rmd-source-code">LS0tDQp0aXRsZTogIlZpc3VhbGl6aW5nIEFybGluZ3RvbiBCaWtvbWV0ZXJzIg0Kc3VidGl0bGU6ICJQYXJ0IDM6IFNldHVwIFlvdXIgRGF0YWJhc2UgYW5kIENvbm5lY3Rpb25zIg0Kb3V0cHV0Og0KICBodG1sX2RvY3VtZW50OiANCiAgICB0b2M6IHllcw0KICAgIHRvY19kZXB0aDogMg0KICAgIHRvY19mbG9hdDogeWVzDQogICAgaGlnaGxpZ2h0OiB6ZW5idXJuDQogICAgY29kZV9kb3dubG9hZDogdHJ1ZQ0KICAgIGluY2x1ZGVzOg0KICAgICAgaW5faGVhZGVyOiBoZWFkZXIuaHRtbA0KLS0tDQoNClwgDQpcIA0KDQojIEludHJvZHVjdGlvbg0KDQpPbmUgb2YgdGhlIGFpbXMgZm9yIHRoaXMgcHJvamVjdCB3YXMgdG8gY3JlYXRlIGEgcGlwZWxpbmUgdGhhdCBmb3JlZ29lcyBzYXZpbmcgaW5kaXZpZHVhbCAnZGF0YScgZmlsZXMgKGUuZy4gY3N2LCB4bWwsIGpzb24sIHR4dCkgdG8gdGhlIGNvbXB1dGVyIGFuZCBpbnN0ZWFkIHVzZXMgYSBkYXRhYmFzZSB0byBzdG9yZSB0aGUgZGF0YS4gQWZ0ZXIgcmVhZGluZyBvdmVyIFt0aGlzIGdyZWF0IGFydGljbGVdKGh0dHBzOi8vcmVhbHB5dGhvbi5jb20vcHl0aG9uLW15c3FsLykgdGhhdCBnaXZlcyBhIGdvb2Qgb3ZlcnZpZXcgb2YgU1FMaXRlLCBQb3N0Z3JlU1FMLCBhbmQgTXlTUUwsIEkgZGVjaWRlZCBvbiBNeVNRTCB0byBoYW5kbGUgbXkgZGF0YWJhc2UuIEFsc28sIG15IGZhdm9yaXRlIFVkZW15IGluc3RydWN0b3IgQ29sdCBTdGVlbGUgaGFkIGEgTXlTUUwgY291cnNlIG9uIHNhbGUgW1RoZSBVbHRpbWF0ZSBNeVNRTCBCb290Y2FtcDogR28gZnJvbSBTUUwgQmVnaW5uZXIgdG8gRXhwZXJ0XShodHRwczovL3d3dy51ZGVteS5jb20vY291cnNlL3RoZS11bHRpbWF0ZS1teXNxbC1ib290Y2FtcC1nby1mcm9tLXNxbC1iZWdpbm5lci10by1leHBlcnQvKSB0aGF0IEkgaGlnaGx5IHJlY29tbWVuZC4NCg0KIyMgR29hbA0KDQpTZXR1cCBNeVNRTCBkYXRhYmFzZSBsb2NhbGx5IGFuZCBjb25uZWN0IFB5dGhvbiBhbmQgUiB0byB0aGUgZGF0YWJhc2VzIGRpcmVjdGx5Lg0KDQojIyBTdGVwcw0KMS4gSW5zdGFsbCBNeVNRTA0KMi4gQ3JlYXRlIHRoZSBEYXRhYmFzZQ0KMy4gQ29ubmVjdCBQeXRob24gdG8gTXlTUUwgd2l0aCBTUUxBbGNoZW15IGFuZCBNeVNRTGRiDQo0LiBDb25uZWN0IFIgdG8gTXlTUUwgd2l0aCBvZGJjDQoNClwgDQoNCiMgU3RlcCAxOiBJbnN0YWxsIE15U1FMDQoNCkkgZm9sbG93ZWQgW3RoZXNlIGluc3RydWN0aW9uc10oaHR0cHM6Ly9kZXYubXlzcWwuY29tL2RvYy9teXNxbC1pbnN0YWxsYXRpb24tZXhjZXJwdC81LjcvZW4vaW5zdGFsbGluZy5odG1sKSB0byBkb3dubG9hZCBNeVNRTCBmb3IgbXkgb3BlcmF0aW5nIHN5c3RlbSAoV2luZG93cykuIEkgY2hvc2UgdGhlICdEZXZlbG9wZXIgRGVmYXVsdCcgc2V0dXAgdHlwZSB0byBnZXQgdGhlIHNlcnZlciwgdGhlIE15U1FMIFdvcmtiZW5jaCwgYW5kIHRoZSBvZGJjL015U1FMIGNvbm5lY3Rvci4gSWYgeW91IGFyZSBhIHBybyBhdCBNeVNRTCwgeW91IG1heSBub3QgbmVlZCB0aGUgV29ya2JlbmNoLCBidXQgdGhlIG90aGVyIHR3byBhcmUgZXNzZW50aWFsLiANCg0KVW5kZXIgdGhlICdUeXBlIGFuZCBOZXR3b3JraW5nJyBzZWN0aW9uLCBJIGNob3NlIHRoZSAnU3RhbmRhbG9uZSBNeVNRTCBTZXJ2ZXIvIENsYXNzaWMgTXlTUUwgUmVwbGljYXRpb24uIEkgbGVmdCB0aGUgZGVmYXVsdCAqY29uZmlnIHR5cGU6IGRldmVsb3BtZW50IG1hY2hpbmUqLCBzZXQgdGhlICdyb290JyBwYXNzd29yZCBhbmQgYXBwbGllZCB0aGUgY29uZmlndXJhdGlvbi4gDQoNCiMgU3RlcCAyOiBDcmVhdGUgdGhlIE15U1FMIERhdGFiYXNlDQoNCldlIG5lZWQgdG8gcnVuIHNvbWUgU1FMIGNvbW1hbmRzLiBJIHVzdWFsbHkgdXNlIHRoZSBNeVNRTCB3b3JrYmVuY2ggdG8gcnVuIHRoZSBNeVNRTCBzdGF0ZW1lbnRzIGJ1dCB0aGUgR1VJIGlzIGEgbGl0dGxlIHNsb3cgc28gaWYgeW91IGNhbiBtYW5hZ2UgaXQsIHVzaW5nIHRoZSAqTXlTUUwgQ29tbWFuZCBMaW5lIENsaWVudCogd2lsbCBiZSBtb3JlIHJlc3BvbnNpdmUuDQoNCkZpcnN0IGxldCdzIGNyZWF0ZSB0aGUgZGF0YWJhc2UgYW5kIGNhbGwgaXQgKmJpa2VvbWV0ZXJzX2RiKi4NCg0KYGBge3NxbCBldmFsPUZBTFNFfQ0KQ1JFQVRFIERBVEFCQVNFIGJpa2VvbWV0ZXJzX2RiOw0KYGBgDQoNCk5vdyB0aGF0IHdlIGhhdmUgdGhlIGRhdGFiYXNlIGNyZWF0ZWQsIGxldCdzIGNvbm5lY3QgaXQgdG8gUHl0aG9uLg0KDQojIFN0ZXAgMzogQ29ubmVjdCBQeXRob24gdG8gTXlTUUwNCg0KV2Ugd2lsbCBuZWVkIHRvIGluc3RhbGwgdGhlIFB5dGhvbiBtb2R1bGVzOiBTUUxBbGNoZW15IGFuZCBNeVNRTGRiDQoNCklmIHlvdSBhcmUgY29uZnVzZWQgYWJvdXQgaG93IHRvIGluc3RhbGwgUHl0aG9uIG1vZHVsZXMsIFt0aGlzXShodHRwczovL3JlYWxweXRob24uY29tL3doYXQtaXMtcGlwLykgaXMgYSBncmVhdCBhcnRpY2xlLg0KDQpGb3IgbWUsIEkgZG9uJ3QgaGF2ZSBzdGFuZC1hbG9uZSBQeXRob24gaW5zdGFsbGVkIG9uIFdpbmRvd3MsIEkganVzdCBoYXZlIG15IGNvbmRhIGVudmlyb25tZW50IGluc3RhbGxlZCBmcm9tIHRoZSBBbmFjb25kYSBTdWl0ZSwgc28gdXNpbmcgcHl0aG9uIGZyb20gdGhlIFdpbmRvd3MgY29tbWFuZCBsaW5lIGlzIG91dCBvZiB0aGUgcXVlc3Rpb24uIEluc3RlYWQsIEkgY2FuIHR5cGUgJ3BpcCBpbnN0YWxsIFNRTEFsY2hlbXkgbXlzcWxjbGllbnQnIGRpcmVjdGx5IGZyb20gbXkgU3B5ZGVyIElERSBhbmQgaXQgd2lsbCBpbnN0YWxsIHRoZSBtb2R1bGVzICoqU1FMQWxjaGVteSoqIGFuZCAqKk15U1FMZGIqKiByZXNwZWN0aXZlbHkuDQoNCk5leHQsIHdlIHdpbGwgaW1wb3J0IHRoZSB0d28gbW9kdWxlcyBpbnRvIFB5dGhvbjogKipTUUxBbGNoZW15KiogYW5kIHRoZSBidWlsdC1pbiBQeXRob24gbW9kdWxlICoqZ2V0cGFzcyoqIHdoaWNoIHdlIHdpbGwgdXNlIHRvIGVudGVyIG91ciBkYXRhYmFzZSBwYXNzd29yZC4NCg0KYGBge3B5dGhvbn0NCmZyb20gc3FsYWxjaGVteSBpbXBvcnQgY3JlYXRlX2VuZ2luZQ0KZnJvbSBnZXRwYXNzIGltcG9ydCBnZXRwYXNzDQpgYGANCg0KTm93LCBsZXQncyBtYWtlIHRoZSBjb25uZWN0aW9uIHRvIHRoZSBkYXRhYmFzZS4NCg0KVXNpbmcgdGhlIFNRTEFsY2hlbXkgKipjcmVhdGVfZW5naW5lKiogZnVuY3Rpb24sIHBhc3MgaW4gdGhlIG5hbWUgb2YgeW91ciBkYXRhYmFzZSBvZiB5b3VyIGRhdGFiYXNlIGFzIGFuIFtmLXN0cmluZ10oaHR0cHM6Ly9yZWFscHl0aG9uLmNvbS9weXRob24tZi1zdHJpbmdzLykgbGlrZSBJIGRvIGJlbG93Lg0KDQpOb3RlOiBiZWxvdyBpcyB0aGUgaG93IHRoZSBmdW5jdGlvbiBpcyBzdXBwb3NlZCB0byBsb29rIHdoZW4gdXNpbmcgUHl0aG9uLiBIb3dldmVyLCB0byBjcmVhdGUgdGhpcyBwb3N0IEknbSBhY3R1YWxseSB1c2luZyBSIGFuZCBleGVjdXRpbmcgdGhlIFB5dGhvbiBjb2RlIHVzaW5nIGFuIFIgbGlicmFyeSBjYWxsZWQgJ3JldGljdWxhdGUnIGFuZCBJIGNvdWxkbid0IGdldCB0aGUgdGhlIHB5dGhvbiBtb2R1bGUgKipnZXRwYXNzKiogdG8gd29yay4gSG93ZXZlciwgSSd2ZSB0cmllZCB0aGlzIGNvZGUgaW4gUHl0aG9uIGFuZCBpdCB3b3JrcyBsaWtlIGEgY2hhcm0uDQoNCmBgYHtweXRob24gZXZhbD1GQUxTRX0NCmVuZ2luZSA9IGNyZWF0ZV9lbmdpbmUoZidteXNxbCtteXNxbGRiOi8ve2lucHV0KCJFbnRlciB1c2VybmFtZTogIil9OntnZXRwYXNzKCJFbnRlciBwYXNzd29yZDogIil9QGxvY2FsaG9zdC9iaWtlb21ldGVyc19kYicpDQpgYGANCg0KYGBge3B5dGhvbiBpbmNsdWRlPUZBTFNFfQ0KIyBXb3JrYXJvdW5kIHRvIGdldCB0aGlzIGRvY3VtZW50IHRvIEtuaXQNCiMgQ3JlYXRlZCB0ZW1wIHVzZXIgbmFtZSB0aGF0IHdpbGwgYmUgZGVsZXRlZCBvbmNlIHRoZSBwb3N0IGlzIHVwbG9hZGVkLg0KZW5naW5lID0gY3JlYXRlX2VuZ2luZShmJ215c3FsK215c3FsZGI6Ly9uZXd1c2VyOmRvbnRldmVudHJ5QGxvY2FsaG9zdC9iaWtlb21ldGVyc19kYicsIGVjaG89RmFsc2UpDQpgYGANCkhvd2V2ZXIsIFNRTEFsY2hlbXkgaXMgJ2xhenknIGFuZCB3b24ndCBhY3R1YWxseSB0cnkgdG8gbWFrZSB0aGUgY29ubmVjdGlvbiB1bnRpbCB3ZSBleHBsaWNpdGx5IHRlbGwgaXQuIFNvLCB0aGUgYmVsb3cgY29kZSB3aWxsIHRlc3QgdGhlIGNvbm5lY3Rpb24gYW5kIHRocm93IGFuIGVycm9yIGlmIGEgY29ubmVjdGlvbiBjYW5ub3QgYmUgbWFkZS4NCg0KYGBge3B5dGhvbn0NCmVuZ2luZS5jb25uZWN0KCkNCmBgYA0KDQpJZiBhIConc3FsYWxjaGVteS5lbmdpbmUuYmFzZS5Db25uZWN0aW9uIG9iamVjdCcqIGlzIHJldHVybmVkLCB0aGF0IG1lYW5zIHlvdSBoYXZlIHN1Y2Nlc3NmdWxseSBjb25uZWN0ZWQgdG8geW91ciBkYXRhYmFzZSENCg0KTGV0J3MgbWFrZSBvdXIgZmlyc3QgcmVxdWVzdCBmcm9tIFB5dGhvbiB0byBNeVNRTC4NCg0KRmlyc3QsIHdlIHdpbGwgYXNzaWduIHRoZSBjb25uZWN0aW9uIHRvIHRoZSB2YXJpYWJsZSAnY29uJy4NCmBgYHtweXRob259DQpjb24gPSBlbmdpbmUuY29ubmVjdCgpDQpgYGANCk5leHQsIHdlIHdpbGwgdXNlIHRoZSAqKmV4ZWN1dGUqKiBtZXRob2QgZnJvbSBTUUxBbGNoZW15IG9uIG91ciAnY29uJyB2YXJpYWJsZSBhbmQgcGFzcyBpbiBhIFNRTCBjb21tYW5kIGFzIGFuIGFyZ3VtZW50Lg0KYGBge3B5dGhvbn0NCmRhdGFiYXNlcyA9IGNvbi5leGVjdXRlKCdTSE9XIERBVEFCQVNFUzsnKQ0KZGF0YWJhc2VzDQpgYGANCldlIGNhbiBsb29rIGluc2lkZSBvdXIgJ2N1cnNvcicgb2JqZWN0IHRvIHNlZSB0aGUgZGF0YSB1c2luZyBhICpmb3IgbG9vcCouDQpgYGB7cHl0aG9ufQ0KZm9yIGl0ZW0gaW4gZGF0YWJhc2VzOg0KICBwcmludChpdGVtWzBdKQ0KDQpgYGANClRoZXNlIGFyZSB0aGUgZGF0YWJhc2VzIGN1cnJlbnRseSBvbiBteSBjb21wdXRlci4NCg0KV2hlbiB3ZSBhcmUgZG9uZSB3aXRoIG91ciBTUUwgY29tbWFuZHMsIGJlc3QgcHJhY3RpY2UgaXMgdG8gY2xvc2UgdGhlIGNvbm5lY3Rpb24gd2l0aCB0aGUgZm9sbG93aW5nIGNvZGUuDQoNCmBgYHtweXRob259DQplbmdpbmUuZGlzcG9zZSgpDQpgYGANCg0KR3JlYXQhIE5vdyB0aGF0IFB5dGhvbiBjYW4gdGFsayB0byBNeVNRTCwgd2Ugd2lsbCBjb25uZWN0IFIgdG8gTXlTUUwuDQoNCiMgU3RlcCA0OiBDb25uZWN0IFIgdG8gTXlTUUwNCg0KUlN0dWRpbyBoYXMgYSBncmVhdCB3ZWJzaXRlIGFib3V0IGNvbm5lY3RpbmcgUiBhbmQgTXlTUUwgW2hlcmVdKGh0dHBzOi8vZGIucnN0dWRpby5jb20vZGF0YWJhc2VzL215LXNxbC8pIHRoYXQgeW91IGNhbiB1c2UgaWYgeW91IGFyZSBoYXZpbmcgdHJvdWJsZSBtYWtpbmcgdGhlIGNvbm5lY3Rpb24uIEknbGwgb3V0bGluZSB0aGUgc3RlcHMgSSB1c2VkIGJlbG93Lg0KDQpJbiBzdGVwIDEsIHdlIGluc3RhbGxlZCB0aGUgTXlTUUwvb2RiYyBDb25uZWN0b3Igd2hlbiB3ZSBpbnN0YWxsZWQgTXlTUUwuIElmIHlvdSBkaWRuJ3QgaW5zdGFsbCB0aGUgY29ubmVjdG9yLCB5b3UgY2FuIGZpbmQgaXQgW2hlcmVdKGh0dHBzOi8vZGV2Lm15c3FsLmNvbS9kb3dubG9hZHMvY29ubmVjdG9yL29kYmMvKS4gQWZ0ZXIgaW5zdGFsbGF0aW9uLCB5b3Ugd2lsbCB3YW50IHRvIHJlc3RhcnQgeW91ciBjb21wdXRlciB0byBlbnN1cmUgaXQgaXMgcHJvcGVybHkgcmVjb2duaXplZC4NCg0KT25jZSBpbnN0YWxsZWQsIG1ha2Ugc3VyZSB0aGF0IGJvdGggdGhlICoqb2RiYyoqIGFuZCAqKkRCSSoqIHBhY2thZ2VzIGFyZSBpbnN0YWxsZWQgaW4gUi4NCg0KRmlyc3QsIHdlIHdpbGwgbG9hZCB0aGUgKipvZGJjKiogYW5kICoqREJJKiogcGFja2FnZSBpbiBSLg0KYGBge3J9DQpsaWJyYXJ5KG9kYmMpDQpsaWJyYXJ5KERCSSkNCmBgYA0KDQpOZXh0LCB3ZSB3aWxsIGFzc2lnbiB0aGUgY29ubmVjdGlvbiB0byB0aGUgdmFyaWFibGUgJ2NvbicuIFlvdSB3aWxsIG5vdGljZSB0aGF0IGFub3RoZXIgcGFzc3dvcmQgcGFja2FnZSBpcyB1c2VkIHRvIGVudGVyIHlvdXIgZGF0YWJhc2UgcGFzc3dvcmQuIFRoaXMgKidyc3R1ZGlvYXBpOjphc2tGb3JQYXNzd29yZCcqIGNvZGUgd2lsbCBjYWxsIHRoZSAqKmFza0ZvclBhc3N3b3JkKiogZnVuY3Rpb24gaW5zaWRlIHRoZSAqcnN0dWRpb2FwaSogcGFja2FnZS4NCg0KYGBge3IgZXZhbD1GQUxTRX0NCmNvbiA8LSBkYkNvbm5lY3Qob2RiYzo6b2RiYygpLCAuY29ubmVjdGlvbl9zdHJpbmcgPSAiRHJpdmVyPXtNeVNRTCBPREJDIDguMCBVbmljb2RlIERyaXZlcn07IiwgDQogICAgICAgICAgICAgICAgIHNlcnZlciA9ICJsb2NhbGhvc3QiLCBkYiA9ICJiaWtlb21ldGVyc19kYiIsIHVzZXIgPSByZWFkbGluZShwcm9tcHQgPSAnRW50ZXIgdXNlciBuYW1lOiAnKSwgcGFzc3dvcmQgPSByc3R1ZGlvYXBpOjphc2tGb3JQYXNzd29yZCgiRGF0YWJhc2UgcGFzc3dvcmQiKSkNCmBgYA0KDQpgYGB7ciBpbmNsdWRlPUZBTFNFfQ0KIyBXb3JrYXJvdW5kIHRvIGdldCB0aGUgZG9jdW1lbnQgdG8ga25pdA0KIyBDcmVhdGVkIHRlbXAgdXNlciBuYW1lIHRoYXQgd2lsbCBiZSBkZWxldGVkIG9uY2UgdGhlIHBvc3QgaXMgdXBsb2FkZWQuDQpjb24gPC0gZGJDb25uZWN0KG9kYmM6Om9kYmMoKSwgLmNvbm5lY3Rpb25fc3RyaW5nID0gIkRyaXZlcj17TXlTUUwgT0RCQyA4LjAgVW5pY29kZSBEcml2ZXJ9OyIsIA0KICAgICAgICAgICAgICAgICBzZXJ2ZXIgPSAibG9jYWxob3N0IiwgZGIgPSAiYmlrZW9tZXRlcnNfZGIiLCB1c2VyID0gJ25ld3VzZXInLCBwYXNzd29yZCA9IHJzdHVkaW9hcGk6OmFza0ZvclBhc3N3b3JkKCJEYXRhYmFzZSBwYXNzd29yZCIpKQ0KYGBgDQoNCklmIHlvdSBhcmUgdXNpbmcgUlN0dWRpbywgYW5kIHlvdXIgY29ubmVjdGlvbiBpcyBzdWNjZXNzZnVsLCB5b3Ugd2lsbCBub3cgc2VlIGEgbGlzdCBvZiB5b3VyIE15U1FMIGRhdGFiYXNlcyBpbiB5b3VyICdDb25uZWN0aW9ucycgdGFiLg0KDQpMZXQncyBzZW5kIGEgTXlTUUwgQ29tbWFuZCBmcm9tIFIgdG8gTXlTUUwgdG8gY29uZmlybSB0aGUgdHdvIGNhbiBjb21tdW5pY2F0ZS4NCg0KV2Ugd2lsbCB1c2UgUiB0byBzZW5kIHRoZSBzYW1lIE15U1FMIGNvbW1hbmQgYXMgYmVmb3JlLg0KYGBge3J9DQpzcWxfY21kIDwtICJTSE9XIERBVEFCQVNFUzsiDQpiaWtlb21ldGVyc19kYiA8LSBkYkdldFF1ZXJ5KGNvbiwgc3FsX2NtZCkNCmJpa2VvbWV0ZXJzX2RiDQpgYGANCklmIHlvdSBzZWUgYSB0YWJsZSBvZiB5b3VyIGRhdGFiYXNlcywgY29uZ3JhdHVsYXRpb25zIQ0KDQpJbiB0aGUgW25leHQgcG9zdF0oaHR0cHM6Ly9uYXRoYW5zcHJvamVjdHMuY29tL3BhcnRfNF9zYXZlX3RoZV9kYXRhX2luX2FfbXlzcWxfZGF0YWJhc2UuaHRtbCksIHdlIHdpbGwgc2F2ZSB0aGUgZGF0YSB3ZSBwdWxsIGZyb20gdGhlIEJpa2UgQXJsaW5ndG9uIEFQSSBpbnRvIG91ciBNeVNRTCBkYXRhYmFzZS4gDQo=</div>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeSourceEmbed("part_3_setup_your_database.Rmd");
+});
+</script>
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
