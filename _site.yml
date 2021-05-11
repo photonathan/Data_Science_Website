@@ -10,7 +10,8 @@ navbar:
           href: part_1_the_plan.html
         - text: "Part 2: Query the API"
           href: part_2_query_the_api.html
-        
+        - text: "Part 3: Setup and Connect Your Database"
+          href: part_3_setup_your_database.html
     - text: "Notes"
       menu:
         - text: 

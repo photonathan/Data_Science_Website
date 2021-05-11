@@ -11,7 +11,12 @@ output:
     includes:
       in_header: header.html
 ---
+CAN"T GET USUER INPUT WHEN KNITTING. USE THIS LINK TO USE PARAMATERS.
+https://stackoverflow.com/questions/45888571/knitr-with-user-input
 
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(cache = TRUE)
+```
 # Introduction
 
 One of my aims for this project was to create a pipeline that foregoes saving individual 'data' files (e.g. csv, xml, json, txt) to the computer and instead used a database to store the data. After reading over [this great article](https://realpython.com/python-mysql/) that gives a good overview of SQLite, PostgreSQL, and MySQL, I decided on MySQL to handle my database. A second factor in my decision was because my favorite Udemy instructor Colt Steele had a MySQL course on sale [The Ultimate MySQL Bootcamp: Go from SQL Beginner to Expert](https://www.udemy.com/course/the-ultimate-mysql-bootcamp-go-from-sql-beginner-to-expert/) recommend I highly recommend.
@@ -64,9 +69,7 @@ Using the SQLAlchemy **create_engine** function, pass in the name of your databa
 
 Note: below is the how the function is supposed to look when using Python. However, to create this post I'm actually using R and executing the Python code using an R library called 'reticulate' and I couldn't get the the python module **getpass** to work. However, I've tried this code in Python and it works like a charm.
 
-```{python eval=FALSE}
 engine = create_engine(f'mysql+mysqldb://{input("Enter username: ")}:{getpass("Enter password: ")}@localhost/bikeometers_db')
-```
 
 Below is the work-around version that doesn't use the **getpass** module.
 ```{python}
