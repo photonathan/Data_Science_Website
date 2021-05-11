@@ -1,6 +1,6 @@
 ---
 title: "Visualizing Arlington Bikometers"
-subtitle: "Part 3: Setup Your Database"
+subtitle: "Part 3: Setup Your Database and Connections"
 output:
   html_document: 
     toc: yes
@@ -11,25 +11,21 @@ output:
     includes:
       in_header: header.html
 ---
-CAN"T GET USUER INPUT WHEN KNITTING. USE THIS LINK TO USE PARAMATERS.
-https://stackoverflow.com/questions/45888571/knitr-with-user-input
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(cache = TRUE)
 ```
+
 # Introduction
 
-One of my aims for this project was to create a pipeline that foregoes saving individual 'data' files (e.g. csv, xml, json, txt) to the computer and instead used a database to store the data. After reading over [this great article](https://realpython.com/python-mysql/) that gives a good overview of SQLite, PostgreSQL, and MySQL, I decided on MySQL to handle my database. A second factor in my decision was because my favorite Udemy instructor Colt Steele had a MySQL course on sale [The Ultimate MySQL Bootcamp: Go from SQL Beginner to Expert](https://www.udemy.com/course/the-ultimate-mysql-bootcamp-go-from-sql-beginner-to-expert/) recommend I highly recommend.
+One of the aims for this project was to create a pipeline that foregoes saving individual 'data' files (e.g. csv, xml, json, txt) to the computer and instead used a database to store the data. After reading over [this great article](https://realpython.com/python-mysql/) that gives a good overview of SQLite, PostgreSQL, and MySQL, I decided on MySQL to handle my database. A second factor in my decision was because my favorite Udemy instructor Colt Steele had a MySQL course on sale [The Ultimate MySQL Bootcamp: Go from SQL Beginner to Expert](https://www.udemy.com/course/the-ultimate-mysql-bootcamp-go-from-sql-beginner-to-expert/) that I highly recommend.
 
 ## Goal
 
 1. Install MySQL
 2. Create the Database
-3. Connect Python to MySQL with SQLAlchemy
-4. Connect R to MySQL
-
-. Connect MySQL to python using the MySQL Python Connector
-. Install the ODBC
+3. Connect Python to MySQL with SQLAlchemy and MySQLdb
+4. Connect R to MySQL with odbc
 
 # Step 1: Install MySQL
 
@@ -69,22 +65,28 @@ Using the SQLAlchemy **create_engine** function, pass in the name of your databa
 
 Note: below is the how the function is supposed to look when using Python. However, to create this post I'm actually using R and executing the Python code using an R library called 'reticulate' and I couldn't get the the python module **getpass** to work. However, I've tried this code in Python and it works like a charm.
 
+```{python eval=FALSE}
 engine = create_engine(f'mysql+mysqldb://{input("Enter username: ")}:{getpass("Enter password: ")}@localhost/bikeometers_db')
+```
 
 Below is the work-around version that doesn't use the **getpass** module.
-```{python}
+
+```{python eval=FALSE}
 engine = create_engine(f'mysql+mysqldb://{input("Enter username: ")}:{input("Enter password: ")}@localhost/bikeometers_db', echo=False)
+```
+
+```{python include=FALSE}
+# Workaround to get the database to connect
+# Created temp user name that will be deleted once the post is uploaded.
+engine = create_engine(f'mysql+mysqldb://newuser:donteventry@localhost/bikeometers_db', echo=False)
 ```
 However, SQLAlchemy is 'lazy' and won't actually try to make the connection until we explicitly tell it. So, the below code will test the connection and throw an error if a connection cannot be made.
 
 ```{python}
 engine.connect()
 ```
-If a 'sqlalchemy.engine.base.Connection object' is returned, that means you have successfully connected to your database!
 
-```{sql}
-SHOW DATABASES;
-```
+If a 'sqlalchemy.engine.base.Connection object' is returned, that means you have successfully connected to your database!
 
 Let's make our first request from Python to MySQL.
 
@@ -129,9 +131,16 @@ library(DBI)
 
 Next, we will assign the connection to the variable 'con'. You will notice that another password package is used to enter your database password. This *'rstudioapi::askForPassword'* code will call the **askForPassword** function inside the *rstudioapi* package.
 
-```{r}
+```{r eval=FALSE}
 con <- dbConnect(odbc::odbc(), .connection_string = "Driver={MySQL ODBC 8.0 Unicode Driver};", 
                  server = "localhost", db = "bikeometers_db", user = readline(prompt = 'Enter user name: '), password = rstudioapi::askForPassword("Database password"))
+```
+
+```{r include=FALSE}
+# Workaround to get the database to connect
+# Created temp user name that will be deleted once the post is uploaded.
+con <- dbConnect(odbc::odbc(), .connection_string = "Driver={MySQL ODBC 8.0 Unicode Driver};", 
+                 server = "localhost", db = "bikeometers_db", user = 'newuser', password = rstudioapi::askForPassword("Database password"))
 ```
 
 If you are using RStudio, and your connection is successful, you will now see a list of your MySQL databases in your 'Connections' tab.
