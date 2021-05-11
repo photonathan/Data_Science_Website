@@ -1,0 +1,432 @@
+---
+title: "Visualizing Arlington Bikometers"
+subtitle: "Part 4: Save your Data in a MySQL Database"
+output:
+  html_document: 
+    toc: yes
+    toc_depth: 2
+    toc_float: yes
+    highlight: zenburn
+    code_download: true
+    includes:
+      in_header: header.html
+---
+
+# Background
+
+
+# Goal
+
+
+## Step 1: Make a request
+
+We can read [here](http://counters.bikearlington.com/bike/assets/File/Regional_bikearlington_webservices.pdf) about the different methods available when making requests to the Bike Arlington API.
+
+First, let's get some details on the Bikeometers in the database. There is a method listed 'GetAllCounters' that will return the details of the bikeometers in the database. I'll use the 'requests' library to make a 'GET' request to the base Bike Arlington URL and pass in the 'GetAllCounters' method as a parameter.
+
+```{python}
+import requests
+
+# Assign the url of the 
+url = 'http://webservices.commuterpage.com/counters.cfc?wsdl'
+# Defines the method in a dictionary used to make the request
+counter_reqest_methods = {'method': 'GetAllCounters'}
+# Save the GetAllCounters request to memory
+response = requests.get(url, params=counter_reqest_methods)
+response
+```
+
+Great! Response [200] means we got an OK response back. When making a GET request, a 'response object' will be returned. Let's take a look at what's inside our response object. Use the .text method as shown below to look at the data inside our response object. The output is a mess of HTML so I'll leave it to you to take a look at it yourself.
+
+```{python eval=FALSE}
+response.text
+```
+
+## Step 2: Clean the Data
+
+We will use the 're' module to remove some of the extraneous html. From the official Python documentation, "This module provides regular expression matching operations..." A great tutorial on Regular Expressions (RegEx) can be found [here](https://realpython.com/regex-python/)
+
+The code below will substitute any '\n' or '\t' with a blank string (''), essentially deleting them.
+
+```{python}
+import re
+
+string_data = response.text
+clean_string_data = re.sub(r'[\n|\t]', '', string_data)
+```
+
+Now it's easier to read! The first part of the data mentions that the data is in XML format. We can use this to our advantage by converting the string to an XML to easily pull out the data we are looking for.
+
+## Step 3: Convert data to XML
+
+We will use the module 'xml.etree.ElementTree' to convert the data from a string to XML format. By converting this to XML, finding the data we need will be faster because we don't have to iterate over the entire string looking for the specific data we need, we can use the hierarchical structure of an XML file to drill down to the specific data we are looking for.
+
+To make it easier to call, we will import the module as 'ET'. We will then call the function 'fromstring' and pass in our 'clean_string_data' as an argument.
+
+```{python}
+import xml.etree.ElementTree as ET
+
+root = ET.fromstring(clean_string_data)
+type(root)
+```
+
+Our object 'root' is now an 'xml.etree.ElementTree.Element' object that we can iterate over with a **for loop** or we can use the **list** function.
+
+## Step 4: Explore XML Data
+
+Using the **list** function allows us to take a look inside **root** to see its children.
+
+```{python}
+list(root)
+```
+
+We can see there are a lot of "Element 'counter'..." objects, each representing a different Bikeometer with details of its own.
+
+Now, we could go in blind and do lots of slicing to see the hierarchy of the file but realistically we have access to a web browser and can use the below URL to make the API call and see where the data that we need is located.
+
+<http://webservices.commuterpage.com/counters.cfc?wsdl&method=GetAllCounters>
+
+Let's slice into the list of counters and assign the first counter to the variable 'child' then take a look inside.
+
+```{python}
+child = root[0]
+list(child)
+```
+
+We can see that 'child' contains many elements that we can access such as name, description, trail_id...etc.
+
+However, we also know that 'child' contains the information for 'id'. Let's access that 'id' information.
+
+We can use the **items** method to return a list of a single tuple.
+
+```{python}
+child.items()
+```
+
+However, we really want to isolate the important information '33'.
+
+So, We can use the **keys** method to even though this is not a dictionary.
+
+```{python}
+child.keys()
+```
+
+We know that the **key** is so we can use the **get** method and pass in 'id' to get the "value".
+
+```{python}
+child.get('id')
+```
+
+To access the 'name' element we will slice into the list and access the first object. We will assign that object to the variable 'grandchild'.
+
+```{python}
+grandchild = child[0]
+grandchild
+```
+
+Now that we have the 'name' object assigned, let's see what the name of the first Bikeometer in our XML file is.
+
+```{python}
+grandchild.text
+```
+
+'110 Trail' is the name! If you want, try pulling some data yourself. Below, I describe how I automated pulling the data.
+
+## Step 5: Automate With A Function
+
+In order to automate pulling all this data, I'll create a **for loop** to iterate through the XML data. Each Bikeometer's data will be saved in a tuple and those tuples will be saved all together in a list.
+
+First, I'll create the empty list that will house the Bikeometer tuples.
+
+```{python}
+bikeometer_details = []
+```
+
+Next, I'll create a function with a Russian nesting doll of a **for loop** to dive into the appropriate sections to pull the information I want. You'll notice I don't pull a filed if it is 'None', 'description', 'trail_id', or 'trail_name' but you can pull this data if you want.
+
+```{python}
+# Iterate through the children, grandchildren, and great-grandchildren and grab req data  
+def get_bikeometer_details():
+  for child in root:
+      # From child 'counter' gets the attribute 'id' of the counter and adds it to single_list
+      single_list = [child.get('id')]
+      # Loops through the grandchildren of root
+      for grandchild in list(child):   
+          if grandchild.text != None and grandchild.tag != 'description' and grandchild.tag != 'trail_id' and grandchild.tag != 'trail_name':
+              # If the grandchild is region, loop through region and grab the grandchildren data
+              if grandchild.tag == 'region':  
+                  for great_grandchild in list(grandchild): 
+                      single_list.append(great_grandchild.text)
+              # If the grandchild is not region, the data is available in grandchild.text
+              else: 
+                  single_list.append(grandchild.text)
+      # Cast the list into a tuple making it easier to migrate data to the database
+      single_tuple = tuple(single_list)
+      # Appends tuples to the list
+      bikeometer_details.append(single_tuple)
+get_bikeometer_details()
+```
+
+Taking a look inside our bikeometer_details object, we see a list of tuples, where each tuple is a seperate Bikeometer.
+
+Each tuple contains: ('bikeometer_id', 'bikeometer_name', 'latitude', 'longitude', 'region', 'region_id')
+
+```{python}
+bikeometer_details
+```
+
+## Step 6: Data into a data frame
+
+First, we will load that **Pandas** module so we can turn our list of tuples into a data frame.
+
+```{python}
+import pandas as pd
+```
+
+Next, we will define the columns of the data frame according to the data in our tuples. 
+```{python}
+columns = ('bikeometer_id', 'name', 'latitude', 'longitude', 'region', 'region_id')
+```
+
+With our columns defined, we will create a dataframe using the **Pandas DataFrame** function, pass in our **bikeometer_details** list into the **data** parameter and pass in our **columns** variable to the **columns** parameter.
+```{python}
+df = pd.DataFrame(data=bikeometer_details, columns = columns)
+```
+
+Finally, we will assign a *type* to each column by using the **.astype()** method.
+```{python}
+df[["name", "latitude", "longitude", "region", 'region_id']] = df[["name", "latitude", "longitude", "region", 'region_id']].astype('str')
+df[["bikeometer_id"]] = df[["bikeometer_id"]].astype('int')
+```
+
+```{python}
+df
+```
+
+
+Now that it's in a data frame, we have many options about what to do with it. We can picke it for later, manipulate it with pandas, or what I'm going to do in the next post: save it in my database.
+
+Now that we can easily pull the Bikeometer data to usable format, we will pull the data for the actual daily bike counts. 
+
+# Requesting Bike Counts
+
+## Step 1: Make a request
+
+Again, let's look to the [API documentation](http://counters.bikearlington.com/bike/assets/File/Regional_bikearlington_webservices.pdf) to find the method we need to request the Bike counts.
+
+We will us the method 'GetCountInDateRange', pass in the dates that we are looking for, and pull out the data that we want: Bikeometer ID, Date, Direction (Inbound or Outbound), Count.
+
+Note: The Bike Arlington API allows for queries of 1 year or less. This limitation can be managed by making requests in 1 year increments and adding them to the database or concatenating each 1 year request into a list.
+
+Again, we'll use the 'requests' library to make a 'GET' request to the base Bike Arlington URL and this time pass in the 'GetCountInDateRange' method as a parameter. 
+
+```{python}
+# Assign the url of the 
+url = 'http://webservices.commuterpage.com/counters.cfc?wsdl'
+# Defines the method in a dictionary used to make the request
+counter_reqest_methods = {'method': 'GetCountInDateRange'}
+# Save the GetAllCounters request to memory
+response = requests.get(url, params=counter_reqest_methods)
+response
+```
+
+Perfect, response [200]! Let's take a look inside our 'response object' by using the **.text**
+
+```{python}
+response.text
+```
+
+It looks like we're missing some parameters... which makes sense. If we take a look at the documenation, it says: 
+
+"Request Fields:
+• CounterID – Number Required Field
+• startDate – mm/dd/yyyy
+• endDate – mm/dd/yyyy
+• direction – I, O (I: Inbound, O: outbound), Empty for both.
+• mode – B, P (B: bike, P: pesdestrian), empty for both.
+• startTime – HH:MM format
+• endtime – HH:MM format
+• interval – h (by the hourly), m(by the minutes), d(by the day
+
+Example with interval as d:
+http://webservices.commuterpage.com/counters.cfc?wsdl&method=GetCountInDateRan
+ge&counterid=1&startDate=12/1/2011&endDate=12/04/2011&direction=I&mode=B&inte
+rval=d"
+
+Like with many parts of coding, there are multiple ways to achieve the same goal. We could create a function that concatenates a URL according to our desired 'request fields', or we can do what I do below: pass in each of the request fields to the GET request.
+
+I'll start with the first 'bikeometer_id' in the above Bikeometer Details data frame, so counterID = 33. To get the 'start date', let's use one of the built-in Bike Arlington API methods: 'getMinDates'
+
+```{python}
+# Assign the url of the 
+url = 'http://webservices.commuterpage.com/counters.cfc?wsdl'
+# Defines the method in a dictionary used to make the request
+counter_reqest_methods = {'method': 'getMinDates', 'counterID': '33'}
+# Save the GetAllCounters request to memory
+response = requests.get(url, params=counter_reqest_methods)
+response.text
+```
+The first date for Bikeometer 33 is 07/22/2015.
+
+Just to test, let's make the end date the same as the start date, 07/22/2015. For 'mode', we have the option to request data for Bikers, Pedestrians, or Both. I'll choose Bikers, so the mode will be 'B'. For 'interval' we can choose 'minute', 'hourly', or 'daily'. I'll choose 'daily'. I'll leave 'direction' blank to pull both the Inbound and Outbound direction.
+
+We will organize all these parameters in a dictionary and pass that dictionary to the GET method.
+
+```{python}
+request_parameters = {'method': 'GetCountInDateRange',
+                      'counterID': '33',
+                      'startDate': '07/22/2015' ,
+                      'endDate': '07/22/2015',
+                      'mode': 'B',
+                      'interval': 'D',
+                      'direction': ''}
+response = requests.get(url, params=request_parameters)
+response.text
+```
+It looks like on 7/22/15, there were 384 bikers in the Inbound direction and 399 bikers in the Outbound direction. Before we extract this data, let's clean it up a little just to make our lives easier.
+
+## Step 2: Clean the Data
+
+Again, we will use the 're' module to remove some of the extraneous html. 
+
+The code below will substitute any '\n' or '\t' with a blank string (''), essentially deleting them.
+
+```{python}
+import re
+
+string_data = response.text
+clean_string_data = re.sub(r'[\n|\t]', '', string_data)
+clean_string_data
+```
+
+Again, The first part of the data mentions that the data is in XML format. We can use this to our advantage by converting the string to an XML to easily pull out the data we are looking for.
+
+## Step 3: Convert data to XML
+
+This step is the same as above but I'll repeat it again for those that skipped right to this step. 
+
+We will use the module 'xml.etree.ElementTree' to convert the data from a string to XML format. By converting this to XML, finding the data we need will be faster because we don't have to iterate over the entire string looking for the specific data we need, we can use the hierarchical structure of an XML file to drill down to the specific data we are looking for.
+
+To make it easier to call, we will import the module as 'ET'. We will then call the method 'fromstring' and pass in our 'clean_string_data' as an argument.
+
+```{python}
+import xml.etree.ElementTree as ET
+
+root = ET.fromstring(clean_string_data)
+type(root)
+```
+
+Our object 'root' is now an 'xml.etree.ElementTree.Element' object that we can iterate over with a **for loop** or we can use the **list** function.
+
+## Step 4: Explore XML Data
+
+Using the **list** function allows us to take a look inside **root** to see its children.
+
+```{python}
+list(root)
+```
+
+We can see there are two "Element 'counter'..." objects, one representing the Inbound direction and the other is the Outbound direction on our requested date.
+
+Let's slice into the list of counters and assign the first counter to the variable 'child' then take a look inside.
+
+```{python}
+child = root[0]
+child.items()
+```
+
+We can see that 'child' contains the 'count', 'date', 'direction', and 'mode'.
+
+To isolate the important information we can use the **get** method and pass in 'count', 'date', 'direction', or 'mode' to get the value.
+
+```{python}
+child.get('count')
+child.get('date')
+child.get('direction')
+child.get('mode')
+```
+Now that we know how to pull the data that we want, let's automate it.
+
+## Step 5: Automate With A Function
+
+I'll show you the function that I created to iterate through the XML data. Every 'count' and its details will be saved in a tuple and those tuples will be saved all together in a list.
+
+First, I'll create the empty list that will house the 'count' tuples.
+
+```{python}
+count_in_date_range_list = []
+```
+
+Next, I'll create a list of the Bikeometer ID's that I'd like to pull data for. My function will iterate over this list using a **for loop**.
+
+```{python}
+bikeometer_id_list = ['33','30','43','24','59','56','47','48','10','20',
+                           '35','57','18','3','58','61','62','38','44','14',
+                           '60','5','6','42','37','27','26','8','7','51','52',
+                           '45','22','21','36','34','41','9','39','16','15',
+                           '54','55','31','28','11','2','25','19']
+```
+
+
+Next, I'll create a Russian nesting doll of a **for loop** to dive into the appropriate sections to pull the information I want. I'll use the **datetime** module to separate out the 
+
+```{python}
+from datetime import date, datetime, timedelta
+
+def api_counts_to_list(): 
+  for bikeometer_id in bikeometer_id_list:
+    request_parameters = {'method': 'GetCountInDateRange',
+                      'counterID': bikeometer_id,
+                      'startDate': '07/22/2015' ,
+                      'endDate': '07/22/2015',
+                      'mode': 'B',
+                      'interval': 'D',
+                      'direction': ''}
+    response = requests.get(url, params=request_parameters)
+    string_data = response.text
+    clean_string_data = re.sub(r'[\n|\t]', '', string_data)
+    root = ET.fromstring(clean_string_data)
+    for type_tag in root.findall('count'):
+        count = type_tag.get('count')
+        date = type_tag.get('date')
+        # Converts counter date to a date object
+        date = datetime.strptime(date, '%m/%d/%Y').date()
+        year = date.year
+        month = date.month
+        day = date.day
+        month_day = f'{month}_{day}'
+        direction = type_tag.get('direction')
+        if date.weekday() <= 4:
+            is_weekend = 0
+        else:
+            is_weekend = 1
+        single_tuple = (bikeometer_id, date, direction, count, is_weekend, year, month, day, month_day)
+        count_in_date_range_list.append(single_tuple)
+  return count_in_date_range_list
+all_id_list = api_counts_to_list()
+all_id_list
+```
+Each tuple contains: (bikeometer_id, date, direction, count, is_weekend, year, month, day, month_day).
+
+I added a few more variables by manipulating the date a bit in order to make the analysis later easier.
+
+## Step 6: Data into a data frame
+
+First, we will load that **Pandas** module so we can turn our list of tuples into a data frame.
+
+```{python}
+import pandas as pd
+```
+
+Next, we will define the columns of the data frame according to the data in our tuples. 
+```{python}
+columns = ('bikeometer_id', 'date', 'direction', 'count', 'is_weekend', 'year', 'month', 'day', 'month_day')
+```
+
+With our columns defined, we will create a dataframe using the pandas **DataFrame** method, pass in our **bikeometer_details** list into the **data** parameter and pass in our **columns** variable to the **columns** parameter.
+```{python}
+df = pd.DataFrame(all_id_list, columns=columns)
+df
+```
+
+Now that we are able to automate pulling the data into a data frame, in the next post, we can set up our database which we will use to store the data for analysis. 
