@@ -12,6 +12,8 @@ navbar:
           href: part_2_query_the_api.html
         - text: "Part 3: Setup and Connect Your Database"
           href: part_3_setup_your_database.html
+        - text: "Part 4: Setup and Connect Your Database"
+          href: part_4_save_the_data_in_a_mysql_database.html 
     - text: "Notes"
       menu:
         - text: 

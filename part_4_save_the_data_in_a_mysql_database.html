@@ -1,0 +1,1171 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Visualizing Arlington Bikometers</title>
+
+<script src="site_libs/header-attrs-2.7/header-attrs.js"></script>
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<script src="site_libs/navigation-1.1/sourceembed.js"></script>
+<link rel="apple-touch-icon" sizes="180x180" href="~/assets/favicon/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon/favicon-16x16.png">
+<link rel="manifest" href="/assets/favicon/site.webmanifest">
+<link rel="mask-icon" href="/assets/favicon/safari-pinned-tab.svg" color="#5bbad5">
+<link rel="shortcut icon" href="/assets/favicon/favicon.ico">
+<meta name="msapplication-TileColor" content="#da532c">
+<meta name="msapplication-config" content="/assets/favicon/browserconfig.xml">
+<meta name="theme-color" content="#ffffff">
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+<style type="text/css">
+  code {
+    white-space: pre;
+  }
+  .sourceCode {
+    overflow: visible;
+  }
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  { color: #cccccc; background-color: #303030; }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ffcfaf; } /* Alert */
+code span.an { color: #7f9f7f; font-weight: bold; } /* Annotation */
+code span.at { } /* Attribute */
+code span.bn { color: #dca3a3; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #f0dfaf; } /* ControlFlow */
+code span.ch { color: #dca3a3; } /* Char */
+code span.cn { color: #dca3a3; font-weight: bold; } /* Constant */
+code span.co { color: #7f9f7f; } /* Comment */
+code span.cv { color: #7f9f7f; font-weight: bold; } /* CommentVar */
+code span.do { color: #7f9f7f; } /* Documentation */
+code span.dt { color: #dfdfbf; } /* DataType */
+code span.dv { color: #dcdccc; } /* DecVal */
+code span.er { color: #c3bf9f; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #c0bed1; } /* Float */
+code span.fu { color: #efef8f; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #7f9f7f; font-weight: bold; } /* Information */
+code span.kw { color: #f0dfaf; } /* Keyword */
+code span.op { color: #f0efd0; } /* Operator */
+code span.ot { color: #efef8f; } /* Other */
+code span.pp { color: #ffcfaf; font-weight: bold; } /* Preprocessor */
+code span.sc { color: #dca3a3; } /* SpecialChar */
+code span.ss { color: #cc9393; } /* SpecialString */
+code span.st { color: #cc9393; } /* String */
+code span.va { } /* Variable */
+code span.vs { color: #cc9393; } /* VerbatimString */
+code span.wa { color: #7f9f7f; font-weight: bold; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+<style type="text/css">
+#rmd-source-code {
+  display: none;
+}
+</style>
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.tab('show');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-sm-12 col-md-4 col-lg-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-sm-12 col-md-8 col-lg-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Nathan's Projects</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Visualizing Arlington Bikeometers
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="part_1_the_plan.html">Part 1: The Plan</a>
+    </li>
+    <li>
+      <a href="part_2_query_the_api.html">Part 2: Query the API</a>
+    </li>
+    <li>
+      <a href="part_3_setup_your_database.html">Part 3: Setup and Connect Your Database</a>
+    </li>
+    <li>
+      <a href="part_4_save_the_data_in_a_mysql_database.html">Part 4: Setup and Connect Your Database</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Notes
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a></a>
+    </li>
+  </ul>
+</li>
+<li>
+  <a href="photography.html">Photography</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/photonathan">Github</a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+<div class="btn-group pull-right float-right">
+<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
+<li><a id="rmd-download-source" href="#">Download Rmd</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">Visualizing Arlington Bikometers</h1>
+<h3 class="subtitle">Part 4: Save your Data in a MySQL Database</h3>
+
+</div>
+
+
+<div id="background" class="section level1">
+<h1>Background</h1>
+<p>I will be building on the Python code we wrote in <a href="https://nathansprojects.com/part_2_query_the_api.html">Part 2: Query the API</a> to move our data into a database.</p>
+</div>
+<div id="goals" class="section level1">
+<h1>Goals</h1>
+<ol style="list-style-type: decimal">
+<li>Add functionality to our code from <a href="https://nathansprojects.com/part_2_query_the_api.html">Part 2</a> that takes a Pandas Data Frame and puts it in our MySQL database.</li>
+<li>Create seperate <strong>helper functions</strong> that create a <em>SQLAlchemy Engine</em> object, make API Requests, and query our MySQL database for the most recent date.</li>
+<li>Integrate these helper functions into or two main functions: one to pull and save all data starting from the oldest date in the Bike Arlington database and one to pull only the data missing from our MySQL database.</li>
+<li>Save all Bike Arlington data on the details of each Bikeometer and all data on the actual bicycle counts to our MySQL database.</li>
+</ol>
+<p>Note: If I were to do this project again, I’d break the functions up into smaller functions to make testing easier. A common recommendation is that each function should only do one thing. If you are describing the functionality and you have to use the word ‘and’, you should break the function up.</p>
+</div>
+<div id="step-1-migrating-bikeometer-details" class="section level1">
+<h1>Step 1: Migrating Bikeometer Details</h1>
+<p>    ## Pandas .to_sql Method</p>
+<p>We will utilize the Pandas module to move our data into MySQL with the <a href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.to_sql.html">to_sql</a> method. This method will operate on our dataframe and we will pass in a few parameters. First is our table name that we will create. Second is our engine that was created using SQLAlchemy. Third we specify to not create a column as the index. Last, we specify that if our table already exists in the database, add our data to the table without touching the existing data.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>df.to_sql(<span class="st">&#39;counts_daily&#39;</span>, con<span class="op">=</span>engine, index<span class="op">=</span><span class="va">False</span>, if_exists<span class="op">=</span><span class="st">&#39;append&#39;</span>)</span></code></pre></div>
+<p>Let’s work on adding the <strong>to_sql</strong> method to our code that pulls the Bikeometer details.</p>
+<p>First, let’s define a <strong>helper function</strong> that will create a SQLAlchemy <em>engine</em> object. Let’s call the function ‘create_new_engine’. All we have to do is pass in the name of the database as an argument (bikeometers_db).</p>
+<div id="connect-to-the-database" class="section level2">
+<h2>Connect to the database</h2>
+<div class="sourceCode" id="cb2"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> create_new_engine(db_name):</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> create_engine(<span class="ss">f&#39;mysql+mysqldb://</span><span class="sc">{</span><span class="bu">input</span>(<span class="st">&quot;Enter username: &quot;</span>)<span class="sc">}</span><span class="ss">:</span><span class="sc">{</span>getpass(<span class="st">&quot;Enter password: &quot;</span>)<span class="sc">}</span><span class="ss">@localhost/</span><span class="sc">{</span>db_name<span class="sc">}</span><span class="ss">&#39;</span>, echo<span class="op">=</span><span class="va">False</span>)</span></code></pre></div>
+</div>
+<div id="define-the-function" class="section level2">
+<h2>Define the function</h2>
+<p>I’ve taken the <em>get_bikeometer_details</em> function from <a href="https://nathansprojects.com/part_2_query_the_api.html">Part 2</a> as well as the GET request steps and made them into a single function <em>bikeometer_to_sql</em>.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> requests</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> re</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> xml.etree.ElementTree <span class="im">as</span> ET</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sqlalchemy <span class="im">import</span> create_engine</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> bikeometer_to_sql():</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    <span class="co">&#39;&#39;&#39;</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="co">    Makes a GET request to the Bike Arlington API using the GetAllCounters </span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="co">    method as a parameter. The API returns a response object that is first</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="co">    converted to a string, cleaned, and converted to an XML object. The XML </span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="co">    object is then parsed for the relevant information, and added to a list.</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="co">    Each list, representing a single Bikeometer, is converted to a tuple and added </span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="co">    to a final list which is converted to a dataframe and uploaded to the database. </span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="co">     &#39;&#39;&#39;</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Calls our helper function to create an engine.</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>    engine <span class="op">=</span> create_new_engine(<span class="st">&#39;bikeometers_db&#39;</span>)</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>    url <span class="op">=</span> <span class="st">&#39;http://webservices.commuterpage.com/counters.cfc?wsdl&#39;</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Defines the method in a dictionary used to make the request</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>    counter_reqest_methods <span class="op">=</span> {<span class="st">&#39;method&#39;</span>: <span class="st">&#39;GetAllCounters&#39;</span>}</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Assigns response object to variable &#39;response&#39;</span></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>    response <span class="op">=</span> requests.get(url, params<span class="op">=</span>counter_reqest_methods)</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Save the content of that request (string) to memory </span></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>    string_data <span class="op">=</span> response.text</span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Clean the string</span></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>    clean_string_data <span class="op">=</span> re.sub(<span class="vs">r&#39;[\n|\t]&#39;</span>, <span class="st">&#39;&#39;</span>, string_data)</span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Convert string to XML object</span></span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>    root <span class="op">=</span> ET.fromstring(clean_string_data)</span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Create the empty list that will include [(Name, counterID, Lat, Long, Region, region_id)(...)]</span></span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>    bikeometer_details <span class="op">=</span> []</span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Iterate through the children, grandchildren, and great-grandchildren and grab the data  </span></span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> child <span class="kw">in</span> root:</span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>        <span class="co"># From child &#39;counter&#39; gets the attribute &#39;id&#39; of the counter and adds it to single_list</span></span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>        single_list <span class="op">=</span> [child.get(<span class="st">&#39;id&#39;</span>)]</span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Loops through the grandchildren of root</span></span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> grandchild <span class="kw">in</span> <span class="bu">list</span>(child):   </span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> grandchild.text <span class="op">!=</span> <span class="va">None</span> <span class="kw">and</span> grandchild.tag <span class="op">!=</span> <span class="st">&#39;description&#39;</span> <span class="kw">and</span> grandchild.tag <span class="op">!=</span> <span class="st">&#39;trail_id&#39;</span> <span class="kw">and</span> grandchild.tag <span class="op">!=</span> <span class="st">&#39;trail_name&#39;</span>:</span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>                <span class="co"># If the grandchild is region, loop through region and grab the grandchildren data</span></span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>                <span class="cf">if</span> grandchild.tag <span class="op">==</span> <span class="st">&#39;region&#39;</span>:  </span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a>                    <span class="cf">for</span> great_grandchild <span class="kw">in</span> <span class="bu">list</span>(grandchild): </span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a>                        single_list.append(great_grandchild.text)</span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a>                <span class="co"># If the grandchild is not region, the data is available in grandchild.text</span></span>
+<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a>                <span class="cf">else</span>: </span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a>                    single_list.append(grandchild.text)</span>
+<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Cast the list into a tuple making it easier to migrate data to the database</span></span>
+<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a>        single_tuple <span class="op">=</span> <span class="bu">tuple</span>(single_list)</span>
+<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Appends tuples to the list</span></span>
+<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a>        bikeometer_details.append(single_tuple)</span>
+<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Establishes the names of the columns</span></span>
+<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a>    columns <span class="op">=</span> (<span class="st">&#39;bikeometer_id&#39;</span>, <span class="st">&#39;name&#39;</span>, <span class="st">&#39;latitude&#39;</span>, <span class="st">&#39;longitude&#39;</span>, <span class="st">&#39;region&#39;</span>, <span class="st">&#39;region_id&#39;</span>)</span>
+<span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Creates a pandas data frame</span></span>
+<span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> pd.DataFrame(data<span class="op">=</span>bikeometer_details, columns <span class="op">=</span> columns)</span>
+<span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Assigns &#39;types&#39; to each column</span></span>
+<span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a>    df[[<span class="st">&quot;name&quot;</span>, <span class="st">&quot;latitude&quot;</span>, <span class="st">&quot;longitude&quot;</span>, <span class="st">&quot;region&quot;</span>, <span class="st">&#39;region_id&#39;</span>]] <span class="op">=</span> df[[<span class="st">&quot;name&quot;</span>, <span class="st">&quot;latitude&quot;</span>, <span class="st">&quot;longitude&quot;</span>, <span class="st">&quot;region&quot;</span>, <span class="st">&#39;region_id&#39;</span>]].astype(<span class="st">&#39;str&#39;</span>)</span>
+<span id="cb3-55"><a href="#cb3-55" aria-hidden="true" tabindex="-1"></a>    df[[<span class="st">&quot;bikeometer_id&quot;</span>]] <span class="op">=</span> df[[<span class="st">&quot;bikeometer_id&quot;</span>]].astype(<span class="st">&#39;int&#39;</span>)</span>
+<span id="cb3-56"><a href="#cb3-56" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Moves data to MySQL</span></span>
+<span id="cb3-57"><a href="#cb3-57" aria-hidden="true" tabindex="-1"></a>    df.to_sql(<span class="st">&#39;bikeometer_details&#39;</span>, con<span class="op">=</span>engine, index<span class="op">=</span><span class="va">False</span>, if_exists<span class="op">=</span><span class="st">&#39;replace&#39;</span>)</span></code></pre></div>
+</div>
+<div id="test-the-function" class="section level2">
+<h2>Test the function</h2>
+<p>Now we run the function.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>bikeometer_to_sql()</span></code></pre></div>
+<p>Let’s check to see what our new table looks like.</p>
+<p>First we create a connection and assign it to <em>con</em>.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>con <span class="op">=</span> engine.<span class="ex">connect</span>()</span></code></pre></div>
+<p>Then, we execute a MySQL statement.</p>
+<p>I’m going to run the MySQL commands from R so first I’ll establish a connection to the database through R. You can run the MySQL commands in either the MysQL Workbench or the MySQL Command Line.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(DBI)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>con <span class="ot">&lt;-</span> <span class="fu">dbConnect</span>(odbc<span class="sc">::</span><span class="fu">odbc</span>(), <span class="at">.connection_string =</span> <span class="st">&quot;Driver={MySQL ODBC 8.0 Unicode Driver};&quot;</span>, </span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">server =</span> <span class="st">&quot;localhost&quot;</span>, <span class="at">db =</span> <span class="st">&quot;bikeometers_db&quot;</span>, <span class="at">user =</span> <span class="st">&quot;newuser&quot;</span>, </span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">password =</span> rstudioapi<span class="sc">::</span><span class="fu">askForPassword</span>(<span class="st">&quot;Database password&quot;</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> bikeometer_details</span></code></pre></div>
+<div class="knitsql-table">
+<table>
+<caption>Displaying records 1 - 10</caption>
+<thead>
+<tr class="header">
+<th align="right">bikeometer_id</th>
+<th align="left">name</th>
+<th align="left">latitude</th>
+<th align="left">longitude</th>
+<th align="left">region</th>
+<th align="left">region_id</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">33</td>
+<td align="left">110 Trail</td>
+<td align="left">38.885315</td>
+<td align="left">-77.065022</td>
+<td align="left">Arlington</td>
+<td align="left">1</td>
+</tr>
+<tr class="even">
+<td align="right">30</td>
+<td align="left">14th Street Bridge</td>
+<td align="left">38.874260</td>
+<td align="left">-77.044610</td>
+<td align="left">Arlington</td>
+<td align="left">1</td>
+</tr>
+<tr class="odd">
+<td align="right">43</td>
+<td align="left">15th Street NW</td>
+<td align="left">38.907470</td>
+<td align="left">-77.034610</td>
+<td align="left">DC</td>
+<td align="left">3</td>
+</tr>
+<tr class="even">
+<td align="right">24</td>
+<td align="left">Ballston Connector</td>
+<td align="left">38.882950</td>
+<td align="left">-77.121235</td>
+<td align="left">Arlington</td>
+<td align="left">1</td>
+</tr>
+<tr class="odd">
+<td align="right">59</td>
+<td align="left">Bluemont Connector</td>
+<td align="left">38.880440</td>
+<td align="left">-77.119290</td>
+<td align="left">Arlington</td>
+<td align="left">1</td>
+</tr>
+<tr class="even">
+<td align="right">56</td>
+<td align="left">BWP Counter</td>
+<td align="left">38.933140</td>
+<td align="left">-76.938320</td>
+<td align="left">Prince George’s County</td>
+<td align="left">5</td>
+</tr>
+<tr class="odd">
+<td align="right">47</td>
+<td align="left">Capital Crescent Trail #1</td>
+<td align="left">38.979500</td>
+<td align="left">-77.096760</td>
+<td align="left">Montgomery County</td>
+<td align="left">4</td>
+</tr>
+<tr class="even">
+<td align="right">48</td>
+<td align="left">Capital Crescent Trail #2</td>
+<td align="left">38.943070</td>
+<td align="left">-77.115660</td>
+<td align="left">Montgomery County</td>
+<td align="left">4</td>
+</tr>
+<tr class="odd">
+<td align="right">10</td>
+<td align="left">CC Connector</td>
+<td align="left">38.857702</td>
+<td align="left">-77.047373</td>
+<td align="left">Arlington</td>
+<td align="left">1</td>
+</tr>
+<tr class="even">
+<td align="right">20</td>
+<td align="left">Clarendon EB bike lane</td>
+<td align="left">38.888780</td>
+<td align="left">-77.090421</td>
+<td align="left">Arlington</td>
+<td align="left">1</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Now that we have our bikeometer_details table in our database, we won’t need to run this code again unless a new Bikeometer is added.</p>
+<p>Next, we will request the daily bike counts for every day since a counter was installed and save it in our database.</p>
+</div>
+</div>
+<div id="step-2-migrating-bike-counts" class="section level1">
+<h1>Step 2: Migrating Bike Counts</h1>
+<p>Again, we will build on the code from <a href="https://nathansprojects.com/part_2_query_the_api.html">Part 2</a>.</p>
+<div id="find-the-oldest-bikeometer" class="section level2">
+<h2>Find the oldest Bikeometer</h2>
+<p>In <a href="https://nathansprojects.com/part_2_query_the_api.html">Part 2</a>, we created a function called <strong>api_counts_to_list</strong> which pulled the bicycle counts using an arbitrary hard-coded start date, end date, and a single Bikeometer. However, now we need to pull the data for <strong>all</strong> Bikeometers and <strong>all</strong> avaiable dates.</p>
+<p>To make our life easier, let’s select the oldest Bikeometer and use it’s start date as our <em>start date</em> for all Bikeometers. Our function is written so that if there is no data for a requested date, our function just skips those dates and moves on without error.</p>
+<p>We will call the built-in Bike Arlington API method: ‘getMinDates’ on all the Bikeometer IDs in the below <em>bikeometer_id_list</em>.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>bikeometer_id_list <span class="op">=</span> [<span class="st">&#39;33&#39;</span>,<span class="st">&#39;30&#39;</span>,<span class="st">&#39;43&#39;</span>,<span class="st">&#39;24&#39;</span>,<span class="st">&#39;59&#39;</span>,<span class="st">&#39;56&#39;</span>,<span class="st">&#39;47&#39;</span>,<span class="st">&#39;48&#39;</span>,<span class="st">&#39;10&#39;</span>,<span class="st">&#39;20&#39;</span>,</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>                           <span class="st">&#39;35&#39;</span>,<span class="st">&#39;57&#39;</span>,<span class="st">&#39;18&#39;</span>,<span class="st">&#39;3&#39;</span>,<span class="st">&#39;58&#39;</span>,<span class="st">&#39;61&#39;</span>,<span class="st">&#39;62&#39;</span>,<span class="st">&#39;38&#39;</span>,<span class="st">&#39;44&#39;</span>,<span class="st">&#39;14&#39;</span>,</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>                           <span class="st">&#39;60&#39;</span>,<span class="st">&#39;5&#39;</span>,<span class="st">&#39;42&#39;</span>,<span class="st">&#39;37&#39;</span>,<span class="st">&#39;27&#39;</span>,<span class="st">&#39;26&#39;</span>,<span class="st">&#39;8&#39;</span>,<span class="st">&#39;7&#39;</span>,<span class="st">&#39;51&#39;</span>,</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>                           <span class="st">&#39;45&#39;</span>,<span class="st">&#39;22&#39;</span>,<span class="st">&#39;21&#39;</span>,<span class="st">&#39;36&#39;</span>,<span class="st">&#39;34&#39;</span>,<span class="st">&#39;41&#39;</span>,<span class="st">&#39;9&#39;</span>,<span class="st">&#39;39&#39;</span>,<span class="st">&#39;16&#39;</span>,<span class="st">&#39;15&#39;</span>,</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>                           <span class="st">&#39;54&#39;</span>,<span class="st">&#39;55&#39;</span>,<span class="st">&#39;31&#39;</span>,<span class="st">&#39;28&#39;</span>,<span class="st">&#39;11&#39;</span>,<span class="st">&#39;2&#39;</span>,<span class="st">&#39;25&#39;</span>,<span class="st">&#39;19&#39;</span>]</span></code></pre></div>
+<p>Now, we will create a simple <em>for loop</em> to call the <em>getMinDates</em> method on all the Bikeometers.</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Assign the url of the </span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>url <span class="op">=</span> <span class="st">&#39;http://webservices.commuterpage.com/counters.cfc?wsdl&#39;</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Defines the method in a dictionary used to make the request</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> bikeometer_id <span class="kw">in</span> bikeometer_id_list: </span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  counter_reqest_methods <span class="op">=</span> {<span class="st">&#39;method&#39;</span>: <span class="st">&#39;getMinDates&#39;</span>, <span class="st">&#39;counterID&#39;</span>: bikeometer_id}</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Save the GetAllCounters request to memory</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>  response <span class="op">=</span> requests.get(url, params<span class="op">=</span>counter_reqest_methods)</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>  response.text</span></code></pre></div>
+<pre><code>## &quot;&lt;wddxPacket version=&#39;1.0&#39;&gt;&lt;header/&gt;&lt;data&gt;&lt;struct&gt;&lt;var name=&#39;STARTDATE&#39;&gt;&lt;string&gt;07/22/2015&lt;/string&gt;&lt;/var&gt;&lt;/struct&gt;&lt;/data&gt;&lt;/wddxPacket&gt;&quot;
+## &quot;&lt;wddxPacket version=&#39;1.0&#39;&gt;&lt;header/&gt;&lt;data&gt;&lt;struct&gt;&lt;var name=&#39;STARTDATE&#39;&gt;&lt;string&gt;11/10/2013&lt;/string&gt;&lt;/var&gt;&lt;/struct&gt;&lt;/data&gt;&lt;/wddxPacket&gt;&quot;
+## &quot;&lt;wddxPacket version=&#39;1.0&#39;&gt;&lt;header/&gt;&lt;data&gt;&lt;struct&gt;&lt;var name=&#39;STARTDATE&#39;&gt;&lt;string&gt;10/22/2014&lt;/string&gt;&lt;/var&gt;&lt;/struct&gt;&lt;/data&gt;&lt;/wddxPacket&gt;&quot;
+## &quot;&lt;wddxPacket version=&#39;1.0&#39;&gt;&lt;header/&gt;&lt;data&gt;&lt;struct&gt;&lt;var name=&#39;STARTDATE&#39;&gt;&lt;string&gt;12/06/2012&lt;/string&gt;&lt;/var&gt;&lt;/struct&gt;&lt;/data&gt;&lt;/wddxPacket&gt;&quot;
+## &quot;&lt;wddxPacket version=&#39;1.0&#39;&gt;&lt;header/&gt;&lt;data&gt;&lt;struct&gt;&lt;var name=&#39;STARTDATE&#39;&gt;&lt;string&gt;01/01/2019&lt;/string&gt;&lt;/var&gt;&lt;/struct&gt;&lt;/data&gt;&lt;/wddxPacket&gt;&quot;
+## &quot;&lt;wddxPacket version=&#39;1.0&#39;&gt;&lt;header/&gt;&lt;data&gt;&lt;struct&gt;&lt;var name=&#39;STARTDATE&#39;&gt;&lt;string&gt;03/19/2017&lt;/string&gt;&lt;/var&gt;&lt;/struct&gt;&lt;/data&gt;&lt;/wddxPacket&gt;&quot;
+## &quot;&lt;wddxPacket version=&#39;1.0&#39;&gt;&lt;header/&gt;&lt;data&gt;&lt;struct&gt;&lt;var name=&#39;STARTDATE&#39;&gt;&lt;string&gt;04/25/2016&lt;/string&gt;&lt;/var&gt;&lt;/struct&gt;&lt;/data&gt;&lt;/wddxPacket&gt;&quot;
+## &quot;&lt;wddxPacket version=&#39;1.0&#39;&gt;&lt;header/&gt;&lt;data&gt;&lt;struct&gt;&lt;var name=&#39;STARTDATE&#39;&gt;&lt;string&gt;04/25/2016&lt;/string&gt;&lt;/var&gt;&lt;/struct&gt;&lt;/data&gt;&lt;/wddxPacket&gt;&quot;
+## &quot;&lt;wddxPacket version=&#39;1.0&#39;&gt;&lt;header/&gt;&lt;data&gt;&lt;struct&gt;&lt;var name=&#39;STARTDATE&#39;&gt;&lt;string&gt;09/02/2011&lt;/string&gt;&lt;/var&gt;&lt;/struct&gt;&lt;/data&gt;&lt;/wddxPacket&gt;&quot;
+## &quot;&lt;wddxPacket version=&#39;1.0&#39;&gt;&lt;header/&gt;&lt;data&gt;&lt;struct&gt;&lt;var name=&#39;STARTDATE&#39;&gt;&lt;string&gt;11/27/2012&lt;/string&gt;&lt;/var&gt;&lt;/struct&gt;&lt;/data&gt;&lt;/wddxPacket&gt;&quot;
+## &quot;&lt;wddxPacket version=&#39;1.0&#39;&gt;&lt;header/&gt;&lt;data&gt;&lt;struct&gt;&lt;var name=&#39;STARTDATE&#39;&gt;&lt;string&gt;10/11/2015&lt;/string&gt;&lt;/var&gt;&lt;/struct&gt;&lt;/data&gt;&lt;/wddxPacket&gt;&quot;
+## &quot;&lt;wddxPacket version=&#39;1.0&#39;&gt;&lt;header/&gt;&lt;data&gt;&lt;struct&gt;&lt;var name=&#39;STARTDATE&#39;&gt;&lt;string&gt;07/05/2017&lt;/string&gt;&lt;/var&gt;&lt;/struct&gt;&lt;/data&gt;&lt;/wddxPacket&gt;&quot;
+## &quot;&lt;wddxPacket version=&#39;1.0&#39;&gt;&lt;header/&gt;&lt;data&gt;&lt;struct&gt;&lt;var name=&#39;STARTDATE&#39;&gt;&lt;string&gt;11/28/2012&lt;/string&gt;&lt;/var&gt;&lt;/struct&gt;&lt;/data&gt;&lt;/wddxPacket&gt;&quot;
+## &quot;&lt;wddxPacket version=&#39;1.0&#39;&gt;&lt;header/&gt;&lt;data&gt;&lt;struct&gt;&lt;var name=&#39;STARTDATE&#39;&gt;&lt;string&gt;12/08/2010&lt;/string&gt;&lt;/var&gt;&lt;/struct&gt;&lt;/data&gt;&lt;/wddxPacket&gt;&quot;
+## &quot;&lt;wddxPacket version=&#39;1.0&#39;&gt;&lt;header/&gt;&lt;data&gt;&lt;struct&gt;&lt;var name=&#39;STARTDATE&#39;&gt;&lt;string&gt;04/16/2020&lt;/string&gt;&lt;/var&gt;&lt;/struct&gt;&lt;/data&gt;&lt;/wddxPacket&gt;&quot;
+## &quot;&lt;wddxPacket version=&#39;1.0&#39;&gt;&lt;header/&gt;&lt;data&gt;&lt;struct&gt;&lt;var name=&#39;STARTDATE&#39;&gt;&lt;string&gt;01/01/2019&lt;/string&gt;&lt;/var&gt;&lt;/struct&gt;&lt;/data&gt;&lt;/wddxPacket&gt;&quot;
+## &quot;&lt;wddxPacket version=&#39;1.0&#39;&gt;&lt;header/&gt;&lt;data&gt;&lt;struct&gt;&lt;var name=&#39;STARTDATE&#39;&gt;&lt;string&gt;01/01/2019&lt;/string&gt;&lt;/var&gt;&lt;/struct&gt;&lt;/data&gt;&lt;/wddxPacket&gt;&quot;
+## &quot;&lt;wddxPacket version=&#39;1.0&#39;&gt;&lt;header/&gt;&lt;data&gt;&lt;struct&gt;&lt;var name=&#39;STARTDATE&#39;&gt;&lt;string&gt;11/18/2015&lt;/string&gt;&lt;/var&gt;&lt;/struct&gt;&lt;/data&gt;&lt;/wddxPacket&gt;&quot;
+## &quot;&lt;wddxPacket version=&#39;1.0&#39;&gt;&lt;header/&gt;&lt;data&gt;&lt;struct&gt;&lt;var name=&#39;STARTDATE&#39;&gt;&lt;string&gt;10/22/2014&lt;/string&gt;&lt;/var&gt;&lt;/struct&gt;&lt;/data&gt;&lt;/wddxPacket&gt;&quot;
+## &quot;&lt;wddxPacket version=&#39;1.0&#39;&gt;&lt;header/&gt;&lt;data&gt;&lt;struct&gt;&lt;var name=&#39;STARTDATE&#39;&gt;&lt;string&gt;12/04/2012&lt;/string&gt;&lt;/var&gt;&lt;/struct&gt;&lt;/data&gt;&lt;/wddxPacket&gt;&quot;
+## &quot;&lt;wddxPacket version=&#39;1.0&#39;&gt;&lt;header/&gt;&lt;data&gt;&lt;struct&gt;&lt;var name=&#39;STARTDATE&#39;&gt;&lt;string&gt;01/01/2019&lt;/string&gt;&lt;/var&gt;&lt;/struct&gt;&lt;/data&gt;&lt;/wddxPacket&gt;&quot;
+## &quot;&lt;wddxPacket version=&#39;1.0&#39;&gt;&lt;header/&gt;&lt;data&gt;&lt;struct&gt;&lt;var name=&#39;STARTDATE&#39;&gt;&lt;string&gt;04/01/2010&lt;/string&gt;&lt;/var&gt;&lt;/struct&gt;&lt;/data&gt;&lt;/wddxPacket&gt;&quot;
+## &quot;&lt;wddxPacket version=&#39;1.0&#39;&gt;&lt;header/&gt;&lt;data&gt;&lt;struct&gt;&lt;var name=&#39;STARTDATE&#39;&gt;&lt;string&gt;03/30/2016&lt;/string&gt;&lt;/var&gt;&lt;/struct&gt;&lt;/data&gt;&lt;/wddxPacket&gt;&quot;
+## &quot;&lt;wddxPacket version=&#39;1.0&#39;&gt;&lt;header/&gt;&lt;data&gt;&lt;struct&gt;&lt;var name=&#39;STARTDATE&#39;&gt;&lt;string&gt;11/18/2015&lt;/string&gt;&lt;/var&gt;&lt;/struct&gt;&lt;/data&gt;&lt;/wddxPacket&gt;&quot;
+## &quot;&lt;wddxPacket version=&#39;1.0&#39;&gt;&lt;header/&gt;&lt;data&gt;&lt;struct&gt;&lt;var name=&#39;STARTDATE&#39;&gt;&lt;string&gt;10/17/2013&lt;/string&gt;&lt;/var&gt;&lt;/struct&gt;&lt;/data&gt;&lt;/wddxPacket&gt;&quot;
+## &quot;&lt;wddxPacket version=&#39;1.0&#39;&gt;&lt;header/&gt;&lt;data&gt;&lt;struct&gt;&lt;var name=&#39;STARTDATE&#39;&gt;&lt;string&gt;06/19/2013&lt;/string&gt;&lt;/var&gt;&lt;/struct&gt;&lt;/data&gt;&lt;/wddxPacket&gt;&quot;
+## &quot;&lt;wddxPacket version=&#39;1.0&#39;&gt;&lt;header/&gt;&lt;data&gt;&lt;struct&gt;&lt;var name=&#39;STARTDATE&#39;&gt;&lt;string&gt;08/12/2011&lt;/string&gt;&lt;/var&gt;&lt;/struct&gt;&lt;/data&gt;&lt;/wddxPacket&gt;&quot;
+## &quot;&lt;wddxPacket version=&#39;1.0&#39;&gt;&lt;header/&gt;&lt;data&gt;&lt;struct&gt;&lt;var name=&#39;STARTDATE&#39;&gt;&lt;string&gt;08/11/2011&lt;/string&gt;&lt;/var&gt;&lt;/struct&gt;&lt;/data&gt;&lt;/wddxPacket&gt;&quot;
+## &quot;&lt;wddxPacket version=&#39;1.0&#39;&gt;&lt;header/&gt;&lt;data&gt;&lt;struct&gt;&lt;var name=&#39;STARTDATE&#39;&gt;&lt;string&gt;06/03/2017&lt;/string&gt;&lt;/var&gt;&lt;/struct&gt;&lt;/data&gt;&lt;/wddxPacket&gt;&quot;
+## &quot;&lt;wddxPacket version=&#39;1.0&#39;&gt;&lt;header/&gt;&lt;data&gt;&lt;struct&gt;&lt;var name=&#39;STARTDATE&#39;&gt;&lt;string&gt;10/22/2014&lt;/string&gt;&lt;/var&gt;&lt;/struct&gt;&lt;/data&gt;&lt;/wddxPacket&gt;&quot;
+## &quot;&lt;wddxPacket version=&#39;1.0&#39;&gt;&lt;header/&gt;&lt;data&gt;&lt;struct&gt;&lt;var name=&#39;STARTDATE&#39;&gt;&lt;string&gt;11/21/2012&lt;/string&gt;&lt;/var&gt;&lt;/struct&gt;&lt;/data&gt;&lt;/wddxPacket&gt;&quot;
+## &quot;&lt;wddxPacket version=&#39;1.0&#39;&gt;&lt;header/&gt;&lt;data&gt;&lt;struct&gt;&lt;var name=&#39;STARTDATE&#39;&gt;&lt;string&gt;03/31/2013&lt;/string&gt;&lt;/var&gt;&lt;/struct&gt;&lt;/data&gt;&lt;/wddxPacket&gt;&quot;
+## &quot;&lt;wddxPacket version=&#39;1.0&#39;&gt;&lt;header/&gt;&lt;data&gt;&lt;struct&gt;&lt;var name=&#39;STARTDATE&#39;&gt;&lt;string&gt;12/04/2015&lt;/string&gt;&lt;/var&gt;&lt;/struct&gt;&lt;/data&gt;&lt;/wddxPacket&gt;&quot;
+## &quot;&lt;wddxPacket version=&#39;1.0&#39;&gt;&lt;header/&gt;&lt;data&gt;&lt;struct&gt;&lt;var name=&#39;STARTDATE&#39;&gt;&lt;string&gt;05/15/2015&lt;/string&gt;&lt;/var&gt;&lt;/struct&gt;&lt;/data&gt;&lt;/wddxPacket&gt;&quot;
+## &quot;&lt;wddxPacket version=&#39;1.0&#39;&gt;&lt;header/&gt;&lt;data&gt;&lt;struct&gt;&lt;var name=&#39;STARTDATE&#39;&gt;&lt;string&gt;12/04/2015&lt;/string&gt;&lt;/var&gt;&lt;/struct&gt;&lt;/data&gt;&lt;/wddxPacket&gt;&quot;
+## &quot;&lt;wddxPacket version=&#39;1.0&#39;&gt;&lt;header/&gt;&lt;data&gt;&lt;struct&gt;&lt;var name=&#39;STARTDATE&#39;&gt;&lt;string&gt;09/01/2011&lt;/string&gt;&lt;/var&gt;&lt;/struct&gt;&lt;/data&gt;&lt;/wddxPacket&gt;&quot;
+## &quot;&lt;wddxPacket version=&#39;1.0&#39;&gt;&lt;header/&gt;&lt;data&gt;&lt;struct&gt;&lt;var name=&#39;STARTDATE&#39;&gt;&lt;string&gt;12/04/2015&lt;/string&gt;&lt;/var&gt;&lt;/struct&gt;&lt;/data&gt;&lt;/wddxPacket&gt;&quot;
+## &quot;&lt;wddxPacket version=&#39;1.0&#39;&gt;&lt;header/&gt;&lt;data&gt;&lt;struct&gt;&lt;var name=&#39;STARTDATE&#39;&gt;&lt;string&gt;12/01/2012&lt;/string&gt;&lt;/var&gt;&lt;/struct&gt;&lt;/data&gt;&lt;/wddxPacket&gt;&quot;
+## &quot;&lt;wddxPacket version=&#39;1.0&#39;&gt;&lt;header/&gt;&lt;data&gt;&lt;struct&gt;&lt;var name=&#39;STARTDATE&#39;&gt;&lt;string&gt;11/21/2012&lt;/string&gt;&lt;/var&gt;&lt;/struct&gt;&lt;/data&gt;&lt;/wddxPacket&gt;&quot;
+## &quot;&lt;wddxPacket version=&#39;1.0&#39;&gt;&lt;header/&gt;&lt;data&gt;&lt;struct&gt;&lt;var name=&#39;STARTDATE&#39;&gt;&lt;string&gt;06/03/2017&lt;/string&gt;&lt;/var&gt;&lt;/struct&gt;&lt;/data&gt;&lt;/wddxPacket&gt;&quot;
+## &quot;&lt;wddxPacket version=&#39;1.0&#39;&gt;&lt;header/&gt;&lt;data&gt;&lt;struct&gt;&lt;var name=&#39;STARTDATE&#39;&gt;&lt;string&gt;06/03/2017&lt;/string&gt;&lt;/var&gt;&lt;/struct&gt;&lt;/data&gt;&lt;/wddxPacket&gt;&quot;
+## &quot;&lt;wddxPacket version=&#39;1.0&#39;&gt;&lt;header/&gt;&lt;data&gt;&lt;struct&gt;&lt;var name=&#39;STARTDATE&#39;&gt;&lt;string&gt;11/10/2013&lt;/string&gt;&lt;/var&gt;&lt;/struct&gt;&lt;/data&gt;&lt;/wddxPacket&gt;&quot;
+## &quot;&lt;wddxPacket version=&#39;1.0&#39;&gt;&lt;header/&gt;&lt;data&gt;&lt;struct&gt;&lt;var name=&#39;STARTDATE&#39;&gt;&lt;string&gt;04/01/2014&lt;/string&gt;&lt;/var&gt;&lt;/struct&gt;&lt;/data&gt;&lt;/wddxPacket&gt;&quot;
+## &quot;&lt;wddxPacket version=&#39;1.0&#39;&gt;&lt;header/&gt;&lt;data&gt;&lt;struct&gt;&lt;var name=&#39;STARTDATE&#39;&gt;&lt;string&gt;10/14/2011&lt;/string&gt;&lt;/var&gt;&lt;/struct&gt;&lt;/data&gt;&lt;/wddxPacket&gt;&quot;
+## &quot;&lt;wddxPacket version=&#39;1.0&#39;&gt;&lt;header/&gt;&lt;data&gt;&lt;struct&gt;&lt;var name=&#39;STARTDATE&#39;&gt;&lt;string&gt;02/01/2011&lt;/string&gt;&lt;/var&gt;&lt;/struct&gt;&lt;/data&gt;&lt;/wddxPacket&gt;&quot;
+## &quot;&lt;wddxPacket version=&#39;1.0&#39;&gt;&lt;header/&gt;&lt;data&gt;&lt;struct&gt;&lt;var name=&#39;STARTDATE&#39;&gt;&lt;string&gt;12/10/2012&lt;/string&gt;&lt;/var&gt;&lt;/struct&gt;&lt;/data&gt;&lt;/wddxPacket&gt;&quot;
+## &quot;&lt;wddxPacket version=&#39;1.0&#39;&gt;&lt;header/&gt;&lt;data&gt;&lt;struct&gt;&lt;var name=&#39;STARTDATE&#39;&gt;&lt;string&gt;11/21/2012&lt;/string&gt;&lt;/var&gt;&lt;/struct&gt;&lt;/data&gt;&lt;/wddxPacket&gt;&quot;</code></pre>
+<p>Skimming through the returned responses, we can see that the first date was 4/1/2010. This will be our first <em>start date</em> in our function.</p>
+</div>
+<div id="create-helper-functions" class="section level2">
+<h2>Create helper functions</h2>
+<p>Ultimately, we will have two functions when we are finished: one that pulls all the dates starting from 4/1/2010 (<strong>all_counts_by_date_to_sql</strong>) and one that pulls only the new dates.(<strong>new_counts_by_date_to_sql</strong>)</p>
+<p>To help us out, we will create a <strong>helper function</strong> based on the <strong>api_counts_to_list</strong> function we made in <a href="https://nathansprojects.com/part_2_query_the_api.html">Part 2</a>.</p>
+<p>The goal is to have the main functions <strong>all_counts_by_date_to_sql</strong> and <strong>new_counts_by_date_to_sql</strong> pass in the <em>bikeometer_id</em>, <em>start date</em> and <em>end date</em> to our helper function <strong>api_counts_to_list</strong>. If you have no data in your database, you would call the <strong>all_counts_by_date_to_sql</strong> function to make requests starting on 4/1/2010. If you already have data in your MySQL database, the <strong>new_counts_by_date_to_sql</strong> function will query your database and only request data for dates not in your database.</p>
+<p>Note: As I write this up, I’m realizing you could write one function that would query your MySQL database and depending upon the response, it could call the appropriate function using an <em>if/else</em> statement, but, as they say, that’s not MVP.</p>
+<p>Here is the <em>helper function</em> that will request data from the Bike Arlington API using the ‘GetCountInDateRange’ method. This function was modified from <a href="https://nathansprojects.com/part_2_query_the_api.html">Part 2</a> to accept arguments for a bikeometer_id, start_date, end_date, and count_in_date_range_list (a list to hold all the count data). We will hard-code the mode=‘B’ to request <em>bike</em> data not <em>pedestrian</em>, interval=‘d’ to request counts by <em>day</em>, start_time and end_time to get data for the entire day, and direction=’’ to pull both the <em>inbound</em> and <em>outbound</em> directions that the Bikeometers can sense.</p>
+<p>Note: The Bike Arlington documentation does not mention this, but some Bikeometers can’t distinguish between <em>inbound</em> or <em>outbound</em> and their counts instead use the label ‘A’. By leaving the <em>direction</em> field blank, our function will include all ‘A’ directions too.</p>
+<p>We will be using a few functions from the <em>datetime</em> module so we start by importing them.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> datetime <span class="im">import</span> date, datetime, timedelta</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> api_counts_to_list(bikeometer_id, </span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>                               start_date,</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>                               end_date, </span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>                               count_in_date_range_list,</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>                               mode<span class="op">=</span><span class="st">&#39;B&#39;</span>, </span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>                               interval<span class="op">=</span><span class="st">&#39;d&#39;</span>, </span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>                               start_time<span class="op">=</span><span class="st">&#39;0:00&#39;</span>, </span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>                               end_time<span class="op">=</span> <span class="st">&#39;23:59&#39;</span>, </span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>                               direction<span class="op">=</span><span class="st">&#39;&#39;</span>) <span class="op">-&gt;</span> <span class="bu">list</span>:</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>    request_parameters <span class="op">=</span> {<span class="st">&#39;method&#39;</span>: <span class="st">&#39;GetCountInDateRange&#39;</span>,</span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>            <span class="st">&#39;counterID&#39;</span>: <span class="bu">str</span>(bikeometer_id),</span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>            <span class="st">&#39;startDate&#39;</span>: start_date,</span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>            <span class="st">&#39;endDate&#39;</span>: end_date,</span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>            <span class="st">&#39;mode&#39;</span>: <span class="bu">str</span>(mode),</span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>            <span class="st">&#39;interval&#39;</span>: <span class="bu">str</span>(interval),</span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>            <span class="st">&#39;direction&#39;</span>: direction}</span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>    response <span class="op">=</span> requests.get(url, params<span class="op">=</span>request_parameters)</span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>        <span class="co">#TODO: Add except for non-200 response</span></span>
+<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Convert response to a string</span></span>
+<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a>    xml_data <span class="op">=</span> response.text</span>
+<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Clean the data</span></span>
+<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a>    clean_xml_data <span class="op">=</span> re.sub(<span class="vs">r&#39;[\n|\t]&#39;</span>, <span class="st">&#39;&#39;</span>, xml_data)</span>
+<span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Cast the string to an XML element</span></span>
+<span id="cb11-26"><a href="#cb11-26" aria-hidden="true" tabindex="-1"></a>    tree <span class="op">=</span> ET.fromstring(clean_xml_data)</span>
+<span id="cb11-27"><a href="#cb11-27" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Create the empty dictionary to put the data in</span></span>
+<span id="cb11-28"><a href="#cb11-28" aria-hidden="true" tabindex="-1"></a>    <span class="co">#CountInDateRangeDict = {}</span></span>
+<span id="cb11-29"><a href="#cb11-29" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Parse the GetCountInDateRange XML file for the count and date and save CountInDateRangeDict</span></span>
+<span id="cb11-30"><a href="#cb11-30" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> type_tag <span class="kw">in</span> tree.findall(<span class="st">&#39;count&#39;</span>):</span>
+<span id="cb11-31"><a href="#cb11-31" aria-hidden="true" tabindex="-1"></a>        count <span class="op">=</span> type_tag.get(<span class="st">&#39;count&#39;</span>)</span>
+<span id="cb11-32"><a href="#cb11-32" aria-hidden="true" tabindex="-1"></a>        date <span class="op">=</span> type_tag.get(<span class="st">&#39;date&#39;</span>)</span>
+<span id="cb11-33"><a href="#cb11-33" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Converts counter date to a date object</span></span>
+<span id="cb11-34"><a href="#cb11-34" aria-hidden="true" tabindex="-1"></a>        date <span class="op">=</span> datetime.strptime(date, <span class="st">&#39;%m/</span><span class="sc">%d</span><span class="st">/%Y&#39;</span>).date()</span>
+<span id="cb11-35"><a href="#cb11-35" aria-hidden="true" tabindex="-1"></a>        year <span class="op">=</span> date.year</span>
+<span id="cb11-36"><a href="#cb11-36" aria-hidden="true" tabindex="-1"></a>        month <span class="op">=</span> date.month</span>
+<span id="cb11-37"><a href="#cb11-37" aria-hidden="true" tabindex="-1"></a>        day <span class="op">=</span> date.day</span>
+<span id="cb11-38"><a href="#cb11-38" aria-hidden="true" tabindex="-1"></a>        month_day <span class="op">=</span> <span class="ss">f&#39;</span><span class="sc">{</span>month<span class="sc">}</span><span class="ss">_</span><span class="sc">{</span>day<span class="sc">}</span><span class="ss">&#39;</span></span>
+<span id="cb11-39"><a href="#cb11-39" aria-hidden="true" tabindex="-1"></a>        direction <span class="op">=</span> type_tag.get(<span class="st">&#39;direction&#39;</span>)</span>
+<span id="cb11-40"><a href="#cb11-40" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> date.weekday() <span class="op">&lt;=</span> <span class="dv">4</span>:</span>
+<span id="cb11-41"><a href="#cb11-41" aria-hidden="true" tabindex="-1"></a>            is_weekend <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb11-42"><a href="#cb11-42" aria-hidden="true" tabindex="-1"></a>        <span class="cf">else</span>:</span>
+<span id="cb11-43"><a href="#cb11-43" aria-hidden="true" tabindex="-1"></a>            is_weekend <span class="op">=</span> <span class="dv">1</span></span>
+<span id="cb11-44"><a href="#cb11-44" aria-hidden="true" tabindex="-1"></a>        single_tuple <span class="op">=</span> (bikeometer_id, date, direction, count, is_weekend, year, month, day, month_day)</span>
+<span id="cb11-45"><a href="#cb11-45" aria-hidden="true" tabindex="-1"></a>        count_in_date_range_list.append(single_tuple)</span>
+<span id="cb11-46"><a href="#cb11-46" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> count_in_date_range_list</span></code></pre></div>
+</div>
+<div id="create-all_counts_by_date_to_sql-function" class="section level2">
+<h2>Create all_counts_by_date_to_sql function</h2>
+<p>Now that we have our helper function complete, let’s create the <strong>all_counts_by_date_to_sql</strong> which will pull all the data starting on 4/1/2010.</p>
+<p>When designing our function, it’s important to remember that the Bike Arlington API will only allow requests of 1 year or less. There are many ways to get the data into your database. I choose to pull all the necessary data before saving it all in my database in one chunk. You may choose to incrementally pull and save the data 1 year at a time. Both ways have their pros and cons and it’s up to you to decide and justify your decision.</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> all_counts_by_date_to_sql():</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Creates the parameters to drive the connection</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    engine <span class="op">=</span> create_new_engine(<span class="st">&#39;bikeometers_db&#39;</span>)</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Tests the connection and throws an error if not established</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    engine.<span class="ex">connect</span>()</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Bike Arlington API only accepts query ranges of 1 year or less</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    start_date <span class="op">=</span> date(year<span class="op">=</span><span class="dv">2010</span>, month<span class="op">=</span><span class="dv">4</span>, day<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>    end_date <span class="op">=</span> date(year<span class="op">=</span><span class="dv">2011</span>, month<span class="op">=</span><span class="dv">4</span>, day<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Create a list to hold count data</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>    count_in_date_range_list <span class="op">=</span> []</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>    <span class="co"># We will pull data up to yesterday&#39;s date</span></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">while</span> end_date <span class="op">&lt;=</span> date.today() <span class="op">-</span> timedelta(days<span class="op">=</span><span class="dv">1</span>):  </span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Hard-coded the bikeometer_id list to not stress the server making unnecessary requests </span></span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>        bikeometer_id_list <span class="op">=</span> [<span class="st">&#39;33&#39;</span>,<span class="st">&#39;30&#39;</span>,<span class="st">&#39;43&#39;</span>,<span class="st">&#39;24&#39;</span>,<span class="st">&#39;59&#39;</span>,<span class="st">&#39;56&#39;</span>,<span class="st">&#39;47&#39;</span>,<span class="st">&#39;48&#39;</span>,<span class="st">&#39;10&#39;</span>,<span class="st">&#39;20&#39;</span>,</span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>                           <span class="st">&#39;35&#39;</span>,<span class="st">&#39;57&#39;</span>,<span class="st">&#39;18&#39;</span>,<span class="st">&#39;3&#39;</span>,<span class="st">&#39;58&#39;</span>,<span class="st">&#39;61&#39;</span>,<span class="st">&#39;62&#39;</span>,<span class="st">&#39;38&#39;</span>,<span class="st">&#39;44&#39;</span>,<span class="st">&#39;14&#39;</span>,</span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>                           <span class="st">&#39;60&#39;</span>,<span class="st">&#39;5&#39;</span>,<span class="st">&#39;6&#39;</span>,<span class="st">&#39;42&#39;</span>,<span class="st">&#39;37&#39;</span>,<span class="st">&#39;27&#39;</span>,<span class="st">&#39;26&#39;</span>,<span class="st">&#39;8&#39;</span>,<span class="st">&#39;7&#39;</span>,<span class="st">&#39;51&#39;</span>,<span class="st">&#39;52&#39;</span>,</span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>                           <span class="st">&#39;45&#39;</span>,<span class="st">&#39;22&#39;</span>,<span class="st">&#39;21&#39;</span>,<span class="st">&#39;36&#39;</span>,<span class="st">&#39;34&#39;</span>,<span class="st">&#39;41&#39;</span>,<span class="st">&#39;9&#39;</span>,<span class="st">&#39;39&#39;</span>,<span class="st">&#39;16&#39;</span>,<span class="st">&#39;15&#39;</span>,</span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>                           <span class="st">&#39;54&#39;</span>,<span class="st">&#39;55&#39;</span>,<span class="st">&#39;31&#39;</span>,<span class="st">&#39;28&#39;</span>,<span class="st">&#39;11&#39;</span>,<span class="st">&#39;2&#39;</span>,<span class="st">&#39;25&#39;</span>,<span class="st">&#39;19&#39;</span>]</span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> bikeometer_id <span class="kw">in</span> bikeometer_id_list:</span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Dates YYYY-MM-DD format converted to MM-DD-YYY and made into a string to search Counter API</span></span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a>            clean_start_date <span class="op">=</span> <span class="ss">f&#39;</span><span class="sc">{</span>start_date<span class="sc">.</span>month<span class="sc">}</span><span class="ss">/</span><span class="sc">{</span>start_date<span class="sc">.</span>day<span class="sc">}</span><span class="ss">/</span><span class="sc">{</span>start_date<span class="sc">.</span>year<span class="sc">}</span><span class="ss">&#39;</span></span>
+<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a>            clean_end_date <span class="op">=</span> <span class="ss">f&#39;</span><span class="sc">{</span>end_date<span class="sc">.</span>month<span class="sc">}</span><span class="ss">/</span><span class="sc">{</span>end_date<span class="sc">.</span>day<span class="sc">}</span><span class="ss">/</span><span class="sc">{</span>end_date<span class="sc">.</span>year<span class="sc">}</span><span class="ss">&#39;</span></span>
+<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Calls the get_count_in_date_range function and passes in hard-coded</span></span>
+<span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a>            <span class="co"># parameters like the start_date, which is the first datapoint in</span></span>
+<span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Bike Arlington server. Optimally, these would not be hardcoded to  </span></span>
+<span id="cb12-26"><a href="#cb12-26" aria-hidden="true" tabindex="-1"></a>            <span class="co"># make the porgram more future-proof.</span></span>
+<span id="cb12-27"><a href="#cb12-27" aria-hidden="true" tabindex="-1"></a>            api_counts_to_list(bikeometer_id, clean_start_date, clean_end_date, count_in_date_range_list, interval<span class="op">=</span><span class="st">&#39;d&#39;</span>)</span>
+<span id="cb12-28"><a href="#cb12-28" aria-hidden="true" tabindex="-1"></a>        <span class="co"># If end date is yesterday&#39;s date, congratulations, you pulled all available dates</span></span>
+<span id="cb12-29"><a href="#cb12-29" aria-hidden="true" tabindex="-1"></a>        <span class="co"># We won&#39;t pull today&#39;s date in case the data has not been uploaded to their servers yet</span></span>
+<span id="cb12-30"><a href="#cb12-30" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> end_date <span class="op">==</span> date.today() <span class="op">-</span> timedelta(days<span class="op">=</span><span class="dv">1</span>):</span>
+<span id="cb12-31"><a href="#cb12-31" aria-hidden="true" tabindex="-1"></a>            <span class="cf">break</span>                </span>
+<span id="cb12-32"><a href="#cb12-32" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Adds a year to start date and end date</span></span>
+<span id="cb12-33"><a href="#cb12-33" aria-hidden="true" tabindex="-1"></a>        start_date <span class="op">=</span> start_date.replace(year <span class="op">=</span> start_date.year <span class="op">+</span> <span class="dv">1</span>)</span>
+<span id="cb12-34"><a href="#cb12-34" aria-hidden="true" tabindex="-1"></a>        end_date <span class="op">=</span> end_date.replace(year <span class="op">=</span> end_date.year <span class="op">+</span> <span class="dv">1</span>)</span>
+<span id="cb12-35"><a href="#cb12-35" aria-hidden="true" tabindex="-1"></a>        <span class="co"># If end date is after yesterday&#39;s date, set the end date to yesterday and pull the data one last time</span></span>
+<span id="cb12-36"><a href="#cb12-36" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> end_date <span class="op">&gt;=</span> date.today():</span>
+<span id="cb12-37"><a href="#cb12-37" aria-hidden="true" tabindex="-1"></a>            end_date <span class="op">=</span> date.today() <span class="op">-</span> timedelta(days<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb12-38"><a href="#cb12-38" aria-hidden="true" tabindex="-1"></a>    columns <span class="op">=</span> (<span class="st">&#39;bikeometer_id&#39;</span>, <span class="st">&#39;date&#39;</span>, <span class="st">&#39;direction&#39;</span>, <span class="st">&#39;count&#39;</span>, <span class="st">&#39;is_weekend&#39;</span>, <span class="st">&#39;year&#39;</span>, <span class="st">&#39;month&#39;</span>, <span class="st">&#39;day&#39;</span>, <span class="st">&#39;month_day&#39;</span>)</span>
+<span id="cb12-39"><a href="#cb12-39" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> pd.DataFrame(count_in_date_range_list, columns<span class="op">=</span>columns)</span>
+<span id="cb12-40"><a href="#cb12-40" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Makes bikeometer_id coulmn type int</span></span>
+<span id="cb12-41"><a href="#cb12-41" aria-hidden="true" tabindex="-1"></a>    df[[<span class="st">&quot;bikeometer_id&quot;</span>]] <span class="op">=</span> df[[<span class="st">&quot;bikeometer_id&quot;</span>]].astype(<span class="st">&#39;int&#39;</span>)</span>
+<span id="cb12-42"><a href="#cb12-42" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Replaces table counts, use if_exists=&#39;append&#39; to insert new values into the table</span></span>
+<span id="cb12-43"><a href="#cb12-43" aria-hidden="true" tabindex="-1"></a>    df.to_sql(<span class="st">&#39;counts_daily&#39;</span>, con<span class="op">=</span>engine, index<span class="op">=</span><span class="va">False</span>, if_exists<span class="op">=</span><span class="st">&#39;append&#39;</span>)</span>
+<span id="cb12-44"><a href="#cb12-44" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Queries your and returns a message to the user indicating the last day in their server</span></span>
+<span id="cb12-45"><a href="#cb12-45" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> engine.<span class="ex">connect</span>() <span class="im">as</span> con:</span>
+<span id="cb12-46"><a href="#cb12-46" aria-hidden="true" tabindex="-1"></a>        date_list <span class="op">=</span> con.execute(<span class="st">&#39;SELECT MAX(Date) FROM counts_daily&#39;</span>)</span>
+<span id="cb12-47"><a href="#cb12-47" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> day <span class="kw">in</span> date_list:</span>
+<span id="cb12-48"><a href="#cb12-48" aria-hidden="true" tabindex="-1"></a>            last_day <span class="op">=</span> day[<span class="dv">0</span>]</span>
+<span id="cb12-49"><a href="#cb12-49" aria-hidden="true" tabindex="-1"></a>            <span class="bu">print</span>(<span class="ss">f&#39;The newest date in counts_daily is </span><span class="sc">{</span>last_day<span class="sc">}</span><span class="ss">&#39;</span>)</span>
+<span id="cb12-50"><a href="#cb12-50" aria-hidden="true" tabindex="-1"></a>    engine.dispose()</span></code></pre></div>
+<p>If you look at the last bit of code in the above function, after the data is saved to my database I make a query to my database to return the most recent date. If the date returned is yesterday’s date, it’s a good sign that the data was uploaded successfully.</p>
+<p>Now that the function is defined, let’s run it.</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>all_counts_by_date_to_sql()</span></code></pre></div>
+<pre><code>## The newest date in counts_daily is 2021-05-11</code></pre>
+<p>Let’s take a look at our table!</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> counts_daily <span class="kw">GROUP</span> <span class="kw">BY</span> bikeometer_id <span class="kw">ORDER</span> <span class="kw">BY</span> bikeometer_id <span class="kw">asc</span>;</span></code></pre></div>
+<div class="knitsql-table">
+<table>
+<caption>Displaying records 1 - 10</caption>
+<thead>
+<tr class="header">
+<th align="right">bikeometer_id</th>
+<th align="left">date</th>
+<th align="left">direction</th>
+<th align="left">count</th>
+<th align="right">is_weekend</th>
+<th align="right">year</th>
+<th align="right">month</th>
+<th align="right">day</th>
+<th align="left">month_day</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">2</td>
+<td align="left">2011-02-01</td>
+<td align="left">I</td>
+<td align="left">6</td>
+<td align="right">0</td>
+<td align="right">2011</td>
+<td align="right">2</td>
+<td align="right">1</td>
+<td align="left">2_1</td>
+</tr>
+<tr class="even">
+<td align="right">3</td>
+<td align="left">2010-12-08</td>
+<td align="left">I</td>
+<td align="left">16</td>
+<td align="right">0</td>
+<td align="right">2010</td>
+<td align="right">12</td>
+<td align="right">8</td>
+<td align="left">12_8</td>
+</tr>
+<tr class="odd">
+<td align="right">5</td>
+<td align="left">2010-04-01</td>
+<td align="left">I</td>
+<td align="left">344</td>
+<td align="right">0</td>
+<td align="right">2010</td>
+<td align="right">4</td>
+<td align="right">1</td>
+<td align="left">4_1</td>
+</tr>
+<tr class="even">
+<td align="right">7</td>
+<td align="left">2011-08-11</td>
+<td align="left">I</td>
+<td align="left">527</td>
+<td align="right">0</td>
+<td align="right">2011</td>
+<td align="right">8</td>
+<td align="right">11</td>
+<td align="left">8_11</td>
+</tr>
+<tr class="odd">
+<td align="right">8</td>
+<td align="left">2011-08-12</td>
+<td align="left">I</td>
+<td align="left">447</td>
+<td align="right">0</td>
+<td align="right">2011</td>
+<td align="right">8</td>
+<td align="right">12</td>
+<td align="left">8_12</td>
+</tr>
+<tr class="even">
+<td align="right">9</td>
+<td align="left">2011-09-01</td>
+<td align="left">I</td>
+<td align="left">1243</td>
+<td align="right">0</td>
+<td align="right">2011</td>
+<td align="right">9</td>
+<td align="right">1</td>
+<td align="left">9_1</td>
+</tr>
+<tr class="odd">
+<td align="right">10</td>
+<td align="left">2011-09-02</td>
+<td align="left">I</td>
+<td align="left">343</td>
+<td align="right">0</td>
+<td align="right">2011</td>
+<td align="right">9</td>
+<td align="right">2</td>
+<td align="left">9_2</td>
+</tr>
+<tr class="even">
+<td align="right">11</td>
+<td align="left">2011-10-14</td>
+<td align="left">I</td>
+<td align="left">155</td>
+<td align="right">0</td>
+<td align="right">2011</td>
+<td align="right">10</td>
+<td align="right">14</td>
+<td align="left">10_14</td>
+</tr>
+<tr class="odd">
+<td align="right">14</td>
+<td align="left">2012-12-04</td>
+<td align="left">A</td>
+<td align="left">73</td>
+<td align="right">0</td>
+<td align="right">2012</td>
+<td align="right">12</td>
+<td align="right">4</td>
+<td align="left">12_4</td>
+</tr>
+<tr class="even">
+<td align="right">15</td>
+<td align="left">2012-11-21</td>
+<td align="left">A</td>
+<td align="left">19</td>
+<td align="right">0</td>
+<td align="right">2012</td>
+<td align="right">11</td>
+<td align="right">21</td>
+<td align="left">11_21</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div id="create-new_counts_by_date_to_sql-function" class="section level2">
+<h2>Create new_counts_by_date_to_sql function</h2>
+<p>Now that we have our <strong>all_counts_by_date_to_sql</strong> function, we need our <strong>new_counts_by_date_to_sql</strong> function which will only pull the new dates.</p>
+<p>To only pull the new dates, let’s make a helper function that will return the most recent date in our MySQL database.</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> last_sql_date_counts_daily(engine):</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">&#39;&#39;&#39; Returns the last date in the MySQL database as a datetime object&#39;&#39;&#39;</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> engine.<span class="ex">connect</span>() <span class="im">as</span> con:</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>        last_date <span class="op">=</span> con.execute(<span class="st">&#39;SELECT MAX(Date) FROM counts_daily&#39;</span>)</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> day <span class="kw">in</span> last_date:</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>        date <span class="op">=</span> day[<span class="dv">0</span>]</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> date</span></code></pre></div>
+<p>With our helper function defined, I’ll use the previous function as a template and just change how the start date and end date variables are first defined.</p>
+<p>I also added a two checks in the beginning. The first is if the <strong>last_sql_date_counts_daily</strong> returns None, it most likely means there is no data in the database and the function stops. The second check is if yesterday’s date is already in the database, the function returns ‘No new data available’ to the user without making any API requests. Everything else should be the same.</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> new_counts_by_day_to_sql():</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>    engine <span class="op">=</span> create_new_engine(<span class="st">&#39;counts&#39;</span>)</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Establish connection to MySQL database before making all the API calls.</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>    <span class="co">#TODO: If no data is in the MySQL database, custom except error</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>    <span class="co"># This prevents the program from pulling today&#39;s date</span></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>    start_date <span class="op">=</span> last_sql_date_counts_daily(engine) <span class="op">+</span> timedelta(days<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> start_date <span class="op">==</span> <span class="va">None</span>:</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="st">&#39;No data found in MySQL database.&#39;</span>)</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="st">&#39;Please use all_counts_to_sql() function&#39;</span>)</span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">None</span></span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> start_date <span class="op">&gt;=</span> date.today() <span class="op">-</span> timedelta(days<span class="op">=</span><span class="dv">1</span>):</span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>        <span class="co">#TODO: throw an exception error instead of print</span></span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="st">&#39;No new data avaiable&#39;</span>)</span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">None</span></span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a>    end_date <span class="op">=</span> start_date.replace(year <span class="op">=</span> start_date.year <span class="op">+</span> <span class="dv">1</span>)</span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> end_date <span class="op">&gt;=</span> date.today():</span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a>        end_date <span class="op">=</span> date.today() <span class="op">-</span> timedelta(days<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a>     <span class="co">## Test db Connection##</span></span>
+<span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Creates the parameters to drive the connection</span></span>
+<span id="cb17-20"><a href="#cb17-20" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Bike Arlington API only accepts query ranges of 1 year or less</span></span>
+<span id="cb17-21"><a href="#cb17-21" aria-hidden="true" tabindex="-1"></a>    count_in_date_range_list <span class="op">=</span> []   </span>
+<span id="cb17-22"><a href="#cb17-22" aria-hidden="true" tabindex="-1"></a>    <span class="cf">while</span> end_date <span class="op">&lt;=</span> date.today() <span class="op">-</span> timedelta(days<span class="op">=</span><span class="dv">1</span>):  </span>
+<span id="cb17-23"><a href="#cb17-23" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Hardcoded the counterID list to not stress the server</span></span>
+<span id="cb17-24"><a href="#cb17-24" aria-hidden="true" tabindex="-1"></a>        bikeometer_id_list <span class="op">=</span> [<span class="st">&#39;33&#39;</span>,<span class="st">&#39;30&#39;</span>,<span class="st">&#39;43&#39;</span>,<span class="st">&#39;24&#39;</span>,<span class="st">&#39;59&#39;</span>,<span class="st">&#39;56&#39;</span>,<span class="st">&#39;47&#39;</span>,<span class="st">&#39;48&#39;</span>,<span class="st">&#39;10&#39;</span>,<span class="st">&#39;20&#39;</span>,</span>
+<span id="cb17-25"><a href="#cb17-25" aria-hidden="true" tabindex="-1"></a>                           <span class="st">&#39;35&#39;</span>,<span class="st">&#39;57&#39;</span>,<span class="st">&#39;18&#39;</span>,<span class="st">&#39;3&#39;</span>,<span class="st">&#39;58&#39;</span>,<span class="st">&#39;61&#39;</span>,<span class="st">&#39;62&#39;</span>,<span class="st">&#39;38&#39;</span>,<span class="st">&#39;44&#39;</span>,<span class="st">&#39;14&#39;</span>,</span>
+<span id="cb17-26"><a href="#cb17-26" aria-hidden="true" tabindex="-1"></a>                           <span class="st">&#39;60&#39;</span>,<span class="st">&#39;5&#39;</span>,<span class="st">&#39;42&#39;</span>,<span class="st">&#39;37&#39;</span>,<span class="st">&#39;27&#39;</span>,<span class="st">&#39;26&#39;</span>,<span class="st">&#39;8&#39;</span>,<span class="st">&#39;7&#39;</span>,<span class="st">&#39;51&#39;</span>,</span>
+<span id="cb17-27"><a href="#cb17-27" aria-hidden="true" tabindex="-1"></a>                           <span class="st">&#39;45&#39;</span>,<span class="st">&#39;22&#39;</span>,<span class="st">&#39;21&#39;</span>,<span class="st">&#39;36&#39;</span>,<span class="st">&#39;34&#39;</span>,<span class="st">&#39;41&#39;</span>,<span class="st">&#39;9&#39;</span>,<span class="st">&#39;39&#39;</span>,<span class="st">&#39;16&#39;</span>,<span class="st">&#39;15&#39;</span>,</span>
+<span id="cb17-28"><a href="#cb17-28" aria-hidden="true" tabindex="-1"></a>                           <span class="st">&#39;54&#39;</span>,<span class="st">&#39;55&#39;</span>,<span class="st">&#39;31&#39;</span>,<span class="st">&#39;28&#39;</span>,<span class="st">&#39;11&#39;</span>,<span class="st">&#39;2&#39;</span>,<span class="st">&#39;25&#39;</span>,<span class="st">&#39;19&#39;</span>]</span>
+<span id="cb17-29"><a href="#cb17-29" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> bikeometer_id <span class="kw">in</span> bikeometer_id_list:</span>
+<span id="cb17-30"><a href="#cb17-30" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Dates YYYY-MM-DD format converted to MM-DD-YYY and made into a string to search Counter API</span></span>
+<span id="cb17-31"><a href="#cb17-31" aria-hidden="true" tabindex="-1"></a>            clean_start_date <span class="op">=</span> <span class="ss">f&#39;</span><span class="sc">{</span>start_date<span class="sc">.</span>month<span class="sc">}</span><span class="ss">/</span><span class="sc">{</span>start_date<span class="sc">.</span>day<span class="sc">}</span><span class="ss">/</span><span class="sc">{</span>start_date<span class="sc">.</span>year<span class="sc">}</span><span class="ss">&#39;</span></span>
+<span id="cb17-32"><a href="#cb17-32" aria-hidden="true" tabindex="-1"></a>            clean_end_date <span class="op">=</span> <span class="ss">f&#39;</span><span class="sc">{</span>end_date<span class="sc">.</span>month<span class="sc">}</span><span class="ss">/</span><span class="sc">{</span>end_date<span class="sc">.</span>day<span class="sc">}</span><span class="ss">/</span><span class="sc">{</span>end_date<span class="sc">.</span>year<span class="sc">}</span><span class="ss">&#39;</span></span>
+<span id="cb17-33"><a href="#cb17-33" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Calls the get_count_in_date_range function and passes in hard-coded</span></span>
+<span id="cb17-34"><a href="#cb17-34" aria-hidden="true" tabindex="-1"></a>            <span class="co"># parameters like the start_date, which is the first datapoint in</span></span>
+<span id="cb17-35"><a href="#cb17-35" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Bike Arlington server. Optimally, these would not be hardcoded  </span></span>
+<span id="cb17-36"><a href="#cb17-36" aria-hidden="true" tabindex="-1"></a>            <span class="co"># make the porgram more future-proof.</span></span>
+<span id="cb17-37"><a href="#cb17-37" aria-hidden="true" tabindex="-1"></a>            api_counts_to_list(bikeometer_id, clean_start_date, clean_end_date, count_in_date_range_list, interval<span class="op">=</span><span class="st">&#39;d&#39;</span>)</span>
+<span id="cb17-38"><a href="#cb17-38" aria-hidden="true" tabindex="-1"></a>        <span class="co"># If end date is yesterday&#39;s date, congratulations, you pulled all available dates</span></span>
+<span id="cb17-39"><a href="#cb17-39" aria-hidden="true" tabindex="-1"></a>        <span class="co"># We won&#39;t pull today&#39;s date in case the data has not been uploaded to their servers yet</span></span>
+<span id="cb17-40"><a href="#cb17-40" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> end_date <span class="op">==</span> date.today() <span class="op">-</span> timedelta(days<span class="op">=</span><span class="dv">1</span>):</span>
+<span id="cb17-41"><a href="#cb17-41" aria-hidden="true" tabindex="-1"></a>            <span class="cf">break</span>                </span>
+<span id="cb17-42"><a href="#cb17-42" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Adds a year to start date and end date</span></span>
+<span id="cb17-43"><a href="#cb17-43" aria-hidden="true" tabindex="-1"></a>        start_date <span class="op">=</span> start_date.replace(year <span class="op">=</span> start_date.year <span class="op">+</span> <span class="dv">1</span>)</span>
+<span id="cb17-44"><a href="#cb17-44" aria-hidden="true" tabindex="-1"></a>        end_date <span class="op">=</span> end_date.replace(year <span class="op">=</span> end_date.year <span class="op">+</span> <span class="dv">1</span>)</span>
+<span id="cb17-45"><a href="#cb17-45" aria-hidden="true" tabindex="-1"></a>        <span class="co"># If end date is after yesterday&#39;s date, set the end date to yesterdayand pull the data one last time</span></span>
+<span id="cb17-46"><a href="#cb17-46" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> end_date <span class="op">&gt;=</span> date.today():</span>
+<span id="cb17-47"><a href="#cb17-47" aria-hidden="true" tabindex="-1"></a>            end_date <span class="op">=</span> date.today() <span class="op">-</span> timedelta(days<span class="op">=</span><span class="dv">1</span>)    </span>
+<span id="cb17-48"><a href="#cb17-48" aria-hidden="true" tabindex="-1"></a>    columns <span class="op">=</span> (<span class="st">&#39;bikeometer_id&#39;</span>, <span class="st">&#39;date&#39;</span>, <span class="st">&#39;direction&#39;</span>, <span class="st">&#39;count&#39;</span>, <span class="st">&#39;is_weekend&#39;</span>, <span class="st">&#39;year&#39;</span>, <span class="st">&#39;month&#39;</span>, <span class="st">&#39;day&#39;</span>, <span class="st">&#39;month_day&#39;</span>)</span>
+<span id="cb17-49"><a href="#cb17-49" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> pd.DataFrame(count_in_date_range_list, columns<span class="op">=</span>columns)</span>
+<span id="cb17-50"><a href="#cb17-50" aria-hidden="true" tabindex="-1"></a>    df[[<span class="st">&quot;bikeometer_id&quot;</span>]] <span class="op">=</span> df[[<span class="st">&quot;bikeometer_id&quot;</span>]].astype(<span class="st">&#39;int&#39;</span>)</span>
+<span id="cb17-51"><a href="#cb17-51" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Replaces table counts, use if_exists=&#39;append&#39; to insert new values into the table</span></span>
+<span id="cb17-52"><a href="#cb17-52" aria-hidden="true" tabindex="-1"></a>    df.to_sql(<span class="st">&#39;counts_daily&#39;</span>, con<span class="op">=</span>engine, index<span class="op">=</span><span class="va">False</span>, if_exists<span class="op">=</span><span class="st">&#39;append&#39;</span>)</span>
+<span id="cb17-53"><a href="#cb17-53" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Reads the table</span></span>
+<span id="cb17-54"><a href="#cb17-54" aria-hidden="true" tabindex="-1"></a>    <span class="co">#df2 = pd.read_sql(&#39;counters&#39;, con=engine)</span></span>
+<span id="cb17-55"><a href="#cb17-55" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> engine.<span class="ex">connect</span>() <span class="im">as</span> con:</span>
+<span id="cb17-56"><a href="#cb17-56" aria-hidden="true" tabindex="-1"></a>        date_list <span class="op">=</span> con.execute(<span class="st">&#39;SELECT MAX(Date) FROM counts_daily&#39;</span>)</span>
+<span id="cb17-57"><a href="#cb17-57" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> day <span class="kw">in</span> date_list:</span>
+<span id="cb17-58"><a href="#cb17-58" aria-hidden="true" tabindex="-1"></a>            last_day <span class="op">=</span> day[<span class="dv">0</span>]</span>
+<span id="cb17-59"><a href="#cb17-59" aria-hidden="true" tabindex="-1"></a>            <span class="bu">print</span>(<span class="ss">f&#39;The newest date in counts_daily is </span><span class="sc">{</span>last_day<span class="sc">}</span><span class="ss">&#39;</span>)</span>
+<span id="cb17-60"><a href="#cb17-60" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Do we need engine.dispose?</span></span>
+<span id="cb17-61"><a href="#cb17-61" aria-hidden="true" tabindex="-1"></a>    engine.dispose()</span>
+<span id="cb17-62"><a href="#cb17-62" aria-hidden="true" tabindex="-1"></a>new_counts_by_day_to_sql()</span></code></pre></div>
+<pre><code>## No new data avaiable</code></pre>
+<p>Because I ran the previous function today, the function returns ‘No new data available’. Try it for yourself tomorrow and compare the time it takes to pull 1 day’s worth of data compared to over 10 years worth of data.</p>
+</div>
+</div>
+
+<div id="rmd-source-code">LS0tDQp0aXRsZTogIlZpc3VhbGl6aW5nIEFybGluZ3RvbiBCaWtvbWV0ZXJzIg0Kc3VidGl0bGU6ICJQYXJ0IDQ6IFNhdmUgeW91ciBEYXRhIGluIGEgTXlTUUwgRGF0YWJhc2UiDQpvdXRwdXQ6DQogIGh0bWxfZG9jdW1lbnQ6IA0KICAgIHRvYzogeWVzDQogICAgdG9jX2RlcHRoOiAyDQogICAgdG9jX2Zsb2F0OiB5ZXMNCiAgICBoaWdobGlnaHQ6IHplbmJ1cm4NCiAgICBjb2RlX2Rvd25sb2FkOiB0cnVlDQogICAgaW5jbHVkZXM6DQogICAgICBpbl9oZWFkZXI6IGhlYWRlci5odG1sDQotLS0NCg0KIyBCYWNrZ3JvdW5kDQpJIHdpbGwgYmUgYnVpbGRpbmcgb24gdGhlIFB5dGhvbiBjb2RlIHdlIHdyb3RlIGluIFtQYXJ0IDI6IFF1ZXJ5IHRoZSBBUEldKGh0dHBzOi8vbmF0aGFuc3Byb2plY3RzLmNvbS9wYXJ0XzJfcXVlcnlfdGhlX2FwaS5odG1sKSB0byBtb3ZlIG91ciBkYXRhIGludG8gYSBkYXRhYmFzZS4gDQoNCiMgR29hbHMNCjEuIEFkZCBmdW5jdGlvbmFsaXR5IHRvIG91ciBjb2RlIGZyb20gW1BhcnQgMl0oaHR0cHM6Ly9uYXRoYW5zcHJvamVjdHMuY29tL3BhcnRfMl9xdWVyeV90aGVfYXBpLmh0bWwpIHRoYXQgdGFrZXMgYSBQYW5kYXMgRGF0YSBGcmFtZSBhbmQgcHV0cyBpdCBpbiBvdXIgTXlTUUwgZGF0YWJhc2UuIA0KMi4gQ3JlYXRlIHNlcGVyYXRlICoqaGVscGVyIGZ1bmN0aW9ucyoqIHRoYXQgY3JlYXRlIGEgKlNRTEFsY2hlbXkgRW5naW5lKiBvYmplY3QsIG1ha2UgQVBJIFJlcXVlc3RzLCBhbmQgcXVlcnkgb3VyIE15U1FMIGRhdGFiYXNlIGZvciB0aGUgbW9zdCByZWNlbnQgZGF0ZS4NCjMuIEludGVncmF0ZSB0aGVzZSBoZWxwZXIgZnVuY3Rpb25zIGludG8gb3IgdHdvIG1haW4gZnVuY3Rpb25zOiBvbmUgdG8gcHVsbCBhbmQgc2F2ZSBhbGwgZGF0YSBzdGFydGluZyBmcm9tIHRoZSBvbGRlc3QgZGF0ZSBpbiB0aGUgQmlrZSBBcmxpbmd0b24gZGF0YWJhc2UgYW5kIG9uZSB0byBwdWxsIG9ubHkgdGhlIGRhdGEgbWlzc2luZyBmcm9tIG91ciBNeVNRTCBkYXRhYmFzZS4gDQo0LiBTYXZlIGFsbCBCaWtlIEFybGluZ3RvbiBkYXRhIG9uIHRoZSBkZXRhaWxzIG9mIGVhY2ggQmlrZW9tZXRlciBhbmQgYWxsIGRhdGEgb24gdGhlIGFjdHVhbCBiaWN5Y2xlIGNvdW50cyB0byBvdXIgTXlTUUwgZGF0YWJhc2UuDQoNCk5vdGU6IElmIEkgd2VyZSB0byBkbyB0aGlzIHByb2plY3QgYWdhaW4sIEknZCBicmVhayB0aGUgZnVuY3Rpb25zIHVwIGludG8gc21hbGxlciBmdW5jdGlvbnMgdG8gbWFrZSB0ZXN0aW5nIGVhc2llci4gQSBjb21tb24gcmVjb21tZW5kYXRpb24gaXMgdGhhdCBlYWNoIGZ1bmN0aW9uIHNob3VsZCBvbmx5IGRvIG9uZSB0aGluZy4gSWYgeW91IGFyZSBkZXNjcmliaW5nIHRoZSBmdW5jdGlvbmFsaXR5IGFuZCB5b3UgaGF2ZSB0byB1c2UgdGhlIHdvcmQgJ2FuZCcsIHlvdSBzaG91bGQgYnJlYWsgdGhlIGZ1bmN0aW9uIHVwLg0KDQojIFN0ZXAgMTogTWlncmF0aW5nIEJpa2VvbWV0ZXIgRGV0YWlscw0KXCANClwgDQojIyBQYW5kYXMgLnRvX3NxbCBNZXRob2QgIA0KDQpXZSB3aWxsIHV0aWxpemUgdGhlIFBhbmRhcyBtb2R1bGUgdG8gbW92ZSBvdXIgZGF0YSBpbnRvIE15U1FMIHdpdGggdGhlIFt0b19zcWxdKGh0dHBzOi8vcGFuZGFzLnB5ZGF0YS5vcmcvZG9jcy9yZWZlcmVuY2UvYXBpL3BhbmRhcy5EYXRhRnJhbWUudG9fc3FsLmh0bWwpIG1ldGhvZC4gVGhpcyBtZXRob2Qgd2lsbCBvcGVyYXRlIG9uIG91ciBkYXRhZnJhbWUgYW5kIHdlIHdpbGwgcGFzcyBpbiBhIGZldyBwYXJhbWV0ZXJzLiBGaXJzdCBpcyBvdXIgdGFibGUgbmFtZSB0aGF0IHdlIHdpbGwgY3JlYXRlLiBTZWNvbmQgaXMgb3VyIGVuZ2luZSB0aGF0IHdhcyBjcmVhdGVkIHVzaW5nIFNRTEFsY2hlbXkuIFRoaXJkIHdlIHNwZWNpZnkgdG8gbm90IGNyZWF0ZSBhIGNvbHVtbiBhcyB0aGUgaW5kZXguIExhc3QsIHdlIHNwZWNpZnkgdGhhdCBpZiBvdXIgdGFibGUgYWxyZWFkeSBleGlzdHMgaW4gdGhlIGRhdGFiYXNlLCBhZGQgb3VyIGRhdGEgdG8gdGhlIHRhYmxlIHdpdGhvdXQgdG91Y2hpbmcgdGhlIGV4aXN0aW5nIGRhdGEuDQoNCmBgYHtweXRob24gZXZhbD1GQUxTRX0NCmRmLnRvX3NxbCgnY291bnRzX2RhaWx5JywgY29uPWVuZ2luZSwgaW5kZXg9RmFsc2UsIGlmX2V4aXN0cz0nYXBwZW5kJykNCmBgYA0KDQpMZXQncyB3b3JrIG9uIGFkZGluZyB0aGUgKip0b19zcWwqKiBtZXRob2QgdG8gb3VyIGNvZGUgdGhhdCBwdWxscyB0aGUgQmlrZW9tZXRlciBkZXRhaWxzLg0KDQpGaXJzdCwgbGV0J3MgZGVmaW5lIGEgKipoZWxwZXIgZnVuY3Rpb24qKiB0aGF0IHdpbGwgY3JlYXRlIGEgU1FMQWxjaGVteSAqZW5naW5lKiBvYmplY3QuIExldCdzIGNhbGwgdGhlIGZ1bmN0aW9uICdjcmVhdGVfbmV3X2VuZ2luZScuIEFsbCB3ZSBoYXZlIHRvIGRvIGlzIHBhc3MgaW4gdGhlIG5hbWUgb2YgdGhlIGRhdGFiYXNlIGFzIGFuIGFyZ3VtZW50IChiaWtlb21ldGVyc19kYikuDQoNCiMjIENvbm5lY3QgdG8gdGhlIGRhdGFiYXNlDQoNCmBgYHtweXRob24gZXZhbD1GQUxTRX0NCmRlZiBjcmVhdGVfbmV3X2VuZ2luZShkYl9uYW1lKToNCiAgICByZXR1cm4gY3JlYXRlX2VuZ2luZShmJ215c3FsK215c3FsZGI6Ly97aW5wdXQoIkVudGVyIHVzZXJuYW1lOiAiKX06e2dldHBhc3MoIkVudGVyIHBhc3N3b3JkOiAiKX1AbG9jYWxob3N0L3tkYl9uYW1lfScsIGVjaG89RmFsc2UpDQpgYGANCg0KYGBge3B5dGhvbiBpbmNsdWRlPUZBTFNFfQ0KIyBXb3JrYXJvdW5kIHRvIGdldCB0aGlzIGRvY3VtZW50IHRvIEtuaXQNCiMgQ3JlYXRlZCB0ZW1wIHVzZXIgbmFtZSB0aGF0IHdpbGwgYmUgZGVsZXRlZCBvbmNlIHRoZSBwb3N0IGlzIHVwbG9hZGVkLg0KZGVmIGNyZWF0ZV9uZXdfZW5naW5lKGRiX25hbWUpOg0KICByZXR1cm4gY3JlYXRlX2VuZ2luZShmJ215c3FsK215c3FsZGI6Ly9uZXd1c2VyOmRvbnRldmVudHJ5QGxvY2FsaG9zdC9iaWtlb21ldGVyc19kYicsIGVjaG89RmFsc2UpDQoNCmBgYA0KDQojIyBEZWZpbmUgdGhlICBmdW5jdGlvbg0KSSd2ZSB0YWtlbiB0aGUgKmdldF9iaWtlb21ldGVyX2RldGFpbHMqIGZ1bmN0aW9uIGZyb20gW1BhcnQgMl0oaHR0cHM6Ly9uYXRoYW5zcHJvamVjdHMuY29tL3BhcnRfMl9xdWVyeV90aGVfYXBpLmh0bWwpIGFzIHdlbGwgYXMgdGhlIEdFVCByZXF1ZXN0IHN0ZXBzIGFuZCBtYWRlIHRoZW0gaW50byBhIHNpbmdsZSBmdW5jdGlvbiAqYmlrZW9tZXRlcl90b19zcWwqLg0KDQpgYGB7cHl0aG9ufQ0KaW1wb3J0IHJlcXVlc3RzDQppbXBvcnQgcmUNCmltcG9ydCB4bWwuZXRyZWUuRWxlbWVudFRyZWUgYXMgRVQNCmltcG9ydCBwYW5kYXMgYXMgcGQNCmZyb20gc3FsYWxjaGVteSBpbXBvcnQgY3JlYXRlX2VuZ2luZQ0KDQpkZWYgYmlrZW9tZXRlcl90b19zcWwoKToNCiAgICAnJycNCiAgICBNYWtlcyBhIEdFVCByZXF1ZXN0IHRvIHRoZSBCaWtlIEFybGluZ3RvbiBBUEkgdXNpbmcgdGhlIEdldEFsbENvdW50ZXJzIA0KICAgIG1ldGhvZCBhcyBhIHBhcmFtZXRlci4gVGhlIEFQSSByZXR1cm5zIGEgcmVzcG9uc2Ugb2JqZWN0IHRoYXQgaXMgZmlyc3QNCiAgICBjb252ZXJ0ZWQgdG8gYSBzdHJpbmcsIGNsZWFuZWQsIGFuZCBjb252ZXJ0ZWQgdG8gYW4gWE1MIG9iamVjdC4gVGhlIFhNTCANCiAgICBvYmplY3QgaXMgdGhlbiBwYXJzZWQgZm9yIHRoZSByZWxldmFudCBpbmZvcm1hdGlvbiwgYW5kIGFkZGVkIHRvIGEgbGlzdC4NCiAgICBFYWNoIGxpc3QsIHJlcHJlc2VudGluZyBhIHNpbmdsZSBCaWtlb21ldGVyLCBpcyBjb252ZXJ0ZWQgdG8gYSB0dXBsZSBhbmQgYWRkZWQgDQogICAgdG8gYSBmaW5hbCBsaXN0IHdoaWNoIGlzIGNvbnZlcnRlZCB0byBhIGRhdGFmcmFtZSBhbmQgdXBsb2FkZWQgdG8gdGhlIGRhdGFiYXNlLiANCiAgICAgJycnDQogICAgIyBDYWxscyBvdXIgaGVscGVyIGZ1bmN0aW9uIHRvIGNyZWF0ZSBhbiBlbmdpbmUuDQogICAgZW5naW5lID0gY3JlYXRlX25ld19lbmdpbmUoJ2Jpa2VvbWV0ZXJzX2RiJykNCiAgICB1cmwgPSAnaHR0cDovL3dlYnNlcnZpY2VzLmNvbW11dGVycGFnZS5jb20vY291bnRlcnMuY2ZjP3dzZGwnDQogICAgIyBEZWZpbmVzIHRoZSBtZXRob2QgaW4gYSBkaWN0aW9uYXJ5IHVzZWQgdG8gbWFrZSB0aGUgcmVxdWVzdA0KICAgIGNvdW50ZXJfcmVxZXN0X21ldGhvZHMgPSB7J21ldGhvZCc6ICdHZXRBbGxDb3VudGVycyd9DQogICAgIyBBc3NpZ25zIHJlc3BvbnNlIG9iamVjdCB0byB2YXJpYWJsZSAncmVzcG9uc2UnDQogICAgcmVzcG9uc2UgPSByZXF1ZXN0cy5nZXQodXJsLCBwYXJhbXM9Y291bnRlcl9yZXFlc3RfbWV0aG9kcykNCiAgICAjIFNhdmUgdGhlIGNvbnRlbnQgb2YgdGhhdCByZXF1ZXN0IChzdHJpbmcpIHRvIG1lbW9yeSANCiAgICBzdHJpbmdfZGF0YSA9IHJlc3BvbnNlLnRleHQNCiAgICAjIENsZWFuIHRoZSBzdHJpbmcNCiAgICBjbGVhbl9zdHJpbmdfZGF0YSA9IHJlLnN1YihyJ1tcbnxcdF0nLCAnJywgc3RyaW5nX2RhdGEpDQogICAgIyBDb252ZXJ0IHN0cmluZyB0byBYTUwgb2JqZWN0DQogICAgcm9vdCA9IEVULmZyb21zdHJpbmcoY2xlYW5fc3RyaW5nX2RhdGEpDQogICAgIyBDcmVhdGUgdGhlIGVtcHR5IGxpc3QgdGhhdCB3aWxsIGluY2x1ZGUgWyhOYW1lLCBjb3VudGVySUQsIExhdCwgTG9uZywgUmVnaW9uLCByZWdpb25faWQpKC4uLildDQogICAgYmlrZW9tZXRlcl9kZXRhaWxzID0gW10NCiAgICAjIEl0ZXJhdGUgdGhyb3VnaCB0aGUgY2hpbGRyZW4sIGdyYW5kY2hpbGRyZW4sIGFuZCBncmVhdC1ncmFuZGNoaWxkcmVuIGFuZCBncmFiIHRoZSBkYXRhICANCiAgICBmb3IgY2hpbGQgaW4gcm9vdDoNCiAgICAgICAgIyBGcm9tIGNoaWxkICdjb3VudGVyJyBnZXRzIHRoZSBhdHRyaWJ1dGUgJ2lkJyBvZiB0aGUgY291bnRlciBhbmQgYWRkcyBpdCB0byBzaW5nbGVfbGlzdA0KICAgICAgICBzaW5nbGVfbGlzdCA9IFtjaGlsZC5nZXQoJ2lkJyldDQogICAgICAgICMgTG9vcHMgdGhyb3VnaCB0aGUgZ3JhbmRjaGlsZHJlbiBvZiByb290DQogICAgICAgIGZvciBncmFuZGNoaWxkIGluIGxpc3QoY2hpbGQpOiAgIA0KICAgICAgICAgICAgaWYgZ3JhbmRjaGlsZC50ZXh0ICE9IE5vbmUgYW5kIGdyYW5kY2hpbGQudGFnICE9ICdkZXNjcmlwdGlvbicgYW5kIGdyYW5kY2hpbGQudGFnICE9ICd0cmFpbF9pZCcgYW5kIGdyYW5kY2hpbGQudGFnICE9ICd0cmFpbF9uYW1lJzoNCiAgICAgICAgICAgICAgICAjIElmIHRoZSBncmFuZGNoaWxkIGlzIHJlZ2lvbiwgbG9vcCB0aHJvdWdoIHJlZ2lvbiBhbmQgZ3JhYiB0aGUgZ3JhbmRjaGlsZHJlbiBkYXRhDQogICAgICAgICAgICAgICAgaWYgZ3JhbmRjaGlsZC50YWcgPT0gJ3JlZ2lvbic6ICANCiAgICAgICAgICAgICAgICAgICAgZm9yIGdyZWF0X2dyYW5kY2hpbGQgaW4gbGlzdChncmFuZGNoaWxkKTogDQogICAgICAgICAgICAgICAgICAgICAgICBzaW5nbGVfbGlzdC5hcHBlbmQoZ3JlYXRfZ3JhbmRjaGlsZC50ZXh0KQ0KICAgICAgICAgICAgICAgICMgSWYgdGhlIGdyYW5kY2hpbGQgaXMgbm90IHJlZ2lvbiwgdGhlIGRhdGEgaXMgYXZhaWxhYmxlIGluIGdyYW5kY2hpbGQudGV4dA0KICAgICAgICAgICAgICAgIGVsc2U6IA0KICAgICAgICAgICAgICAgICAgICBzaW5nbGVfbGlzdC5hcHBlbmQoZ3JhbmRjaGlsZC50ZXh0KQ0KICAgICAgICAjIENhc3QgdGhlIGxpc3QgaW50byBhIHR1cGxlIG1ha2luZyBpdCBlYXNpZXIgdG8gbWlncmF0ZSBkYXRhIHRvIHRoZSBkYXRhYmFzZQ0KICAgICAgICBzaW5nbGVfdHVwbGUgPSB0dXBsZShzaW5nbGVfbGlzdCkNCiAgICAgICAgIyBBcHBlbmRzIHR1cGxlcyB0byB0aGUgbGlzdA0KICAgICAgICBiaWtlb21ldGVyX2RldGFpbHMuYXBwZW5kKHNpbmdsZV90dXBsZSkNCiAgICAjIEVzdGFibGlzaGVzIHRoZSBuYW1lcyBvZiB0aGUgY29sdW1ucw0KICAgIGNvbHVtbnMgPSAoJ2Jpa2VvbWV0ZXJfaWQnLCAnbmFtZScsICdsYXRpdHVkZScsICdsb25naXR1ZGUnLCAncmVnaW9uJywgJ3JlZ2lvbl9pZCcpDQogICAgIyBDcmVhdGVzIGEgcGFuZGFzIGRhdGEgZnJhbWUNCiAgICBkZiA9IHBkLkRhdGFGcmFtZShkYXRhPWJpa2VvbWV0ZXJfZGV0YWlscywgY29sdW1ucyA9IGNvbHVtbnMpDQogICAgIyBBc3NpZ25zICd0eXBlcycgdG8gZWFjaCBjb2x1bW4NCiAgICBkZltbIm5hbWUiLCAibGF0aXR1ZGUiLCAibG9uZ2l0dWRlIiwgInJlZ2lvbiIsICdyZWdpb25faWQnXV0gPSBkZltbIm5hbWUiLCAibGF0aXR1ZGUiLCAibG9uZ2l0dWRlIiwgInJlZ2lvbiIsICdyZWdpb25faWQnXV0uYXN0eXBlKCdzdHInKQ0KICAgIGRmW1siYmlrZW9tZXRlcl9pZCJdXSA9IGRmW1siYmlrZW9tZXRlcl9pZCJdXS5hc3R5cGUoJ2ludCcpDQogICAgIyBNb3ZlcyBkYXRhIHRvIE15U1FMDQogICAgZGYudG9fc3FsKCdiaWtlb21ldGVyX2RldGFpbHMnLCBjb249ZW5naW5lLCBpbmRleD1GYWxzZSwgaWZfZXhpc3RzPSdyZXBsYWNlJykNCg0KYGBgDQoNCiMjIFRlc3QgdGhlIGZ1bmN0aW9uDQpOb3cgd2UgcnVuIHRoZSBmdW5jdGlvbi4NCmBgYHtweXRob259DQpiaWtlb21ldGVyX3RvX3NxbCgpDQpgYGANCkxldCdzIGNoZWNrIHRvIHNlZSB3aGF0IG91ciBuZXcgdGFibGUgbG9va3MgbGlrZS4gDQoNCkZpcnN0IHdlIGNyZWF0ZSBhIGNvbm5lY3Rpb24gYW5kIGFzc2lnbiBpdCB0byAqY29uKi4NCg0KYGBge3B5dGhvbiBpbmNsdWRlPUZBTFNFfQ0KIyBXb3JrYXJvdW5kIHRvIGdldCB0aGlzIGRvY3VtZW50IHRvIEtuaXQNCiMgQ3JlYXRlZCB0ZW1wIHVzZXIgbmFtZSB0aGF0IHdpbGwgYmUgZGVsZXRlZCBvbmNlIHRoZSBwb3N0IGlzIHVwbG9hZGVkLg0KZW5naW5lID0gY3JlYXRlX2VuZ2luZShmJ215c3FsK215c3FsZGI6Ly9uZXd1c2VyOmRvbnRldmVudHJ5QGxvY2FsaG9zdC9iaWtlb21ldGVyc19kYicsIGVjaG89RmFsc2UpDQpgYGANCg0KYGBge3B5dGhvbn0NCmNvbiA9IGVuZ2luZS5jb25uZWN0KCkNCmBgYA0KVGhlbiwgd2UgZXhlY3V0ZSBhIE15U1FMIHN0YXRlbWVudC4NCg0KSSdtIGdvaW5nIHRvIHJ1biB0aGUgTXlTUUwgY29tbWFuZHMgZnJvbSBSIHNvIGZpcnN0IEknbGwgZXN0YWJsaXNoIGEgY29ubmVjdGlvbiB0byB0aGUgZGF0YWJhc2UgdGhyb3VnaCBSLiBZb3UgY2FuIHJ1biB0aGUgTXlTUUwgY29tbWFuZHMgaW4gZWl0aGVyIHRoZSBNeXNRTCBXb3JrYmVuY2ggb3IgdGhlIE15U1FMIENvbW1hbmQgTGluZS4NCg0KYGBge3J9DQpsaWJyYXJ5KERCSSkNCmNvbiA8LSBkYkNvbm5lY3Qob2RiYzo6b2RiYygpLCAuY29ubmVjdGlvbl9zdHJpbmcgPSAiRHJpdmVyPXtNeVNRTCBPREJDIDguMCBVbmljb2RlIERyaXZlcn07IiwgDQogICAgc2VydmVyID0gImxvY2FsaG9zdCIsIGRiID0gImJpa2VvbWV0ZXJzX2RiIiwgdXNlciA9ICJuZXd1c2VyIiwgDQogICAgcGFzc3dvcmQgPSByc3R1ZGlvYXBpOjphc2tGb3JQYXNzd29yZCgiRGF0YWJhc2UgcGFzc3dvcmQiKSkNCmBgYA0KDQpgYGB7c3FsIGNvbm5lY3Rpb249Y29ufQ0KU0VMRUNUICogRlJPTSBiaWtlb21ldGVyX2RldGFpbHMNCmBgYA0KDQpOb3cgdGhhdCB3ZSBoYXZlIG91ciBiaWtlb21ldGVyX2RldGFpbHMgdGFibGUgaW4gb3VyIGRhdGFiYXNlLCB3ZSB3b24ndCBuZWVkIHRvIHJ1biB0aGlzIGNvZGUgYWdhaW4gdW5sZXNzIGEgbmV3IEJpa2VvbWV0ZXIgaXMgYWRkZWQuDQoNCk5leHQsIHdlIHdpbGwgcmVxdWVzdCB0aGUgZGFpbHkgYmlrZSBjb3VudHMgZm9yIGV2ZXJ5IGRheSBzaW5jZSBhIGNvdW50ZXIgd2FzIGluc3RhbGxlZCBhbmQgc2F2ZSBpdCBpbiBvdXIgZGF0YWJhc2UuIA0KDQojIFN0ZXAgMjogTWlncmF0aW5nIEJpa2UgQ291bnRzDQoNCkFnYWluLCB3ZSB3aWxsIGJ1aWxkIG9uIHRoZSBjb2RlIGZyb20gW1BhcnQgMl0oaHR0cHM6Ly9uYXRoYW5zcHJvamVjdHMuY29tL3BhcnRfMl9xdWVyeV90aGVfYXBpLmh0bWwpLg0KDQojIyBGaW5kIHRoZSBvbGRlc3QgQmlrZW9tZXRlcg0KDQpJbiBbUGFydCAyXShodHRwczovL25hdGhhbnNwcm9qZWN0cy5jb20vcGFydF8yX3F1ZXJ5X3RoZV9hcGkuaHRtbCksIHdlIGNyZWF0ZWQgYSBmdW5jdGlvbiBjYWxsZWQgKiphcGlfY291bnRzX3RvX2xpc3QqKiB3aGljaCBwdWxsZWQgdGhlIGJpY3ljbGUgY291bnRzIHVzaW5nIGFuIGFyYml0cmFyeSBoYXJkLWNvZGVkIHN0YXJ0IGRhdGUsIGVuZCBkYXRlLCBhbmQgYSBzaW5nbGUgQmlrZW9tZXRlci4gSG93ZXZlciwgbm93IHdlIG5lZWQgdG8gcHVsbCB0aGUgZGF0YSBmb3IgKiphbGwqKiBCaWtlb21ldGVycyBhbmQgKiphbGwqKiBhdmFpYWJsZSBkYXRlcy4NCg0KVG8gbWFrZSBvdXIgbGlmZSBlYXNpZXIsIGxldCdzIHNlbGVjdCB0aGUgb2xkZXN0IEJpa2VvbWV0ZXIgYW5kIHVzZSBpdCdzIHN0YXJ0IGRhdGUgYXMgb3VyICpzdGFydCBkYXRlKiBmb3IgYWxsIEJpa2VvbWV0ZXJzLiBPdXIgZnVuY3Rpb24gaXMgd3JpdHRlbiBzbyB0aGF0IGlmIHRoZXJlIGlzIG5vIGRhdGEgZm9yIGEgcmVxdWVzdGVkIGRhdGUsIG91ciBmdW5jdGlvbiBqdXN0IHNraXBzIHRob3NlIGRhdGVzIGFuZCBtb3ZlcyBvbiB3aXRob3V0IGVycm9yLg0KDQpXZSB3aWxsIGNhbGwgdGhlIGJ1aWx0LWluIEJpa2UgQXJsaW5ndG9uIEFQSSBtZXRob2Q6ICdnZXRNaW5EYXRlcycgb24gYWxsIHRoZSBCaWtlb21ldGVyIElEcyBpbiB0aGUgYmVsb3cgKmJpa2VvbWV0ZXJfaWRfbGlzdCouDQoNCmBgYHtweXRob259DQpiaWtlb21ldGVyX2lkX2xpc3QgPSBbJzMzJywnMzAnLCc0MycsJzI0JywnNTknLCc1NicsJzQ3JywnNDgnLCcxMCcsJzIwJywNCiAgICAgICAgICAgICAgICAgICAgICAgICAgICczNScsJzU3JywnMTgnLCczJywnNTgnLCc2MScsJzYyJywnMzgnLCc0NCcsJzE0JywNCiAgICAgICAgICAgICAgICAgICAgICAgICAgICc2MCcsJzUnLCc0MicsJzM3JywnMjcnLCcyNicsJzgnLCc3JywnNTEnLA0KICAgICAgICAgICAgICAgICAgICAgICAgICAgJzQ1JywnMjInLCcyMScsJzM2JywnMzQnLCc0MScsJzknLCczOScsJzE2JywnMTUnLA0KICAgICAgICAgICAgICAgICAgICAgICAgICAgJzU0JywnNTUnLCczMScsJzI4JywnMTEnLCcyJywnMjUnLCcxOSddDQpgYGANCg0KTm93LCB3ZSB3aWxsIGNyZWF0ZSBhIHNpbXBsZSAqZm9yIGxvb3AqIHRvIGNhbGwgdGhlICpnZXRNaW5EYXRlcyogbWV0aG9kIG9uIGFsbCB0aGUgQmlrZW9tZXRlcnMuDQpgYGB7cHl0aG9ufQ0KIyBBc3NpZ24gdGhlIHVybCBvZiB0aGUgDQp1cmwgPSAnaHR0cDovL3dlYnNlcnZpY2VzLmNvbW11dGVycGFnZS5jb20vY291bnRlcnMuY2ZjP3dzZGwnDQoNCiMgRGVmaW5lcyB0aGUgbWV0aG9kIGluIGEgZGljdGlvbmFyeSB1c2VkIHRvIG1ha2UgdGhlIHJlcXVlc3QNCmZvciBiaWtlb21ldGVyX2lkIGluIGJpa2VvbWV0ZXJfaWRfbGlzdDogDQogIGNvdW50ZXJfcmVxZXN0X21ldGhvZHMgPSB7J21ldGhvZCc6ICdnZXRNaW5EYXRlcycsICdjb3VudGVySUQnOiBiaWtlb21ldGVyX2lkfQ0KICAjIFNhdmUgdGhlIEdldEFsbENvdW50ZXJzIHJlcXVlc3QgdG8gbWVtb3J5DQogIHJlc3BvbnNlID0gcmVxdWVzdHMuZ2V0KHVybCwgcGFyYW1zPWNvdW50ZXJfcmVxZXN0X21ldGhvZHMpDQogIHJlc3BvbnNlLnRleHQNCg0KYGBgDQpTa2ltbWluZyB0aHJvdWdoIHRoZSByZXR1cm5lZCByZXNwb25zZXMsIHdlIGNhbiBzZWUgdGhhdCB0aGUgZmlyc3QgZGF0ZSB3YXMgNC8xLzIwMTAuIFRoaXMgd2lsbCBiZSBvdXIgZmlyc3QgKnN0YXJ0IGRhdGUqIGluIG91ciBmdW5jdGlvbi4gDQoNCiMjIENyZWF0ZSBoZWxwZXIgZnVuY3Rpb25zDQoNClVsdGltYXRlbHksIHdlIHdpbGwgaGF2ZSB0d28gZnVuY3Rpb25zIHdoZW4gd2UgYXJlIGZpbmlzaGVkOiBvbmUgdGhhdCBwdWxscyBhbGwgdGhlIGRhdGVzIHN0YXJ0aW5nIGZyb20gNC8xLzIwMTAgKCoqYWxsX2NvdW50c19ieV9kYXRlX3RvX3NxbCoqKSBhbmQgb25lIHRoYXQgcHVsbHMgb25seSB0aGUgbmV3IGRhdGVzLigqKm5ld19jb3VudHNfYnlfZGF0ZV90b19zcWwqKikNCg0KVG8gaGVscCB1cyBvdXQsIHdlIHdpbGwgY3JlYXRlIGEgKipoZWxwZXIgZnVuY3Rpb24qKiBiYXNlZCBvbiB0aGUgKiphcGlfY291bnRzX3RvX2xpc3QqKiBmdW5jdGlvbiB3ZSBtYWRlIGluIFtQYXJ0IDJdKGh0dHBzOi8vbmF0aGFuc3Byb2plY3RzLmNvbS9wYXJ0XzJfcXVlcnlfdGhlX2FwaS5odG1sKS4NCg0KVGhlIGdvYWwgaXMgdG8gaGF2ZSB0aGUgbWFpbiBmdW5jdGlvbnMgKiphbGxfY291bnRzX2J5X2RhdGVfdG9fc3FsKiogYW5kICoqbmV3X2NvdW50c19ieV9kYXRlX3RvX3NxbCoqIHBhc3MgaW4gdGhlICpiaWtlb21ldGVyX2lkKiwgKnN0YXJ0IGRhdGUqIGFuZCAqZW5kIGRhdGUqIHRvIG91ciBoZWxwZXIgZnVuY3Rpb24gKiphcGlfY291bnRzX3RvX2xpc3QqKi4gSWYgeW91IGhhdmUgbm8gZGF0YSBpbiB5b3VyIGRhdGFiYXNlLCB5b3Ugd291bGQgY2FsbCB0aGUgICoqYWxsX2NvdW50c19ieV9kYXRlX3RvX3NxbCoqIGZ1bmN0aW9uIHRvIG1ha2UgcmVxdWVzdHMgc3RhcnRpbmcgb24gNC8xLzIwMTAuIElmIHlvdSBhbHJlYWR5IGhhdmUgZGF0YSBpbiB5b3VyIE15U1FMIGRhdGFiYXNlLCB0aGUgKipuZXdfY291bnRzX2J5X2RhdGVfdG9fc3FsKiogZnVuY3Rpb24gd2lsbCBxdWVyeSB5b3VyIGRhdGFiYXNlIGFuZCBvbmx5IHJlcXVlc3QgZGF0YSBmb3IgZGF0ZXMgbm90IGluIHlvdXIgZGF0YWJhc2UuDQoNCk5vdGU6IEFzIEkgd3JpdGUgdGhpcyB1cCwgSSdtIHJlYWxpemluZyB5b3UgY291bGQgd3JpdGUgb25lIGZ1bmN0aW9uIHRoYXQgd291bGQgcXVlcnkgeW91ciBNeVNRTCBkYXRhYmFzZSBhbmQgZGVwZW5kaW5nIHVwb24gdGhlIHJlc3BvbnNlLCBpdCBjb3VsZCBjYWxsIHRoZSBhcHByb3ByaWF0ZSBmdW5jdGlvbiB1c2luZyBhbiAqaWYvZWxzZSogc3RhdGVtZW50LCBidXQsIGFzIHRoZXkgc2F5LCB0aGF0J3Mgbm90IE1WUC4NCg0KSGVyZSBpcyB0aGUgKmhlbHBlciBmdW5jdGlvbiogdGhhdCB3aWxsIHJlcXVlc3QgZGF0YSBmcm9tIHRoZSBCaWtlIEFybGluZ3RvbiBBUEkgdXNpbmcgdGhlICdHZXRDb3VudEluRGF0ZVJhbmdlJyBtZXRob2QuIFRoaXMgZnVuY3Rpb24gd2FzIG1vZGlmaWVkIGZyb20gW1BhcnQgMl0oaHR0cHM6Ly9uYXRoYW5zcHJvamVjdHMuY29tL3BhcnRfMl9xdWVyeV90aGVfYXBpLmh0bWwpIHRvIGFjY2VwdCBhcmd1bWVudHMgZm9yIGEgYmlrZW9tZXRlcl9pZCwgc3RhcnRfZGF0ZSwgZW5kX2RhdGUsIGFuZCBjb3VudF9pbl9kYXRlX3JhbmdlX2xpc3QgKGEgbGlzdCB0byBob2xkIGFsbCB0aGUgY291bnQgZGF0YSkuIFdlIHdpbGwgaGFyZC1jb2RlIHRoZSBtb2RlPSdCJyB0byByZXF1ZXN0ICpiaWtlKiBkYXRhIG5vdCAqcGVkZXN0cmlhbiosIGludGVydmFsPSdkJyB0byByZXF1ZXN0IGNvdW50cyBieSAqZGF5Kiwgc3RhcnRfdGltZSBhbmQgZW5kX3RpbWUgdG8gZ2V0IGRhdGEgZm9yIHRoZSBlbnRpcmUgZGF5LCBhbmQgZGlyZWN0aW9uPScnIHRvIHB1bGwgYm90aCB0aGUgKmluYm91bmQqIGFuZCAqb3V0Ym91bmQqIGRpcmVjdGlvbnMgdGhhdCB0aGUgQmlrZW9tZXRlcnMgY2FuIHNlbnNlLg0KDQpOb3RlOiBUaGUgQmlrZSBBcmxpbmd0b24gZG9jdW1lbnRhdGlvbiBkb2VzIG5vdCBtZW50aW9uIHRoaXMsIGJ1dCBzb21lIEJpa2VvbWV0ZXJzIGNhbid0IGRpc3Rpbmd1aXNoIGJldHdlZW4gKmluYm91bmQqIG9yICpvdXRib3VuZCogYW5kIHRoZWlyIGNvdW50cyBpbnN0ZWFkIHVzZSB0aGUgbGFiZWwgJ0EnLiBCeSBsZWF2aW5nIHRoZSAqZGlyZWN0aW9uKiBmaWVsZCBibGFuaywgb3VyIGZ1bmN0aW9uIHdpbGwgaW5jbHVkZSBhbGwgJ0EnIGRpcmVjdGlvbnMgdG9vLiANCg0KV2Ugd2lsbCBiZSB1c2luZyBhIGZldyBmdW5jdGlvbnMgZnJvbSB0aGUgKmRhdGV0aW1lKiBtb2R1bGUgc28gd2Ugc3RhcnQgYnkgaW1wb3J0aW5nIHRoZW0uDQoNCmBgYHtweXRob259DQpmcm9tIGRhdGV0aW1lIGltcG9ydCBkYXRlLCBkYXRldGltZSwgdGltZWRlbHRhDQoNCmRlZiBhcGlfY291bnRzX3RvX2xpc3QoYmlrZW9tZXRlcl9pZCwgDQogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgc3RhcnRfZGF0ZSwNCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBlbmRfZGF0ZSwgDQogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgY291bnRfaW5fZGF0ZV9yYW5nZV9saXN0LA0KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIG1vZGU9J0InLCANCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBpbnRlcnZhbD0nZCcsIA0KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHN0YXJ0X3RpbWU9JzA6MDAnLCANCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBlbmRfdGltZT0gJzIzOjU5JywgDQogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgZGlyZWN0aW9uPScnKSAtPiBsaXN0Og0KICAgIHJlcXVlc3RfcGFyYW1ldGVycyA9IHsnbWV0aG9kJzogJ0dldENvdW50SW5EYXRlUmFuZ2UnLA0KICAgICAgICAgICAgJ2NvdW50ZXJJRCc6IHN0cihiaWtlb21ldGVyX2lkKSwNCiAgICAgICAgICAgICdzdGFydERhdGUnOiBzdGFydF9kYXRlLA0KICAgICAgICAgICAgJ2VuZERhdGUnOiBlbmRfZGF0ZSwNCiAgICAgICAgICAgICdtb2RlJzogc3RyKG1vZGUpLA0KICAgICAgICAgICAgJ2ludGVydmFsJzogc3RyKGludGVydmFsKSwNCiAgICAgICAgICAgICdkaXJlY3Rpb24nOiBkaXJlY3Rpb259DQogICAgcmVzcG9uc2UgPSByZXF1ZXN0cy5nZXQodXJsLCBwYXJhbXM9cmVxdWVzdF9wYXJhbWV0ZXJzKQ0KICAgICAgICAjVE9ETzogQWRkIGV4Y2VwdCBmb3Igbm9uLTIwMCByZXNwb25zZQ0KICAgICMgQ29udmVydCByZXNwb25zZSB0byBhIHN0cmluZw0KICAgIHhtbF9kYXRhID0gcmVzcG9uc2UudGV4dA0KICAgICMgQ2xlYW4gdGhlIGRhdGENCiAgICBjbGVhbl94bWxfZGF0YSA9IHJlLnN1YihyJ1tcbnxcdF0nLCAnJywgeG1sX2RhdGEpDQogICAgIyBDYXN0IHRoZSBzdHJpbmcgdG8gYW4gWE1MIGVsZW1lbnQNCiAgICB0cmVlID0gRVQuZnJvbXN0cmluZyhjbGVhbl94bWxfZGF0YSkNCiAgICAjIENyZWF0ZSB0aGUgZW1wdHkgZGljdGlvbmFyeSB0byBwdXQgdGhlIGRhdGEgaW4NCiAgICAjQ291bnRJbkRhdGVSYW5nZURpY3QgPSB7fQ0KICAgICMgUGFyc2UgdGhlIEdldENvdW50SW5EYXRlUmFuZ2UgWE1MIGZpbGUgZm9yIHRoZSBjb3VudCBhbmQgZGF0ZSBhbmQgc2F2ZSBDb3VudEluRGF0ZVJhbmdlRGljdA0KICAgIGZvciB0eXBlX3RhZyBpbiB0cmVlLmZpbmRhbGwoJ2NvdW50Jyk6DQogICAgICAgIGNvdW50ID0gdHlwZV90YWcuZ2V0KCdjb3VudCcpDQogICAgICAgIGRhdGUgPSB0eXBlX3RhZy5nZXQoJ2RhdGUnKQ0KICAgICAgICAjIENvbnZlcnRzIGNvdW50ZXIgZGF0ZSB0byBhIGRhdGUgb2JqZWN0DQogICAgICAgIGRhdGUgPSBkYXRldGltZS5zdHJwdGltZShkYXRlLCAnJW0vJWQvJVknKS5kYXRlKCkNCiAgICAgICAgeWVhciA9IGRhdGUueWVhcg0KICAgICAgICBtb250aCA9IGRhdGUubW9udGgNCiAgICAgICAgZGF5ID0gZGF0ZS5kYXkNCiAgICAgICAgbW9udGhfZGF5ID0gZid7bW9udGh9X3tkYXl9Jw0KICAgICAgICBkaXJlY3Rpb24gPSB0eXBlX3RhZy5nZXQoJ2RpcmVjdGlvbicpDQogICAgICAgIGlmIGRhdGUud2Vla2RheSgpIDw9IDQ6DQogICAgICAgICAgICBpc193ZWVrZW5kID0gMA0KICAgICAgICBlbHNlOg0KICAgICAgICAgICAgaXNfd2Vla2VuZCA9IDENCiAgICAgICAgc2luZ2xlX3R1cGxlID0gKGJpa2VvbWV0ZXJfaWQsIGRhdGUsIGRpcmVjdGlvbiwgY291bnQsIGlzX3dlZWtlbmQsIHllYXIsIG1vbnRoLCBkYXksIG1vbnRoX2RheSkNCiAgICAgICAgY291bnRfaW5fZGF0ZV9yYW5nZV9saXN0LmFwcGVuZChzaW5nbGVfdHVwbGUpDQogICAgcmV0dXJuIGNvdW50X2luX2RhdGVfcmFuZ2VfbGlzdA0KDQpgYGANCg0KIyMgQ3JlYXRlIGFsbF9jb3VudHNfYnlfZGF0ZV90b19zcWwgZnVuY3Rpb24NCg0KTm93IHRoYXQgd2UgaGF2ZSBvdXIgaGVscGVyIGZ1bmN0aW9uIGNvbXBsZXRlLCBsZXQncyBjcmVhdGUgdGhlICoqYWxsX2NvdW50c19ieV9kYXRlX3RvX3NxbCoqIHdoaWNoIHdpbGwgcHVsbCBhbGwgdGhlIGRhdGEgc3RhcnRpbmcgb24gNC8xLzIwMTAuIA0KDQpXaGVuIGRlc2lnbmluZyBvdXIgZnVuY3Rpb24sIGl0J3MgaW1wb3J0YW50IHRvIHJlbWVtYmVyIHRoYXQgdGhlIEJpa2UgQXJsaW5ndG9uIEFQSSB3aWxsIG9ubHkgYWxsb3cgcmVxdWVzdHMgb2YgMSB5ZWFyIG9yIGxlc3MuIFRoZXJlIGFyZSBtYW55IHdheXMgdG8gZ2V0IHRoZSBkYXRhIGludG8geW91ciBkYXRhYmFzZS4gSSBjaG9vc2UgdG8gcHVsbCBhbGwgdGhlIG5lY2Vzc2FyeSBkYXRhIGJlZm9yZSBzYXZpbmcgaXQgYWxsIGluIG15IGRhdGFiYXNlIGluIG9uZSBjaHVuay4gWW91IG1heSBjaG9vc2UgdG8gaW5jcmVtZW50YWxseSBwdWxsIGFuZCBzYXZlIHRoZSBkYXRhIDEgeWVhciBhdCBhIHRpbWUuIEJvdGggd2F5cyBoYXZlIHRoZWlyIHByb3MgYW5kIGNvbnMgYW5kIGl0J3MgdXAgdG8geW91IHRvIGRlY2lkZSBhbmQganVzdGlmeSB5b3VyIGRlY2lzaW9uLg0KDQpgYGB7cHl0aG9ufQ0KZGVmIGFsbF9jb3VudHNfYnlfZGF0ZV90b19zcWwoKToNCiAgICAjIENyZWF0ZXMgdGhlIHBhcmFtZXRlcnMgdG8gZHJpdmUgdGhlIGNvbm5lY3Rpb24NCiAgICBlbmdpbmUgPSBjcmVhdGVfbmV3X2VuZ2luZSgnYmlrZW9tZXRlcnNfZGInKQ0KICAgICMgVGVzdHMgdGhlIGNvbm5lY3Rpb24gYW5kIHRocm93cyBhbiBlcnJvciBpZiBub3QgZXN0YWJsaXNoZWQNCiAgICBlbmdpbmUuY29ubmVjdCgpDQogICAgIyBCaWtlIEFybGluZ3RvbiBBUEkgb25seSBhY2NlcHRzIHF1ZXJ5IHJhbmdlcyBvZiAxIHllYXIgb3IgbGVzcw0KICAgIHN0YXJ0X2RhdGUgPSBkYXRlKHllYXI9MjAxMCwgbW9udGg9NCwgZGF5PTEpDQogICAgZW5kX2RhdGUgPSBkYXRlKHllYXI9MjAxMSwgbW9udGg9NCwgZGF5PTEpDQogICAgIyBDcmVhdGUgYSBsaXN0IHRvIGhvbGQgY291bnQgZGF0YQ0KICAgIGNvdW50X2luX2RhdGVfcmFuZ2VfbGlzdCA9IFtdDQogICAgIyBXZSB3aWxsIHB1bGwgZGF0YSB1cCB0byB5ZXN0ZXJkYXkncyBkYXRlDQogICAgd2hpbGUgZW5kX2RhdGUgPD0gZGF0ZS50b2RheSgpIC0gdGltZWRlbHRhKGRheXM9MSk6ICANCiAgICAjIEhhcmQtY29kZWQgdGhlIGJpa2VvbWV0ZXJfaWQgbGlzdCB0byBub3Qgc3RyZXNzIHRoZSBzZXJ2ZXIgbWFraW5nIHVubmVjZXNzYXJ5IHJlcXVlc3RzIA0KICAgICAgICBiaWtlb21ldGVyX2lkX2xpc3QgPSBbJzMzJywnMzAnLCc0MycsJzI0JywnNTknLCc1NicsJzQ3JywnNDgnLCcxMCcsJzIwJywNCiAgICAgICAgICAgICAgICAgICAgICAgICAgICczNScsJzU3JywnMTgnLCczJywnNTgnLCc2MScsJzYyJywnMzgnLCc0NCcsJzE0JywNCiAgICAgICAgICAgICAgICAgICAgICAgICAgICc2MCcsJzUnLCc2JywnNDInLCczNycsJzI3JywnMjYnLCc4JywnNycsJzUxJywnNTInLA0KICAgICAgICAgICAgICAgICAgICAgICAgICAgJzQ1JywnMjInLCcyMScsJzM2JywnMzQnLCc0MScsJzknLCczOScsJzE2JywnMTUnLA0KICAgICAgICAgICAgICAgICAgICAgICAgICAgJzU0JywnNTUnLCczMScsJzI4JywnMTEnLCcyJywnMjUnLCcxOSddDQogICAgICAgIGZvciBiaWtlb21ldGVyX2lkIGluIGJpa2VvbWV0ZXJfaWRfbGlzdDoNCiAgICAgICAgICAgICMgRGF0ZXMgWVlZWS1NTS1ERCBmb3JtYXQgY29udmVydGVkIHRvIE1NLURELVlZWSBhbmQgbWFkZSBpbnRvIGEgc3RyaW5nIHRvIHNlYXJjaCBDb3VudGVyIEFQSQ0KICAgICAgICAgICAgY2xlYW5fc3RhcnRfZGF0ZSA9IGYne3N0YXJ0X2RhdGUubW9udGh9L3tzdGFydF9kYXRlLmRheX0ve3N0YXJ0X2RhdGUueWVhcn0nDQogICAgICAgICAgICBjbGVhbl9lbmRfZGF0ZSA9IGYne2VuZF9kYXRlLm1vbnRofS97ZW5kX2RhdGUuZGF5fS97ZW5kX2RhdGUueWVhcn0nDQogICAgICAgICAgICAjIENhbGxzIHRoZSBnZXRfY291bnRfaW5fZGF0ZV9yYW5nZSBmdW5jdGlvbiBhbmQgcGFzc2VzIGluIGhhcmQtY29kZWQNCiAgICAgICAgICAgICMgcGFyYW1ldGVycyBsaWtlIHRoZSBzdGFydF9kYXRlLCB3aGljaCBpcyB0aGUgZmlyc3QgZGF0YXBvaW50IGluDQogICAgICAgICAgICAjIEJpa2UgQXJsaW5ndG9uIHNlcnZlci4gT3B0aW1hbGx5LCB0aGVzZSB3b3VsZCBub3QgYmUgaGFyZGNvZGVkIHRvICANCiAgICAgICAgICAgICMgbWFrZSB0aGUgcG9yZ3JhbSBtb3JlIGZ1dHVyZS1wcm9vZi4NCiAgICAgICAgICAgIGFwaV9jb3VudHNfdG9fbGlzdChiaWtlb21ldGVyX2lkLCBjbGVhbl9zdGFydF9kYXRlLCBjbGVhbl9lbmRfZGF0ZSwgY291bnRfaW5fZGF0ZV9yYW5nZV9saXN0LCBpbnRlcnZhbD0nZCcpDQogICAgICAgICMgSWYgZW5kIGRhdGUgaXMgeWVzdGVyZGF5J3MgZGF0ZSwgY29uZ3JhdHVsYXRpb25zLCB5b3UgcHVsbGVkIGFsbCBhdmFpbGFibGUgZGF0ZXMNCiAgICAgICAgIyBXZSB3b24ndCBwdWxsIHRvZGF5J3MgZGF0ZSBpbiBjYXNlIHRoZSBkYXRhIGhhcyBub3QgYmVlbiB1cGxvYWRlZCB0byB0aGVpciBzZXJ2ZXJzIHlldA0KICAgICAgICBpZiBlbmRfZGF0ZSA9PSBkYXRlLnRvZGF5KCkgLSB0aW1lZGVsdGEoZGF5cz0xKToNCiAgICAgICAgICAgIGJyZWFrICAgICAgICAgICAgICAgIA0KICAgICAgICAjIEFkZHMgYSB5ZWFyIHRvIHN0YXJ0IGRhdGUgYW5kIGVuZCBkYXRlDQogICAgICAgIHN0YXJ0X2RhdGUgPSBzdGFydF9kYXRlLnJlcGxhY2UoeWVhciA9IHN0YXJ0X2RhdGUueWVhciArIDEpDQogICAgICAgIGVuZF9kYXRlID0gZW5kX2RhdGUucmVwbGFjZSh5ZWFyID0gZW5kX2RhdGUueWVhciArIDEpDQogICAgICAgICMgSWYgZW5kIGRhdGUgaXMgYWZ0ZXIgeWVzdGVyZGF5J3MgZGF0ZSwgc2V0IHRoZSBlbmQgZGF0ZSB0byB5ZXN0ZXJkYXkgYW5kIHB1bGwgdGhlIGRhdGEgb25lIGxhc3QgdGltZQ0KICAgICAgICBpZiBlbmRfZGF0ZSA+PSBkYXRlLnRvZGF5KCk6DQogICAgICAgICAgICBlbmRfZGF0ZSA9IGRhdGUudG9kYXkoKSAtIHRpbWVkZWx0YShkYXlzPTEpDQogICAgY29sdW1ucyA9ICgnYmlrZW9tZXRlcl9pZCcsICdkYXRlJywgJ2RpcmVjdGlvbicsICdjb3VudCcsICdpc193ZWVrZW5kJywgJ3llYXInLCAnbW9udGgnLCAnZGF5JywgJ21vbnRoX2RheScpDQogICAgZGYgPSBwZC5EYXRhRnJhbWUoY291bnRfaW5fZGF0ZV9yYW5nZV9saXN0LCBjb2x1bW5zPWNvbHVtbnMpDQogICAgIyBNYWtlcyBiaWtlb21ldGVyX2lkIGNvdWxtbiB0eXBlIGludA0KICAgIGRmW1siYmlrZW9tZXRlcl9pZCJdXSA9IGRmW1siYmlrZW9tZXRlcl9pZCJdXS5hc3R5cGUoJ2ludCcpDQogICAgIyBSZXBsYWNlcyB0YWJsZSBjb3VudHMsIHVzZSBpZl9leGlzdHM9J2FwcGVuZCcgdG8gaW5zZXJ0IG5ldyB2YWx1ZXMgaW50byB0aGUgdGFibGUNCiAgICBkZi50b19zcWwoJ2NvdW50c19kYWlseScsIGNvbj1lbmdpbmUsIGluZGV4PUZhbHNlLCBpZl9leGlzdHM9J2FwcGVuZCcpDQogICAgIyBRdWVyaWVzIHlvdXIgYW5kIHJldHVybnMgYSBtZXNzYWdlIHRvIHRoZSB1c2VyIGluZGljYXRpbmcgdGhlIGxhc3QgZGF5IGluIHRoZWlyIHNlcnZlcg0KICAgIHdpdGggZW5naW5lLmNvbm5lY3QoKSBhcyBjb246DQogICAgICAgIGRhdGVfbGlzdCA9IGNvbi5leGVjdXRlKCdTRUxFQ1QgTUFYKERhdGUpIEZST00gY291bnRzX2RhaWx5JykNCiAgICAgICAgZm9yIGRheSBpbiBkYXRlX2xpc3Q6DQogICAgICAgICAgICBsYXN0X2RheSA9IGRheVswXQ0KICAgICAgICAgICAgcHJpbnQoZidUaGUgbmV3ZXN0IGRhdGUgaW4gY291bnRzX2RhaWx5IGlzIHtsYXN0X2RheX0nKQ0KICAgIGVuZ2luZS5kaXNwb3NlKCkNCg0KYGBgDQoNCklmIHlvdSBsb29rIGF0IHRoZSBsYXN0IGJpdCBvZiBjb2RlIGluIHRoZSBhYm92ZSBmdW5jdGlvbiwgYWZ0ZXIgdGhlIGRhdGEgaXMgc2F2ZWQgdG8gbXkgZGF0YWJhc2UgSSBtYWtlIGEgcXVlcnkgdG8gbXkgZGF0YWJhc2UgdG8gcmV0dXJuIHRoZSBtb3N0IHJlY2VudCBkYXRlLiBJZiB0aGUgZGF0ZSByZXR1cm5lZCBpcyB5ZXN0ZXJkYXkncyBkYXRlLCBpdCdzIGEgZ29vZCBzaWduIHRoYXQgdGhlIGRhdGEgd2FzIHVwbG9hZGVkIHN1Y2Nlc3NmdWxseS4NCg0KTm93IHRoYXQgdGhlIGZ1bmN0aW9uIGlzIGRlZmluZWQsIGxldCdzIHJ1biBpdC4NCg0KYGBge3B5dGhvbn0NCmFsbF9jb3VudHNfYnlfZGF0ZV90b19zcWwoKQ0KYGBgDQoNCkxldCdzIHRha2UgYSBsb29rIGF0IG91ciB0YWJsZSENCg0KYGBge3NxbCBjb25uZWN0aW9uPWNvbn0NClNFTEVDVCAqIEZST00gY291bnRzX2RhaWx5IEdST1VQIEJZIGJpa2VvbWV0ZXJfaWQgT1JERVIgQlkgYmlrZW9tZXRlcl9pZCBhc2M7DQpgYGANCg0KIyMgQ3JlYXRlIG5ld19jb3VudHNfYnlfZGF0ZV90b19zcWwgZnVuY3Rpb24NCg0KTm93IHRoYXQgd2UgaGF2ZSBvdXIgKiphbGxfY291bnRzX2J5X2RhdGVfdG9fc3FsKiogZnVuY3Rpb24sIHdlIG5lZWQgb3VyICAqKm5ld19jb3VudHNfYnlfZGF0ZV90b19zcWwqKiBmdW5jdGlvbiB3aGljaCB3aWxsIG9ubHkgcHVsbCB0aGUgbmV3IGRhdGVzLg0KDQpUbyBvbmx5IHB1bGwgdGhlIG5ldyBkYXRlcywgbGV0J3MgbWFrZSBhIGhlbHBlciBmdW5jdGlvbiB0aGF0IHdpbGwgcmV0dXJuIHRoZSBtb3N0IHJlY2VudCBkYXRlIGluIG91ciBNeVNRTCBkYXRhYmFzZS4NCg0KYGBge3B5dGhvbn0NCmRlZiBsYXN0X3NxbF9kYXRlX2NvdW50c19kYWlseShlbmdpbmUpOg0KICAgICcnJyBSZXR1cm5zIHRoZSBsYXN0IGRhdGUgaW4gdGhlIE15U1FMIGRhdGFiYXNlIGFzIGEgZGF0ZXRpbWUgb2JqZWN0JycnDQogICAgd2l0aCBlbmdpbmUuY29ubmVjdCgpIGFzIGNvbjoNCiAgICAgICAgbGFzdF9kYXRlID0gY29uLmV4ZWN1dGUoJ1NFTEVDVCBNQVgoRGF0ZSkgRlJPTSBjb3VudHNfZGFpbHknKQ0KICAgIGZvciBkYXkgaW4gbGFzdF9kYXRlOg0KICAgICAgICBkYXRlID0gZGF5WzBdDQogICAgcmV0dXJuIGRhdGUNCg0KYGBgDQpXaXRoIG91ciBoZWxwZXIgZnVuY3Rpb24gZGVmaW5lZCwgSSdsbCB1c2UgdGhlIHByZXZpb3VzIGZ1bmN0aW9uIGFzIGEgdGVtcGxhdGUgYW5kIGp1c3QgY2hhbmdlIGhvdyB0aGUgc3RhcnQgZGF0ZSBhbmQgZW5kIGRhdGUgdmFyaWFibGVzIGFyZSBmaXJzdCBkZWZpbmVkLiANCg0KSSBhbHNvIGFkZGVkIGEgdHdvIGNoZWNrcyBpbiB0aGUgYmVnaW5uaW5nLiBUaGUgZmlyc3QgaXMgaWYgdGhlICoqbGFzdF9zcWxfZGF0ZV9jb3VudHNfZGFpbHkqKiByZXR1cm5zIE5vbmUsIGl0IG1vc3QgbGlrZWx5IG1lYW5zIHRoZXJlIGlzIG5vIGRhdGEgaW4gdGhlIGRhdGFiYXNlIGFuZCB0aGUgZnVuY3Rpb24gc3RvcHMuIFRoZSBzZWNvbmQgY2hlY2sgaXMgaWYgeWVzdGVyZGF5J3MgZGF0ZSBpcyBhbHJlYWR5IGluIHRoZSBkYXRhYmFzZSwgdGhlIGZ1bmN0aW9uIHJldHVybnMgJ05vIG5ldyBkYXRhIGF2YWlsYWJsZScgdG8gdGhlIHVzZXIgd2l0aG91dCBtYWtpbmcgYW55IEFQSSByZXF1ZXN0cy4gRXZlcnl0aGluZyBlbHNlIHNob3VsZCBiZSB0aGUgc2FtZS4NCg0KYGBge3B5dGhvbn0NCmRlZiBuZXdfY291bnRzX2J5X2RheV90b19zcWwoKToNCiAgICBlbmdpbmUgPSBjcmVhdGVfbmV3X2VuZ2luZSgnY291bnRzJykNCiAgICAjIEVzdGFibGlzaCBjb25uZWN0aW9uIHRvIE15U1FMIGRhdGFiYXNlIGJlZm9yZSBtYWtpbmcgYWxsIHRoZSBBUEkgY2FsbHMuDQogICAgI1RPRE86IElmIG5vIGRhdGEgaXMgaW4gdGhlIE15U1FMIGRhdGFiYXNlLCBjdXN0b20gZXhjZXB0IGVycm9yDQogICAgIyBUaGlzIHByZXZlbnRzIHRoZSBwcm9ncmFtIGZyb20gcHVsbGluZyB0b2RheSdzIGRhdGUNCiAgICBzdGFydF9kYXRlID0gbGFzdF9zcWxfZGF0ZV9jb3VudHNfZGFpbHkoZW5naW5lKSArIHRpbWVkZWx0YShkYXlzPTEpDQogICAgaWYgc3RhcnRfZGF0ZSA9PSBOb25lOg0KICAgICAgICBwcmludCgnTm8gZGF0YSBmb3VuZCBpbiBNeVNRTCBkYXRhYmFzZS4nKQ0KICAgICAgICBwcmludCgnUGxlYXNlIHVzZSBhbGxfY291bnRzX3RvX3NxbCgpIGZ1bmN0aW9uJykNCiAgICAgICAgcmV0dXJuIE5vbmUNCiAgICBpZiBzdGFydF9kYXRlID49IGRhdGUudG9kYXkoKSAtIHRpbWVkZWx0YShkYXlzPTEpOg0KICAgICAgICAjVE9ETzogdGhyb3cgYW4gZXhjZXB0aW9uIGVycm9yIGluc3RlYWQgb2YgcHJpbnQNCiAgICAgICAgcHJpbnQoJ05vIG5ldyBkYXRhIGF2YWlhYmxlJykNCiAgICAgICAgcmV0dXJuIE5vbmUNCiAgICBlbmRfZGF0ZSA9IHN0YXJ0X2RhdGUucmVwbGFjZSh5ZWFyID0gc3RhcnRfZGF0ZS55ZWFyICsgMSkNCiAgICBpZiBlbmRfZGF0ZSA+PSBkYXRlLnRvZGF5KCk6DQogICAgICAgIGVuZF9kYXRlID0gZGF0ZS50b2RheSgpIC0gdGltZWRlbHRhKGRheXM9MSkNCiAgICAgIyMgVGVzdCBkYiBDb25uZWN0aW9uIyMNCiAgICAjIENyZWF0ZXMgdGhlIHBhcmFtZXRlcnMgdG8gZHJpdmUgdGhlIGNvbm5lY3Rpb24NCiAgICAjIEJpa2UgQXJsaW5ndG9uIEFQSSBvbmx5IGFjY2VwdHMgcXVlcnkgcmFuZ2VzIG9mIDEgeWVhciBvciBsZXNzDQogICAgY291bnRfaW5fZGF0ZV9yYW5nZV9saXN0ID0gW10gICANCiAgICB3aGlsZSBlbmRfZGF0ZSA8PSBkYXRlLnRvZGF5KCkgLSB0aW1lZGVsdGEoZGF5cz0xKTogIA0KICAgICMgSGFyZGNvZGVkIHRoZSBjb3VudGVySUQgbGlzdCB0byBub3Qgc3RyZXNzIHRoZSBzZXJ2ZXINCiAgICAgICAgYmlrZW9tZXRlcl9pZF9saXN0ID0gWyczMycsJzMwJywnNDMnLCcyNCcsJzU5JywnNTYnLCc0NycsJzQ4JywnMTAnLCcyMCcsDQogICAgICAgICAgICAgICAgICAgICAgICAgICAnMzUnLCc1NycsJzE4JywnMycsJzU4JywnNjEnLCc2MicsJzM4JywnNDQnLCcxNCcsDQogICAgICAgICAgICAgICAgICAgICAgICAgICAnNjAnLCc1JywnNDInLCczNycsJzI3JywnMjYnLCc4JywnNycsJzUxJywNCiAgICAgICAgICAgICAgICAgICAgICAgICAgICc0NScsJzIyJywnMjEnLCczNicsJzM0JywnNDEnLCc5JywnMzknLCcxNicsJzE1JywNCiAgICAgICAgICAgICAgICAgICAgICAgICAgICc1NCcsJzU1JywnMzEnLCcyOCcsJzExJywnMicsJzI1JywnMTknXQ0KICAgICAgICBmb3IgYmlrZW9tZXRlcl9pZCBpbiBiaWtlb21ldGVyX2lkX2xpc3Q6DQogICAgICAgICAgICAjIERhdGVzIFlZWVktTU0tREQgZm9ybWF0IGNvbnZlcnRlZCB0byBNTS1ERC1ZWVkgYW5kIG1hZGUgaW50byBhIHN0cmluZyB0byBzZWFyY2ggQ291bnRlciBBUEkNCiAgICAgICAgICAgIGNsZWFuX3N0YXJ0X2RhdGUgPSBmJ3tzdGFydF9kYXRlLm1vbnRofS97c3RhcnRfZGF0ZS5kYXl9L3tzdGFydF9kYXRlLnllYXJ9Jw0KICAgICAgICAgICAgY2xlYW5fZW5kX2RhdGUgPSBmJ3tlbmRfZGF0ZS5tb250aH0ve2VuZF9kYXRlLmRheX0ve2VuZF9kYXRlLnllYXJ9Jw0KICAgICAgICAgICAgIyBDYWxscyB0aGUgZ2V0X2NvdW50X2luX2RhdGVfcmFuZ2UgZnVuY3Rpb24gYW5kIHBhc3NlcyBpbiBoYXJkLWNvZGVkDQogICAgICAgICAgICAjIHBhcmFtZXRlcnMgbGlrZSB0aGUgc3RhcnRfZGF0ZSwgd2hpY2ggaXMgdGhlIGZpcnN0IGRhdGFwb2ludCBpbg0KICAgICAgICAgICAgIyBCaWtlIEFybGluZ3RvbiBzZXJ2ZXIuIE9wdGltYWxseSwgdGhlc2Ugd291bGQgbm90IGJlIGhhcmRjb2RlZCAgDQogICAgICAgICAgICAjIG1ha2UgdGhlIHBvcmdyYW0gbW9yZSBmdXR1cmUtcHJvb2YuDQogICAgICAgICAgICBhcGlfY291bnRzX3RvX2xpc3QoYmlrZW9tZXRlcl9pZCwgY2xlYW5fc3RhcnRfZGF0ZSwgY2xlYW5fZW5kX2RhdGUsIGNvdW50X2luX2RhdGVfcmFuZ2VfbGlzdCwgaW50ZXJ2YWw9J2QnKQ0KICAgICAgICAjIElmIGVuZCBkYXRlIGlzIHllc3RlcmRheSdzIGRhdGUsIGNvbmdyYXR1bGF0aW9ucywgeW91IHB1bGxlZCBhbGwgYXZhaWxhYmxlIGRhdGVzDQogICAgICAgICMgV2Ugd29uJ3QgcHVsbCB0b2RheSdzIGRhdGUgaW4gY2FzZSB0aGUgZGF0YSBoYXMgbm90IGJlZW4gdXBsb2FkZWQgdG8gdGhlaXIgc2VydmVycyB5ZXQNCiAgICAgICAgaWYgZW5kX2RhdGUgPT0gZGF0ZS50b2RheSgpIC0gdGltZWRlbHRhKGRheXM9MSk6DQogICAgICAgICAgICBicmVhayAgICAgICAgICAgICAgICANCiAgICAgICAgIyBBZGRzIGEgeWVhciB0byBzdGFydCBkYXRlIGFuZCBlbmQgZGF0ZQ0KICAgICAgICBzdGFydF9kYXRlID0gc3RhcnRfZGF0ZS5yZXBsYWNlKHllYXIgPSBzdGFydF9kYXRlLnllYXIgKyAxKQ0KICAgICAgICBlbmRfZGF0ZSA9IGVuZF9kYXRlLnJlcGxhY2UoeWVhciA9IGVuZF9kYXRlLnllYXIgKyAxKQ0KICAgICAgICAjIElmIGVuZCBkYXRlIGlzIGFmdGVyIHllc3RlcmRheSdzIGRhdGUsIHNldCB0aGUgZW5kIGRhdGUgdG8geWVzdGVyZGF5YW5kIHB1bGwgdGhlIGRhdGEgb25lIGxhc3QgdGltZQ0KICAgICAgICBpZiBlbmRfZGF0ZSA+PSBkYXRlLnRvZGF5KCk6DQogICAgICAgICAgICBlbmRfZGF0ZSA9IGRhdGUudG9kYXkoKSAtIHRpbWVkZWx0YShkYXlzPTEpICAgIA0KICAgIGNvbHVtbnMgPSAoJ2Jpa2VvbWV0ZXJfaWQnLCAnZGF0ZScsICdkaXJlY3Rpb24nLCAnY291bnQnLCAnaXNfd2Vla2VuZCcsICd5ZWFyJywgJ21vbnRoJywgJ2RheScsICdtb250aF9kYXknKQ0KICAgIGRmID0gcGQuRGF0YUZyYW1lKGNvdW50X2luX2RhdGVfcmFuZ2VfbGlzdCwgY29sdW1ucz1jb2x1bW5zKQ0KICAgIGRmW1siYmlrZW9tZXRlcl9pZCJdXSA9IGRmW1siYmlrZW9tZXRlcl9pZCJdXS5hc3R5cGUoJ2ludCcpDQogICAgIyBSZXBsYWNlcyB0YWJsZSBjb3VudHMsIHVzZSBpZl9leGlzdHM9J2FwcGVuZCcgdG8gaW5zZXJ0IG5ldyB2YWx1ZXMgaW50byB0aGUgdGFibGUNCiAgICBkZi50b19zcWwoJ2NvdW50c19kYWlseScsIGNvbj1lbmdpbmUsIGluZGV4PUZhbHNlLCBpZl9leGlzdHM9J2FwcGVuZCcpDQogICAgIyBSZWFkcyB0aGUgdGFibGUNCiAgICAjZGYyID0gcGQucmVhZF9zcWwoJ2NvdW50ZXJzJywgY29uPWVuZ2luZSkNCiAgICB3aXRoIGVuZ2luZS5jb25uZWN0KCkgYXMgY29uOg0KICAgICAgICBkYXRlX2xpc3QgPSBjb24uZXhlY3V0ZSgnU0VMRUNUIE1BWChEYXRlKSBGUk9NIGNvdW50c19kYWlseScpDQogICAgICAgIGZvciBkYXkgaW4gZGF0ZV9saXN0Og0KICAgICAgICAgICAgbGFzdF9kYXkgPSBkYXlbMF0NCiAgICAgICAgICAgIHByaW50KGYnVGhlIG5ld2VzdCBkYXRlIGluIGNvdW50c19kYWlseSBpcyB7bGFzdF9kYXl9JykNCiAgICAjIERvIHdlIG5lZWQgZW5naW5lLmRpc3Bvc2U/DQogICAgZW5naW5lLmRpc3Bvc2UoKQ0KbmV3X2NvdW50c19ieV9kYXlfdG9fc3FsKCkNCmBgYA0KQmVjYXVzZSBJIHJhbiB0aGUgcHJldmlvdXMgZnVuY3Rpb24gdG9kYXksIHRoZSBmdW5jdGlvbiByZXR1cm5zICdObyBuZXcgZGF0YSBhdmFpbGFibGUnLiBUcnkgaXQgZm9yIHlvdXJzZWxmIHRvbW9ycm93IGFuZCBjb21wYXJlIHRoZSB0aW1lIGl0IHRha2VzIHRvIHB1bGwgMSBkYXkncyB3b3J0aCBvZiBkYXRhIGNvbXBhcmVkIHRvIG92ZXIgMTAgeWVhcnMgd29ydGggb2YgZGF0YS4NCg0KDQo=</div>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeSourceEmbed("part_4_save_the_data_in_a_mysql_database.Rmd");
+});
+</script>
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

@@ -12,10 +12,6 @@ output:
       in_header: header.html
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(cache=TRUE)
-```
-
 # Background
 I will be building on the Python code we wrote in [Part 2: Query the API](https://nathansprojects.com/part_2_query_the_api.html) to move our data into a database. 
 
@@ -23,20 +19,14 @@ I will be building on the Python code we wrote in [Part 2: Query the API](https:
 1. Add functionality to our code from [Part 2](https://nathansprojects.com/part_2_query_the_api.html) that takes a Pandas Data Frame and puts it in our MySQL database. 
 2. Create seperate **helper functions** that create a *SQLAlchemy Engine* object, make API Requests, and query our MySQL database for the most recent date.
 3. Integrate these helper functions into or two main functions: one to pull and save all data starting from the oldest date in the Bike Arlington database and one to pull only the data missing from our MySQL database. 
-4. Upload to our MySQL database all Bike Arlington data on the details of each Bikeometer and all data on the actual bicycle counts.
+4. Save all Bike Arlington data on the details of each Bikeometer and all data on the actual bicycle counts to our MySQL database.
 
 Note: If I were to do this project again, I'd break the functions up into smaller functions to make testing easier. A common recommendation is that each function should only do one thing. If you are describing the functionality and you have to use the word 'and', you should break the function up.
 
-## Steps
-1. Moving Bikeometer Details to database
-2. Moving Daily Bike Counts to database
-3. Add feature to check for existing data in the database.
-4. Add feature that only pulls and adds new data to the database.
-5. 
-
-# Step 1: Move our data into MySQL
-
-## Migrating Bikeometer Details
+# Step 1: Migrating Bikeometer Details
+\ 
+\ 
+## Pandas .to_sql Method  
 
 We will utilize the Pandas module to move our data into MySQL with the [to_sql](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.to_sql.html) method. This method will operate on our dataframe and we will pass in a few parameters. First is our table name that we will create. Second is our engine that was created using SQLAlchemy. Third we specify to not create a column as the index. Last, we specify that if our table already exists in the database, add our data to the table without touching the existing data.
 
@@ -48,6 +38,8 @@ Let's work on adding the **to_sql** method to our code that pulls the Bikeometer
 
 First, let's define a **helper function** that will create a SQLAlchemy *engine* object. Let's call the function 'create_new_engine'. All we have to do is pass in the name of the database as an argument (bikeometers_db).
 
+## Connect to the database
+
 ```{python eval=FALSE}
 def create_new_engine(db_name):
     return create_engine(f'mysql+mysqldb://{input("Enter username: ")}:{getpass("Enter password: ")}@localhost/{db_name}', echo=False)
@@ -58,8 +50,10 @@ def create_new_engine(db_name):
 # Created temp user name that will be deleted once the post is uploaded.
 def create_new_engine(db_name):
   return create_engine(f'mysql+mysqldb://newuser:donteventry@localhost/bikeometers_db', echo=False)
+
 ```
 
+## Define the  function
 I've taken the *get_bikeometer_details* function from [Part 2](https://nathansprojects.com/part_2_query_the_api.html) as well as the GET request steps and made them into a single function *bikeometer_to_sql*.
 
 ```{python}
@@ -123,6 +117,7 @@ def bikeometer_to_sql():
 
 ```
 
+## Test the function
 Now we run the function.
 ```{python}
 bikeometer_to_sql()
@@ -130,10 +125,27 @@ bikeometer_to_sql()
 Let's check to see what our new table looks like. 
 
 First we create a connection and assign it to *con*.
+
+```{python include=FALSE}
+# Workaround to get this document to Knit
+# Created temp user name that will be deleted once the post is uploaded.
+engine = create_engine(f'mysql+mysqldb://newuser:donteventry@localhost/bikeometers_db', echo=False)
+```
+
 ```{python}
 con = engine.connect()
 ```
 Then, we execute a MySQL statement.
+
+I'm going to run the MySQL commands from R so first I'll establish a connection to the database through R. You can run the MySQL commands in either the MysQL Workbench or the MySQL Command Line.
+
+```{r}
+library(DBI)
+con <- dbConnect(odbc::odbc(), .connection_string = "Driver={MySQL ODBC 8.0 Unicode Driver};", 
+    server = "localhost", db = "bikeometers_db", user = "newuser", 
+    password = rstudioapi::askForPassword("Database password"))
+```
+
 ```{sql connection=con}
 SELECT * FROM bikeometer_details
 ```
@@ -142,9 +154,11 @@ Now that we have our bikeometer_details table in our database, we won't need to 
 
 Next, we will request the daily bike counts for every day since a counter was installed and save it in our database. 
 
-## Migrating Bike Counts
+# Step 2: Migrating Bike Counts
 
 Again, we will build on the code from [Part 2](https://nathansprojects.com/part_2_query_the_api.html).
+
+## Find the oldest Bikeometer
 
 In [Part 2](https://nathansprojects.com/part_2_query_the_api.html), we created a function called **api_counts_to_list** which pulled the bicycle counts using an arbitrary hard-coded start date, end date, and a single Bikeometer. However, now we need to pull the data for **all** Bikeometers and **all** avaiable dates.
 
@@ -155,7 +169,7 @@ We will call the built-in Bike Arlington API method: 'getMinDates' on all the Bi
 ```{python}
 bikeometer_id_list = ['33','30','43','24','59','56','47','48','10','20',
                            '35','57','18','3','58','61','62','38','44','14',
-                           '60','5','6','42','37','27','26','8','7','51','52',
+                           '60','5','42','37','27','26','8','7','51',
                            '45','22','21','36','34','41','9','39','16','15',
                            '54','55','31','28','11','2','25','19']
 ```
@@ -175,6 +189,8 @@ for bikeometer_id in bikeometer_id_list:
 ```
 Skimming through the returned responses, we can see that the first date was 4/1/2010. This will be our first *start date* in our function. 
 
+## Create helper functions
+
 Ultimately, we will have two functions when we are finished: one that pulls all the dates starting from 4/1/2010 (**all_counts_by_date_to_sql**) and one that pulls only the new dates.(**new_counts_by_date_to_sql**)
 
 To help us out, we will create a **helper function** based on the **api_counts_to_list** function we made in [Part 2](https://nathansprojects.com/part_2_query_the_api.html).
@@ -183,13 +199,24 @@ The goal is to have the main functions **all_counts_by_date_to_sql** and **new_c
 
 Note: As I write this up, I'm realizing you could write one function that would query your MySQL database and depending upon the response, it could call the appropriate function using an *if/else* statement, but, as they say, that's not MVP.
 
-Here is the *helper function* that will request data from the Bike Arlington API using the 'GetCountInDateRange' method. This function was modified from Part 2 to accept arguments for a bikeometer_id, start_date, end_date, and count_in_date_range_list (a list to hold all the count data). We will hard-code the mode='B' to request *bike* data not *pedestrian*, interval='d' to request counts by *day*, start_time and end_time to get data for the entire day, and direction='' to pull both the *inbound* and *outbound* directions that the Bikeometers can sense.
+Here is the *helper function* that will request data from the Bike Arlington API using the 'GetCountInDateRange' method. This function was modified from [Part 2](https://nathansprojects.com/part_2_query_the_api.html) to accept arguments for a bikeometer_id, start_date, end_date, and count_in_date_range_list (a list to hold all the count data). We will hard-code the mode='B' to request *bike* data not *pedestrian*, interval='d' to request counts by *day*, start_time and end_time to get data for the entire day, and direction='' to pull both the *inbound* and *outbound* directions that the Bikeometers can sense.
 
 Note: The Bike Arlington documentation does not mention this, but some Bikeometers can't distinguish between *inbound* or *outbound* and their counts instead use the label 'A'. By leaving the *direction* field blank, our function will include all 'A' directions too. 
 
+We will be using a few functions from the *datetime* module so we start by importing them.
+
 ```{python}
-def api_counts_to_list(bikeometer_id, start_date, end_date,count_in_date_range_list, mode='B', 
-                               interval='d', start_time='0:00', end_time= '23:59', direction=''):
+from datetime import date, datetime, timedelta
+
+def api_counts_to_list(bikeometer_id, 
+                               start_date,
+                               end_date, 
+                               count_in_date_range_list,
+                               mode='B', 
+                               interval='d', 
+                               start_time='0:00', 
+                               end_time= '23:59', 
+                               direction='') -> list:
     request_parameters = {'method': 'GetCountInDateRange',
             'counterID': str(bikeometer_id),
             'startDate': start_date,
@@ -198,41 +225,46 @@ def api_counts_to_list(bikeometer_id, start_date, end_date,count_in_date_range_l
             'interval': str(interval),
             'direction': direction}
     response = requests.get(url, params=request_parameters)
-    #TODO: Add except for non-200 response
+        #TODO: Add except for non-200 response
     # Convert response to a string
     xml_data = response.text
     # Clean the data
     clean_xml_data = re.sub(r'[\n|\t]', '', xml_data)
     # Cast the string to an XML element
     tree = ET.fromstring(clean_xml_data)
-    # Parse the GetCountInDateRange XML file for the count and date and save CountInDateRangeList
-      for type_tag in tree.findall('count'):
-          count = type_tag.get('count')
-          date = type_tag.get('date')
-          # Converts counter date to a date object
-          date = datetime.strptime(date, '%m/%d/%Y').date()
-          year = date.year
-          month = date.month
-          day = date.day
-          month_day = f'{month}_{day}'
-          direction = type_tag.get('direction')
-          if date.weekday() <= 4:
-              is_weekend = 0
-          else:
-              is_weekend = 1
-          single_tuple = (bikeometer_id, date, direction, count, is_weekend, year, month, day, month_day)
-          count_in_date_range_list.append(single_tuple)
-      return count_in_date_range_list
+    # Create the empty dictionary to put the data in
+    #CountInDateRangeDict = {}
+    # Parse the GetCountInDateRange XML file for the count and date and save CountInDateRangeDict
+    for type_tag in tree.findall('count'):
+        count = type_tag.get('count')
+        date = type_tag.get('date')
+        # Converts counter date to a date object
+        date = datetime.strptime(date, '%m/%d/%Y').date()
+        year = date.year
+        month = date.month
+        day = date.day
+        month_day = f'{month}_{day}'
+        direction = type_tag.get('direction')
+        if date.weekday() <= 4:
+            is_weekend = 0
+        else:
+            is_weekend = 1
+        single_tuple = (bikeometer_id, date, direction, count, is_weekend, year, month, day, month_day)
+        count_in_date_range_list.append(single_tuple)
+    return count_in_date_range_list
+
 ```
+
+## Create all_counts_by_date_to_sql function
 
 Now that we have our helper function complete, let's create the **all_counts_by_date_to_sql** which will pull all the data starting on 4/1/2010. 
 
-When designing our function, it's important to remember that the Bike Arlington API will only allow requests of 1 year or less. There are many ways to get the data into your database. I choose to pull all the necessary data before saving it all in my database in one chunk. You may choose to incrementally pull and save the data 1 year at a time. Both ways have their pros and cons and it's up to you to decide and further justify your decision.
+When designing our function, it's important to remember that the Bike Arlington API will only allow requests of 1 year or less. There are many ways to get the data into your database. I choose to pull all the necessary data before saving it all in my database in one chunk. You may choose to incrementally pull and save the data 1 year at a time. Both ways have their pros and cons and it's up to you to decide and justify your decision.
 
 ```{python}
 def all_counts_by_date_to_sql():
     # Creates the parameters to drive the connection
-    engine = create_new_engine('counts')
+    engine = create_new_engine('bikeometers_db')
     # Tests the connection and throws an error if not established
     engine.connect()
     # Bike Arlington API only accepts query ranges of 1 year or less
@@ -257,18 +289,117 @@ def all_counts_by_date_to_sql():
             # Bike Arlington server. Optimally, these would not be hardcoded to  
             # make the porgram more future-proof.
             api_counts_to_list(bikeometer_id, clean_start_date, clean_end_date, count_in_date_range_list, interval='d')
-        # Adds a year to start date and end date
-        start_date = start_date.replace(year = start_date.year + 1)
-        end_date = end_date.replace(year = end_date.year + 1)
         # If end date is yesterday's date, congratulations, you pulled all available dates
         # We won't pull today's date in case the data has not been uploaded to their servers yet
         if end_date == date.today() - timedelta(days=1):
             break                
+        # Adds a year to start date and end date
+        start_date = start_date.replace(year = start_date.year + 1)
+        end_date = end_date.replace(year = end_date.year + 1)
         # If end date is after yesterday's date, set the end date to yesterday and pull the data one last time
         if end_date >= date.today():
             end_date = date.today() - timedelta(days=1)
     columns = ('bikeometer_id', 'date', 'direction', 'count', 'is_weekend', 'year', 'month', 'day', 'month_day')
     df = pd.DataFrame(count_in_date_range_list, columns=columns)
+    # Makes bikeometer_id coulmn type int
+    df[["bikeometer_id"]] = df[["bikeometer_id"]].astype('int')
+    # Replaces table counts, use if_exists='append' to insert new values into the table
+    df.to_sql('counts_daily', con=engine, index=False, if_exists='append')
+    # Queries your and returns a message to the user indicating the last day in their server
+    with engine.connect() as con:
+        date_list = con.execute('SELECT MAX(Date) FROM counts_daily')
+        for day in date_list:
+            last_day = day[0]
+            print(f'The newest date in counts_daily is {last_day}')
+    engine.dispose()
+
+```
+
+If you look at the last bit of code in the above function, after the data is saved to my database I make a query to my database to return the most recent date. If the date returned is yesterday's date, it's a good sign that the data was uploaded successfully.
+
+Now that the function is defined, let's run it.
+
+```{python}
+all_counts_by_date_to_sql()
+```
+
+Let's take a look at our table!
+
+```{sql connection=con}
+SELECT * FROM counts_daily GROUP BY bikeometer_id ORDER BY bikeometer_id asc;
+```
+
+## Create new_counts_by_date_to_sql function
+
+Now that we have our **all_counts_by_date_to_sql** function, we need our  **new_counts_by_date_to_sql** function which will only pull the new dates.
+
+To only pull the new dates, let's make a helper function that will return the most recent date in our MySQL database.
+
+```{python}
+def last_sql_date_counts_daily(engine):
+    ''' Returns the last date in the MySQL database as a datetime object'''
+    with engine.connect() as con:
+        last_date = con.execute('SELECT MAX(Date) FROM counts_daily')
+    for day in last_date:
+        date = day[0]
+    return date
+
+```
+With our helper function defined, I'll use the previous function as a template and just change how the start date and end date variables are first defined. 
+
+I also added a two checks in the beginning. The first is if the **last_sql_date_counts_daily** returns None, it most likely means there is no data in the database and the function stops. The second check is if yesterday's date is already in the database, the function returns 'No new data available' to the user without making any API requests. Everything else should be the same.
+
+```{python}
+def new_counts_by_day_to_sql():
+    engine = create_new_engine('counts')
+    # Establish connection to MySQL database before making all the API calls.
+    #TODO: If no data is in the MySQL database, custom except error
+    # This prevents the program from pulling today's date
+    start_date = last_sql_date_counts_daily(engine) + timedelta(days=1)
+    if start_date == None:
+        print('No data found in MySQL database.')
+        print('Please use all_counts_to_sql() function')
+        return None
+    if start_date >= date.today() - timedelta(days=1):
+        #TODO: throw an exception error instead of print
+        print('No new data avaiable')
+        return None
+    end_date = start_date.replace(year = start_date.year + 1)
+    if end_date >= date.today():
+        end_date = date.today() - timedelta(days=1)
+     ## Test db Connection##
+    # Creates the parameters to drive the connection
+    # Bike Arlington API only accepts query ranges of 1 year or less
+    count_in_date_range_list = []   
+    while end_date <= date.today() - timedelta(days=1):  
+    # Hardcoded the counterID list to not stress the server
+        bikeometer_id_list = ['33','30','43','24','59','56','47','48','10','20',
+                           '35','57','18','3','58','61','62','38','44','14',
+                           '60','5','42','37','27','26','8','7','51',
+                           '45','22','21','36','34','41','9','39','16','15',
+                           '54','55','31','28','11','2','25','19']
+        for bikeometer_id in bikeometer_id_list:
+            # Dates YYYY-MM-DD format converted to MM-DD-YYY and made into a string to search Counter API
+            clean_start_date = f'{start_date.month}/{start_date.day}/{start_date.year}'
+            clean_end_date = f'{end_date.month}/{end_date.day}/{end_date.year}'
+            # Calls the get_count_in_date_range function and passes in hard-coded
+            # parameters like the start_date, which is the first datapoint in
+            # Bike Arlington server. Optimally, these would not be hardcoded  
+            # make the porgram more future-proof.
+            api_counts_to_list(bikeometer_id, clean_start_date, clean_end_date, count_in_date_range_list, interval='d')
+        # If end date is yesterday's date, congratulations, you pulled all available dates
+        # We won't pull today's date in case the data has not been uploaded to their servers yet
+        if end_date == date.today() - timedelta(days=1):
+            break                
+        # Adds a year to start date and end date
+        start_date = start_date.replace(year = start_date.year + 1)
+        end_date = end_date.replace(year = end_date.year + 1)
+        # If end date is after yesterday's date, set the end date to yesterdayand pull the data one last time
+        if end_date >= date.today():
+            end_date = date.today() - timedelta(days=1)    
+    columns = ('bikeometer_id', 'date', 'direction', 'count', 'is_weekend', 'year', 'month', 'day', 'month_day')
+    df = pd.DataFrame(count_in_date_range_list, columns=columns)
+    df[["bikeometer_id"]] = df[["bikeometer_id"]].astype('int')
     # Replaces table counts, use if_exists='append' to insert new values into the table
     df.to_sql('counts_daily', con=engine, index=False, if_exists='append')
     # Reads the table
@@ -278,206 +409,10 @@ def all_counts_by_date_to_sql():
         for day in date_list:
             last_day = day[0]
             print(f'The newest date in counts_daily is {last_day}')
+    # Do we need engine.dispose?
     engine.dispose()
+new_counts_by_day_to_sql()
 ```
+Because I ran the previous function today, the function returns 'No new data available'. Try it for yourself tomorrow and compare the time it takes to pull 1 day's worth of data compared to over 10 years worth of data.
 
 
-
-```{python}
-response.text
-```
-
-It looks like we're missing some parameters... which makes sense. If we take a look at the documenation, it says: 
-
-"Request Fields:
-• CounterID – Number Required Field
-• startDate – mm/dd/yyyy
-• endDate – mm/dd/yyyy
-• direction – I, O (I: Inbound, O: outbound), Empty for both.
-• mode – B, P (B: bike, P: pesdestrian), empty for both.
-• startTime – HH:MM format
-• endtime – HH:MM format
-• interval – h (by the hourly), m(by the minutes), d(by the day
-
-Example with interval as d:
-http://webservices.commuterpage.com/counters.cfc?wsdl&method=GetCountInDateRan
-ge&counterid=1&startDate=12/1/2011&endDate=12/04/2011&direction=I&mode=B&inte
-rval=d"
-
-Like with many parts of coding, there are multiple ways to achieve the same goal. We could create a function that concatenates a URL according to our desired 'request fields', or we can do what I do below: pass in each of the request fields to the GET request.
-
-I'll start with the first 'bikeometer_id' in the above Bikeometer Details data frame, so counterID = 33. To get the 'start date', let's use one of the built-in Bike Arlington API methods: 'getMinDates'
-
-```{python}
-# Assign the url of the 
-url = 'http://webservices.commuterpage.com/counters.cfc?wsdl'
-# Defines the method in a dictionary used to make the request
-counter_reqest_methods = {'method': 'getMinDates', 'counterID': '33'}
-# Save the GetAllCounters request to memory
-response = requests.get(url, params=counter_reqest_methods)
-response.text
-```
-The first date for Bikeometer 33 is 07/22/2015.
-
-Just to test, let's make the end date the same as the start date, 07/22/2015. For 'mode', we have the option to request data for Bikers, Pedestrians, or Both. I'll choose Bikers, so the mode will be 'B'. For 'interval' we can choose 'minute', 'hourly', or 'daily'. I'll choose 'daily'. I'll leave 'direction' blank to pull both the Inbound and Outbound direction.
-
-We will organize all these parameters in a dictionary and pass that dictionary to the GET method.
-
-```{python}
-request_parameters = {'method': 'GetCountInDateRange',
-                      'counterID': '33',
-                      'startDate': '07/22/2015' ,
-                      'endDate': '07/22/2015',
-                      'mode': 'B',
-                      'interval': 'D',
-                      'direction': ''}
-response = requests.get(url, params=request_parameters)
-response.text
-```
-It looks like on 7/22/15, there were 384 bikers in the Inbound direction and 399 bikers in the Outbound direction. Before we extract this data, let's clean it up a little just to make our lives easier.
-
-## Step 2: Clean the Data
-
-Again, we will use the 're' module to remove some of the extraneous html. 
-
-The code below will substitute any '\n' or '\t' with a blank string (''), essentially deleting them.
-
-```{python}
-import re
-
-string_data = response.text
-clean_string_data = re.sub(r'[\n|\t]', '', string_data)
-clean_string_data
-```
-
-Again, The first part of the data mentions that the data is in XML format. We can use this to our advantage by converting the string to an XML to easily pull out the data we are looking for.
-
-## Step 3: Convert data to XML
-
-This step is the same as above but I'll repeat it again for those that skipped right to this step. 
-
-We will use the module 'xml.etree.ElementTree' to convert the data from a string to XML format. By converting this to XML, finding the data we need will be faster because we don't have to iterate over the entire string looking for the specific data we need, we can use the hierarchical structure of an XML file to drill down to the specific data we are looking for.
-
-To make it easier to call, we will import the module as 'ET'. We will then call the method 'fromstring' and pass in our 'clean_string_data' as an argument.
-
-```{python}
-import xml.etree.ElementTree as ET
-
-root = ET.fromstring(clean_string_data)
-type(root)
-```
-
-Our object 'root' is now an 'xml.etree.ElementTree.Element' object that we can iterate over with a **for loop** or we can use the **list** function.
-
-## Step 4: Explore XML Data
-
-Using the **list** function allows us to take a look inside **root** to see its children.
-
-```{python}
-list(root)
-```
-
-We can see there are two "Element 'counter'..." objects, one representing the Inbound direction and the other is the Outbound direction on our requested date.
-
-Let's slice into the list of counters and assign the first counter to the variable 'child' then take a look inside.
-
-```{python}
-child = root[0]
-child.items()
-```
-
-We can see that 'child' contains the 'count', 'date', 'direction', and 'mode'.
-
-To isolate the important information we can use the **get** method and pass in 'count', 'date', 'direction', or 'mode' to get the value.
-
-```{python}
-child.get('count')
-child.get('date')
-child.get('direction')
-child.get('mode')
-```
-Now that we know how to pull the data that we want, let's automate it.
-
-## Step 5: Automate With A Function
-
-I'll show you the function that I created to iterate through the XML data. Every 'count' and its details will be saved in a tuple and those tuples will be saved all together in a list.
-
-First, I'll create the empty list that will house the 'count' tuples.
-
-```{python}
-count_in_date_range_list = []
-```
-
-Next, I'll create a list of the Bikeometer ID's that I'd like to pull data for. My function will iterate over this list using a **for loop**.
-
-```{python}
-bikeometer_id_list = ['33','30','43','24','59','56','47','48','10','20',
-                           '35','57','18','3','58','61','62','38','44','14',
-                           '60','5','6','42','37','27','26','8','7','51','52',
-                           '45','22','21','36','34','41','9','39','16','15',
-                           '54','55','31','28','11','2','25','19']
-```
-
-
-Next, I'll create a Russian nesting doll of a **for loop** to dive into the appropriate sections to pull the information I want. I'll use the **datetime** module to separate out the 
-
-```{python}
-from datetime import date, datetime, timedelta
-
-def api_counts_to_list(): 
-  for bikeometer_id in bikeometer_id_list:
-    request_parameters = {'method': 'GetCountInDateRange',
-                      'counterID': bikeometer_id,
-                      'startDate': '07/22/2015' ,
-                      'endDate': '07/22/2015',
-                      'mode': 'B',
-                      'interval': 'D',
-                      'direction': ''}
-    response = requests.get(url, params=request_parameters)
-    string_data = response.text
-    clean_string_data = re.sub(r'[\n|\t]', '', string_data)
-    root = ET.fromstring(clean_string_data)
-    for type_tag in root.findall('count'):
-        count = type_tag.get('count')
-        date = type_tag.get('date')
-        # Converts counter date to a date object
-        date = datetime.strptime(date, '%m/%d/%Y').date()
-        year = date.year
-        month = date.month
-        day = date.day
-        month_day = f'{month}_{day}'
-        direction = type_tag.get('direction')
-        if date.weekday() <= 4:
-            is_weekend = 0
-        else:
-            is_weekend = 1
-        single_tuple = (bikeometer_id, date, direction, count, is_weekend, year, month, day, month_day)
-        count_in_date_range_list.append(single_tuple)
-  return count_in_date_range_list
-all_id_list = api_counts_to_list()
-all_id_list
-```
-Each tuple contains: (bikeometer_id, date, direction, count, is_weekend, year, month, day, month_day).
-
-I added a few more variables by manipulating the date a bit in order to make the analysis later easier.
-
-## Step 6: Data into a data frame
-
-First, we will load that **Pandas** module so we can turn our list of tuples into a data frame.
-
-```{python}
-import pandas as pd
-```
-
-Next, we will define the columns of the data frame according to the data in our tuples. 
-```{python}
-columns = ('bikeometer_id', 'date', 'direction', 'count', 'is_weekend', 'year', 'month', 'day', 'month_day')
-```
-
-With our columns defined, we will create a dataframe using the pandas **DataFrame** method, pass in our **bikeometer_details** list into the **data** parameter and pass in our **columns** variable to the **columns** parameter.
-```{python}
-df = pd.DataFrame(all_id_list, columns=columns)
-df
-```
-
-Now that we are able to automate pulling the data into a data frame, in the next post, we can set up our database which we will use to store the data for analysis. 

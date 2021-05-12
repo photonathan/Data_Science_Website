@@ -24,7 +24,7 @@ In 2020, Minnesota's Department of Transportaion put out a [great visualization]
 Similarly explore Arlington, Virginia's bicycle ridership numbers around Virginia Governor Northram's [State of Emergency](https://www.governor.virginia.gov/newsroom/all-releases/2020/march/headline-853537-en.html) Declaration on March 12, 2020 and [Stay at Home order](https://www.governor.virginia.gov/newsroom/all-releases/2020/march/headline-855702-en.html) on March 30, 2020.
 
 ## Follow along or explore on your own
-Subsequent posts for this project will outline step by step how I went about creating similar visualizations to the Minnesota DOT. I believe this is a great project for those new to Python, R, or databases. If you have any questions, comments, or are working on your own analysis, [send me an email](mailto:mail.nathansprojects@gmail.com)!
+Subsequent posts for this project will outline step by step how I went about creating similar visualizations to the Minnesota DOT. I believe this is a great project for those new to Python, R, or databases. Each *Part* of this project will have a **Goal** section. The best way to learn is to give the goals a shot on your own before looking at how I accomplished them. If you have any questions, comments, or are working on your own analysis, [send me an email](mailto:mail.nathansprojects@gmail.com)!
 
 ## Requirements
 To start the project, the only requirements are listed below. I'll document as best I can how to set up the MySQL database and connect everything together in [part 3](https://nathansprojects.com/part_3_setup_your_database.html).
