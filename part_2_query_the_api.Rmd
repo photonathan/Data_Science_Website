@@ -444,4 +444,4 @@ df = pd.DataFrame(all_id_list, columns=columns)
 df
 ```
 
-Now that we are able to automate pulling the data into a data frame, in the next post, we can set up our database which we will use to store the data for analysis. 
+Now that we are able to automate pulling the data into a data frame, in the [next post](https://nathansprojects.com/part_3_setup_your_database.html), we can set up our database which we will use to store the data for analysis. 
