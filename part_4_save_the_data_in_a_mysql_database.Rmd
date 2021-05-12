@@ -12,6 +12,10 @@ output:
       in_header: header.html
 ---
 
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(cache=TRUE)
+```
+
 # Background
 I will be building on the Python code we wrote in [Part 2: Query the API](https://nathansprojects.com/part_2_query_the_api.html) to move our data into a database. 
 
@@ -20,14 +24,16 @@ I will be building on the Python code we wrote in [Part 2: Query the API](https:
 2. Create a few  **helper functions** that our main functions will call.
 3. Finalize our functions to pull the API data and upload it to the MySQL database.
 
-# Steps
+## Steps
 1. Moving Bikeometer Details to database
 2. Moving Daily Bike Counts to database
 3. Add feature to check for existing data in the database.
 4. Add feature that only pulls and adds new data to the database.
 5. 
 
-## Step 1: Move our data into MySQL
+# Step 1: Move our data into MySQL
+
+## Migrating Bikeometer Details
 
 We will utilize the Pandas module to move our data into MySQL with the [to_sql](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.to_sql.html) method. This method will operate on our dataframe and we will pass in a few parameters. First is our table name that we will create. Second is our engine that was created using SQLAlchemy. Third we specify to not create a column as the index. Last, we specify that if our table already exists in the database, add our data to the table without touching the existing data.
 
@@ -44,8 +50,14 @@ def create_new_engine(db_name):
     return create_engine(f'mysql+mysqldb://{input("Enter username: ")}:{getpass("Enter password: ")}@localhost/{db_name}', echo=False)
 ```
 
-I've taken the the *get_bikeometer_details* function from Part 2 as well as the GET request steps and made them into a single function *bikeometer_to_sql*.
+```{python include=FALSE}
+# Workaround to get this document to Knit
+# Created temp user name that will be deleted once the post is uploaded.
+def create_new_engine(db_name):
+  return create_engine(f'mysql+mysqldb://newuser:donteventry@localhost/bikeometers_db', echo=False)
+```
 
+I've taken the *get_bikeometer_details* function from Part 2 as well as the GET request steps and made them into a single function *bikeometer_to_sql*.
 
 ```{python}
 import requests
@@ -101,68 +113,104 @@ def bikeometer_to_sql():
     # Creates a pandas data frame
     df = pd.DataFrame(data=bikeometer_details, columns = columns)
     # Assigns 'types' to each column
-    df[["name", "latitude", "longitude", "region", 'region_id']] = df[["name", "latitude", "longitude", "region", 'region_id']].astype('string')
+    df[["name", "latitude", "longitude", "region", 'region_id']] = df[["name", "latitude", "longitude", "region", 'region_id']].astype('str')
     df[["bikeometer_id"]] = df[["bikeometer_id"]].astype('int')
     # Moves data to MySQL
     df.to_sql('bikeometer_details', con=engine, index=False, if_exists='replace')
+
 ```
 
+Now we run the function.
+```{python}
+bikeometer_to_sql()
+```
+Let's check to see what our new table looks like. 
 
+First we create a connection and assign it to *con*.
+```{python}
+con = engine.connect()
+```
+Then, we execute a MySQL statement.
+```{sql connection=con}
+SELECT * FROM bikeometer_details
+```
 
+Now that we have our bikeometer_details table in our database, we won't need to run this code again unless a new Bikeometer is added.
 
+Next, we will request the daily bike counts for every day since a counter was installed and save it in our database. 
 
-Taking a look inside our bikeometer_details object, we see a list of tuples, where each tuple is a seperate Bikeometer.
+## Migrating Bike Counts
 
-Each tuple contains: ('bikeometer_id', 'bikeometer_name', 'latitude', 'longitude', 'region', 'region_id')
+Again, we will build on the code from Part 2.
+
+In Part 2, we created a function called **api_counts_to_list** which pulled the bicycle counts in a hard-coded start date, end date, and a single Bikeometer. However, now we need to pull the data for **all** Bikeometers.
+
+To make our life easier, let's select the oldest Bikeometer, pull it's first date on the job, and use that date as our *start date* for all Bikeometers. Our function is writted so that if there is no data for a requested date, our function just skips those dates and moves on without error.
+
+We will call the built-in Bike Arlington API method: 'getMinDates' on all the Bikeometer IDs in the below *bikeometer_id_list*.
 
 ```{python}
-bikeometer_details
+bikeometer_id_list = ['33','30','43','24','59','56','47','48','10','20',
+                           '35','57','18','3','58','61','62','38','44','14',
+                           '60','5','6','42','37','27','26','8','7','51','52',
+                           '45','22','21','36','34','41','9','39','16','15',
+                           '54','55','31','28','11','2','25','19']
 ```
 
-## Step 6: Data into a data frame
+Now, we will create a simple *for loop* to call the *getMinDates* method on all the Bikeometers.
+```{python}
+# Assign the url of the 
+url = 'http://webservices.commuterpage.com/counters.cfc?wsdl'
 
-First, we will load that **Pandas** module so we can turn our list of tuples into a data frame.
+# Defines the method in a dictionary used to make the request
+for bikeometer_id in bikeometer_id_list: 
+  counter_reqest_methods = {'method': 'getMinDates', 'counterID': bikeometer_id}
+  # Save the GetAllCounters request to memory
+  response = requests.get(url, params=counter_reqest_methods)
+  response.text
+
+```
+Skimming through the returned responses, we can see that the first date was 4/1/2010. This will be our first *start date* in our function. 
+
+Ultimately, we will have two functions when we are finished: one that pulls all the dates starting from 4/1/2010 and one that pulls only the new dates. Let's create the first function called **all_counts_by_date_to_sql**.
+
 
 ```{python}
-import pandas as pd
+from datetime import date, datetime, timedelta
+
+def api_counts_to_list(): 
+  for bikeometer_id in bikeometer_id_list:
+    request_parameters = {'method': 'GetCountInDateRange',
+                      'counterID': bikeometer_id,
+                      'startDate': '07/22/2015' ,
+                      'endDate': '07/22/2015',
+                      'mode': 'B',
+                      'interval': 'D',
+                      'direction': ''}
+    response = requests.get(url, params=request_parameters)
+    string_data = response.text
+    clean_string_data = re.sub(r'[\n|\t]', '', string_data)
+    root = ET.fromstring(clean_string_data)
+    for type_tag in root.findall('count'):
+        count = type_tag.get('count')
+        date = type_tag.get('date')
+        # Converts counter date to a date object
+        date = datetime.strptime(date, '%m/%d/%Y').date()
+        year = date.year
+        month = date.month
+        day = date.day
+        month_day = f'{month}_{day}'
+        direction = type_tag.get('direction')
+        if date.weekday() <= 4:
+            is_weekend = 0
+        else:
+            is_weekend = 1
+        single_tuple = (bikeometer_id, date, direction, count, is_weekend, year, month, day, month_day)
+        count_in_date_range_list.append(single_tuple)
+  return count_in_date_range_list
+all_id_list = api_counts_to_list()
+all_id_list
 ```
-
-Next, we will define the columns of the data frame according to the data in our tuples. 
-```{python}
-columns = ('bikeometer_id', 'name', 'latitude', 'longitude', 'region', 'region_id')
-```
-
-With our columns defined, we will create a dataframe using the **Pandas DataFrame** function, pass in our **bikeometer_details** list into the **data** parameter and pass in our **columns** variable to the **columns** parameter.
-```{python}
-df = pd.DataFrame(data=bikeometer_details, columns = columns)
-```
-
-Finally, we will assign a *type* to each column by using the **.astype()** method.
-```{python}
-df[["name", "latitude", "longitude", "region", 'region_id']] = df[["name", "latitude", "longitude", "region", 'region_id']].astype('str')
-df[["bikeometer_id"]] = df[["bikeometer_id"]].astype('int')
-```
-
-```{python}
-df
-```
-
-
-Now that it's in a data frame, we have many options about what to do with it. We can picke it for later, manipulate it with pandas, or what I'm going to do in the next post: save it in my database.
-
-Now that we can easily pull the Bikeometer data to usable format, we will pull the data for the actual daily bike counts. 
-
-# Requesting Bike Counts
-
-## Step 1: Make a request
-
-Again, let's look to the [API documentation](http://counters.bikearlington.com/bike/assets/File/Regional_bikearlington_webservices.pdf) to find the method we need to request the Bike counts.
-
-We will us the method 'GetCountInDateRange', pass in the dates that we are looking for, and pull out the data that we want: Bikeometer ID, Date, Direction (Inbound or Outbound), Count.
-
-Note: The Bike Arlington API allows for queries of 1 year or less. This limitation can be managed by making requests in 1 year increments and adding them to the database or concatenating each 1 year request into a list.
-
-Again, we'll use the 'requests' library to make a 'GET' request to the base Bike Arlington URL and this time pass in the 'GetCountInDateRange' method as a parameter. 
 
 ```{python}
 # Assign the url of the 
