@@ -59,7 +59,7 @@ For me, I don't have stand-alone Python installed on Windows, I just have my con
 
 Next, we will import the two modules into Python: **SQLAlchemy** and the built-in Python module **getpass** which we will use to enter our database password.
 
-```{python}
+```{python cache=TRUE}
 from sqlalchemy import create_engine
 from getpass import getpass
 ```
@@ -74,14 +74,14 @@ Note: below is the how the function is supposed to look when using Python. Howev
 engine = create_engine(f'mysql+mysqldb://{input("Enter username: ")}:{getpass("Enter password: ")}@localhost/bikeometers_db')
 ```
 
-```{python include=FALSE}
+```{python include=FALSE, cache=TRUE}
 # Workaround to get this document to Knit
 # Created temp user name that will be deleted once the post is uploaded.
 engine = create_engine(f'mysql+mysqldb://newuser:donteventry@localhost/bikeometers_db', echo=False)
 ```
 However, SQLAlchemy is 'lazy' and won't actually try to make the connection until we explicitly tell it. So, the below code will test the connection and throw an error if a connection cannot be made.
 
-```{python}
+```{python cache=TRUE}
 engine.connect()
 ```
 
@@ -90,16 +90,16 @@ If a *'sqlalchemy.engine.base.Connection object'* is returned, that means you ha
 Let's make our first request from Python to MySQL.
 
 First, we will assign the connection to the variable 'con'.
-```{python}
+```{python cache=TRUE}
 con = engine.connect()
 ```
 Next, we will use the **execute** method from SQLAlchemy on our 'con' variable and pass in a SQL command as an argument.
-```{python}
+```{python cache=TRUE}
 databases = con.execute('SHOW DATABASES;')
 databases
 ```
 We can look inside our 'cursor' object to see the data using a *for loop*.
-```{python}
+```{python cache=TRUE}
 for item in databases:
   print(item[0])
 
@@ -108,7 +108,7 @@ These are the databases currently on my computer.
 
 When we are done with our SQL commands, best practice is to close the connection with the following code.
 
-```{python}
+```{python cache=TRUE}
 engine.dispose()
 ```
 
@@ -123,7 +123,7 @@ In step 1, we installed the MySQL/odbc Connector when we installed MySQL. If you
 Once installed, make sure that both the **odbc** and **DBI** packages are installed in R.
 
 First, we will load the **odbc** and **DBI** package in R.
-```{r}
+```{r cache=TRUE}
 library(odbc)
 library(DBI)
 ```
@@ -135,7 +135,7 @@ con <- dbConnect(odbc::odbc(), .connection_string = "Driver={MySQL ODBC 8.0 Unic
                  server = "localhost", db = "bikeometers_db", user = readline(prompt = 'Enter user name: '), password = rstudioapi::askForPassword("Database password"))
 ```
 
-```{r include=FALSE}
+```{r include=FALSE, cache=TRUE}
 # Workaround to get the document to knit
 # Created temp user name that will be deleted once the post is uploaded.
 con <- dbConnect(odbc::odbc(), .connection_string = "Driver={MySQL ODBC 8.0 Unicode Driver};", 
@@ -147,7 +147,7 @@ If you are using RStudio, and your connection is successful, you will now see a 
 Let's send a MySQL Command from R to MySQL to confirm the two can communicate.
 
 We will use R to send the same MySQL command as before.
-```{r}
+```{r cache=TRUE}
 sql_cmd <- "SHOW DATABASES;"
 bikeometers_db <- dbGetQuery(con, sql_cmd)
 bikeometers_db

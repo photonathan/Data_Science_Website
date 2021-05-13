@@ -7,13 +7,17 @@ output:
     includes:
       in_header: header.html
 ---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(cache=TRUE)
+```
+
 \ 
 \ 
 \ 
 
 + Occasionally, when I use the 'reticulate' package in RStudio, it doesn't work. I'll be executing Python chunks like it's nobody's business, then all of the sudden, I'll get an error and my Python chunks that ran great previously will stop working.
 
-+ Occasionally, it will be the 'r setup' code chunk that caches code chunks globally that needs to be disabled:
++ Occasionally, it will be the 'r setup' code chunk that [caches](https://yihui.org/en/2018/06/cache-invalidation/) code chunks globally that needs to be disabled:
 ```
 \```{r setup, include=TRUE}
 knitr::opts_chunk$set(cache=TRUE)
@@ -26,8 +30,4 @@ https://rstudio.github.io/reticulate/articles/versions.html
 
 + Occasionally, I get the error: **Evaluation error: ModuleNotFoundError: No module named 'rpytools'**
 
-  Well I fixed this one! I needed to copy the rpytools folder originally in [this location](C:\Users\...\Documents\R\win-library\4.0\reticulate\python) to [this location](C:\Users\...\anaconda3\envs\r-reticulate\Lib). I almost pooped my pants when it worked. 
-
-  Also, I omitted my user name in my hyperlinks.
-
-  If I never have to run Python in R again, it will be too soon.
+  Well I fixed this one! I needed to copy the rpytools folder originally in [this location](C:\Users\...\Documents\R\win-library\4.0\reticulate\python) to [this location](C:\Users\...\anaconda3\envs\r-reticulate\Lib). I almost pooped my pants when it worked. Also, I omitted my user name in my hyperlinks. If I never have to run Python in R again, it will be too soon.

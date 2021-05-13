@@ -12,6 +12,10 @@ output:
     includes:
       in_header: header.html
 ---
+```{r setup, include=FALSE, cache=TRUE, autodep=TRUE, cache.lazy=FALSE}
+knitr::opts_chunk$set(cache=TRUE)
+```
+
 \ 
 \ 
 
@@ -21,7 +25,7 @@ To match the plot of the MnDOT, I'll use an area plot, so I use the same code bu
 
 # Connect to MySQL Database
 
-```{r echo = FALSE, message = FALSE, warning= FALSE}
+```{r echo = FALSE, message = FALSE, warning= FALSE, cache=TRUE}
 library(ggplot2)
 library(dplyr)
 library(odbc)
@@ -35,7 +39,7 @@ con <- dbConnect(odbc::odbc(), .connection_string = "Driver={MySQL ODBC 8.0 Unic
 
 Right now, the table looks like this:
 
-```{r}
+```{r cache=TRUE}
 counts_daily <- tbl(con, 'counts_daily')
 head(counts_daily)
 ```
@@ -57,7 +61,7 @@ For those not familiar with MySQL views, they look like tables but are actually 
 
 Now, let's take a look at our new view.
 
-```{r}
+```{r cache=TRUE}
 counts_daily_total <- tbl(con, 'counts_daily_total')
 head(counts_daily_total)
 ```
@@ -75,7 +79,7 @@ WHERE bikeometer_id IN (14,15,16,18,22,31,39)
 AND Year(Date) in (2017,2018,2019);
 ```
 
-```{r paged.print=TRUE}
+```{r cache=TRUE}
 filtered_counts_daily_total_2017_to_2019 <- tbl(con, 'filtered_counts_daily_total_2017_to_2019')
 filtered_counts_daily_total_2017_to_2019
 ```
@@ -92,7 +96,7 @@ LEFT JOIN filtered_counts_daily_total a ON cd.month_day = a.month_day
 group by cd.month_day;
 ```
 
-```{r}
+```{r cache=TRUE}
 counts_daily_average_2017_to_2019 <- tbl(con, 'counts_daily_average_2017_to_2019')
 counts_daily_average_2017_to_2019
 ```
@@ -106,20 +110,20 @@ FROM counts_daily_average_2017_to_2019 A
 INNER JOIN counts_daily_average_2020 B ON B.month_day = A.month_day
 ```
 
-```{r message=FALSE}
+```{r message=FALSE, cache=TRUE}
 df <- tbl(con, 'the_best_table')
 # These Bikeometers are all located in the Arlington region
 ```
 
 In order for this table to be easily read by R, we need to covert it from a wide table to a long table. [This]('https://mgimond.github.io/ES218/Week03b.html') is the resource I used to understand how to do the conversion.
 
-```{r}
+```{r cache=TRUE}
 df.long <- pivot_longer(df, cols=2:3, names_to='year', values_to='counts')
 ```
 
 Here I added the year to the end of the all the month_day values then convert that to a date class so R has an easy time graphing it.
 
-```{r}
+```{r cache=TRUE}
 df.long <- mutate(df.long, month_day=paste(month_day, '-2020', sep = ''))
 df.long <- collect(df.long)
 ```
@@ -134,21 +138,21 @@ df.long
 
 Then I'll filter for the dates in my range
 
-```{r}
+```{r cache=TRUE}
 df.long.filtered <- df.long %>% filter(month_day >= '03-12-2020' & month_day <= '05-15-2020') %>% collect()
 df.long.filtered
 ```
 
 Finally I convert the month_day values from a 'character class' to a time class. Be sure to lowercase the 'm' and 'd' in '%m-%d-%Y'.
 
-```{r}
+```{r cache=TRUE}
 df.long.filtered$month_day <- strptime(df.long.filtered$month_day, '%m-%d-%Y')
 class(df.long.filtered$month_day[1])
 df.long.filtered$month_day <- as.Date(df.long.filtered$month_day)
 class(df.long.filtered$month_day[1])
 ```
 
-```{r}
+```{r cache=TRUE}
 #library(ggpmisc)
 p <- df.long.filtered %>% ggplot(aes(x = month_day, y = counts)) +
   geom_line(aes(group = year, color = year))
@@ -158,7 +162,7 @@ print(p)
 ```
 
 
-```{r}
+```{r cache=TRUE}
 p <- df.long.filtered %>% ggplot(aes(x = month_day, y = counts)) +
   geom_area(aes(group = year, color = year))
 print(p)
@@ -174,7 +178,7 @@ I'll map the locations of the Bikeometers to see where exactly they are in Arlin
 
 On the left are the numbers we need to enter into the bbox variable below in order to get the graph from [Stamen Maps](http://maps.stamen.com/). I've chosen 'terrain' as my map type and the 'zoom' will be 13, which is in the openstreetmap url just after the text 'map='.
 
-```{r message=FALSE}
+```{r message=FALSE, cache=TRUE}
 library(ggmap)
 library(ggthemes)
 # Get the map information
@@ -186,7 +190,7 @@ arlington <- get_stamenmap(
 
 Next we will import the Bikeometer data from my database that contains the longitude and latitudes needed to plot the Bikeometers.
 
-```{r}
+```{r cache=TRUE}
 sql_cmd <- "SELECT * FROM counts.bikeometer_details WHERE bikeometer_id in (14,15,16,18,22,31,39)"
 # creates a lazy table
 bikeometer_table <- dbGetQuery(con, sql_cmd)
@@ -195,7 +199,7 @@ bikeometer_table
 
 One Bikeometer stands out as not even being in Alrington... how did that get in there? Let's plot it anyway to see how close it is to Arlington. Realistically, I frequently bike into Alexandria on the weekends but I'll probably end up excluding it none the less.
 
-```{r}
+```{r cache=TRUE}
 # Convert latitude and longitude to integers
 bikeometer_table$longitude <- as.numeric(bikeometer_table$longitude)
 bikeometer_table$latitude <- as.numeric(bikeometer_table$latitude)
@@ -219,14 +223,14 @@ I used the websites [GPXStudio](https://gpxstudio.github.io/) and [MyGeodata Con
 
 I read in the CSV which I'll use to plot the Arlington Loop.
 
-```{r}
+```{r cache=TRUE}
 arlington_loop_table <- read.csv('~/Github/Arlington_Bikeometer_Visualizations/Data/arlington_loop.csv')
 arlington_loop_table
 ```
 
 I passed the 'arlington' map object to ggmap to set the background image to Arlington then plotted the Arlington Loop using geom_point. I used the 'longitude' column as the x-axis, 'latitude' column as the y-axis, 'alpha' is the transparency of the points (0 to 1) and 'size' is the size of each point. I used 'theme_map' without 'x' and 'y' axes.
 
-```{r}
+```{r cache=TRUE}
 ggmap(arlington) + # creates the map "background"
   geom_point(data = arlington_loop_table, 
              aes(x = longitude, y = latitude), 
@@ -237,29 +241,29 @@ ggmap(arlington) + # creates the map "background"
 
 Next, I'll create an Arlington Loop layer so I can overlay it on top of the Bikeometer location map. I found two options to create this layer: geom_polygon or geom_path. The biggest diffrence I see is that you can specify a fill for geom_polygon, but considering I don't want to fill the layer in, I'll use geom_path.
 
-```{r}
+```{r cache=TRUE}
 ggmap(arlington) + geom_polygon(aes(x = longitude, y = latitude),
                              data = arlington_loop_table, fill = 'blue', alpha = 0.1, size = 1, color = "red")
 ```
 
-```{r}
+```{r cache=TRUE}
 ggmap(arlington) + geom_path(data = arlington_loop_table, aes(x = longitude, y = latitude), size = 1, color = 'red') + theme_map()
 
 ```
 
 If I wanted the path to change color according to elevation, I could use the below \<color = ele\> argument. This will generate a legend on the map. By adding the \<theme(legend.background = element_blank())\> code, you remove the background from the legend. However I won't be using this code.
 
-```{r}
+```{r cache=TRUE}
 ggmap(arlington) + geom_path(data = arlington_loop_table, aes(x = longitude, y = latitude, color = ele), size = 1) + theme_map() + theme(legend.background = element_blank())
 ```
 
 I'll assign the geom_path to the arlington_loop_layer variable to be plotted on top of the plot with the location of the Bikeometes.
 
-```{r}
+```{r cache=TRUE}
 arlington_loop_layer <- geom_path(data = arlington_loop_table, aes(x = longitude, y = latitude), size = 1, color = 'red')
 ```
 
-```{r}
+```{r cache=TRUE}
 ggmap(arlington) + # creates the map "background"
   geom_point(data = bikeometer_table, 
              aes(x = longitude, y = latitude, color = region), 
@@ -275,7 +279,7 @@ Let's see what Bikeometers are actually on the Arlington Loop. I can use that da
 
 all_bikeometer_table
 
-```{r}
+```{r cache=TRUE}
 sql_cmd <- "SELECT * FROM counts.bikeometer_details"
 # creates a lazy table
 all_bikeometer_table <- dbGetQuery(con, sql_cmd)
@@ -286,7 +290,7 @@ all_bikeometer_table
 
 To figure out labeling, I used [this site](https://rafalab.github.io/dsbook/ggplot2.html).
 
-```{r}
+```{r cache=TRUE}
 ggmap(arlington) + # creates the map "background"
   geom_point(data = bikeometer_table, 
              aes(x = longitude, y = latitude, color = region), 
@@ -299,11 +303,11 @@ ggmap(arlington) + # creates the map "background"
 
 For some reason, bikeometer_id 6 isn't in my database. I'll quickly covert my list of Bikeometers into integers so I can use the sorted() function in python to order them.
 
-```{r include=FALSE}
+```{r include=FALSE, cache=TRUE}
 library(reticulate)
 ```
 
-```{python}
+```{python cache=TRUE}
 bikeometer_list = ['33','30','43','24','59','56','47','48','10','20',
                            '35','57','18','3','58','61','62','38','44','14',
                            '60','5','6','42','37','27','26','8','7','51','52',
