@@ -15,7 +15,7 @@ navbar:
         - text: "Part 4: Save the Data in Your Local MySQL Database"
           href: part_4_save_the_data_in_a_mysql_database.html 
         - text: "Part 5: Creating the Initial Visualizations"
-          href: part_5_creating_initial_visualizations.Rmd
+          href: part_5_creating_initial_visualizations.html
     - text: "Notes"
       menu:
         - text: "Fixing rpytools error"
