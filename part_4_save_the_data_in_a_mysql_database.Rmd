@@ -30,7 +30,7 @@ Note: If I were to do this project again, I'd break the functions up into smalle
 
 We will utilize the Pandas module to move our data into MySQL with the [to_sql](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.to_sql.html) method. This method will operate on our dataframe and we will pass in a few parameters. First is our table name that we will create. Second is our engine that was created using SQLAlchemy. Third we specify to not create a column as the index. Last, we specify that if our table already exists in the database, add our data to the table without touching the existing data.
 
-```{python eval=FALSE, cache=TRUE}
+```{python eval=FALSE}
 df.to_sql('counts_daily', con=engine, index=False, if_exists='append')
 ```
 
@@ -40,7 +40,7 @@ First, let's define a **helper function** that will create a SQLAlchemy *engine*
 
 ## Connect to the database
 
-```{python eval=FALSE, cache=TRUE}
+```{python eval=FALSE}
 def create_new_engine(db_name):
     return create_engine(f'mysql+mysqldb://{input("Enter username: ")}:{getpass("Enter password: ")}@localhost/{db_name}', echo=False)
 ```
@@ -415,4 +415,4 @@ new_counts_by_day_to_sql()
 ```
 Because I ran the previous function today, this function returns 'No new data available'. Try it for yourself tomorrow and compare the time it takes to pull 1 day's worth of data compared to over 10 years worth of data.
 
-In the [next post]() I'll start creating visualizations of the data.
+In the [next post](https://nathansprojects.com/part_5_creating_initial_visualizations.html) I'll start creating visualizations of the data.
