@@ -12,8 +12,10 @@ navbar:
           href: part_2_query_the_api.html
         - text: "Part 3: Setup and Connect Your Database"
           href: part_3_setup_your_database.html
-        - text: "Part 4: Save the Data in a Local MySQL Database"
+        - text: "Part 4: Save the Data in Your Local MySQL Database"
           href: part_4_save_the_data_in_a_mysql_database.html 
+        - text: "Part 5: Creating the Initial Visualizations"
+          href: part_5_creating_initial_visualizations.Rmd
     - text: "Notes"
       menu:
         - text: 
