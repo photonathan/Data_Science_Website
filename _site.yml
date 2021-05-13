@@ -18,8 +18,8 @@ navbar:
           href: part_5_creating_initial_visualizations.Rmd
     - text: "Notes"
       menu:
-        - text: "Fixing pyrtools error"
-          href: fixing_pyrtools_error.html
+        - text: "Fixing rpytools error"
+          href: fixing_rpytools_error.html
     - text: "Photography"
       href: photography.html
     - text: "About"
