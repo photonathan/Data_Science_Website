@@ -11,7 +11,7 @@
 
 
 
-<title>Nathan’s Projects</title>
+<title>Fixing rpytools Error</title>
 
 <script src="site_libs/header-attrs-2.7/header-attrs.js"></script>
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
@@ -30,8 +30,8 @@
        code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
        pre:not([class]) { background-color: white }</style>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
-<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
-<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<script src="site_libs/navigation-1.1/sourceembed.js"></script>
 <link rel="apple-touch-icon" sizes="180x180" href="~/assets/favicon/apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon/favicon-16x16.png">
@@ -51,19 +51,14 @@
   ul.task-list{list-style: none;}
     </style>
 
-<style type="text/css">code{white-space: pre;}</style>
-<script type="text/javascript">
-if (window.hljs) {
-  hljs.configure({languages: []});
-  hljs.initHighlightingOnLoad();
-  if (document.readyState && document.readyState === "complete") {
-    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
-  }
+
+
+
+<style type="text/css">
+#rmd-source-code {
+  display: none;
 }
-</script>
-
-
-
+</style>
 
 
 
@@ -224,6 +219,9 @@ $(document).ready(function () {
 </style>
 
 <!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
 
 
 
@@ -307,34 +305,37 @@ $(document).ready(function () {
 
 <div id="header">
 
+<div class="btn-group pull-right float-right">
+<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
+<li><a id="rmd-download-source" href="#">Download Rmd</a></li>
+</ul>
+</div>
 
 
-<h1 class="title toc-ignore">Nathan’s Projects</h1>
+
+<h1 class="title toc-ignore">Fixing rpytools Error</h1>
 
 </div>
 
 
-<style type="text/css">
-.title {
-  display: none;
-}
+<p>     </p>
+<ul>
+<li><p>Occasionally, when I use the ‘reticulate’ package in RStudio, it doesn’t work. I’ll be executing Python chunks like it’s nobody’s business, then all of the sudden, I’ll get an error and my Python chunks that ran great previously will stop working.</p></li>
+<li><p>Occasionally, it will be the ‘r setup’ code chunk that caches code chunks globally that needs to be disabled:</p></li>
+</ul>
+<pre><code>\```{r setup, include=TRUE}
+knitr::opts_chunk$set(cache=TRUE)
+\```</code></pre>
+<ul>
+<li><p>Occasionally, the Python environment isn’t setup properly and I need to refer to these web pages then pray: <a href="https://rstudio.github.io/reticulate/articles/python_packages.html" class="uri">https://rstudio.github.io/reticulate/articles/python_packages.html</a> <a href="https://rstudio.github.io/reticulate/articles/versions.html" class="uri">https://rstudio.github.io/reticulate/articles/versions.html</a></p></li>
+<li><p>Occasionally, I get the error: <strong>Evaluation error: ModuleNotFoundError: No module named ‘rpytools’</strong></p>
+<p>Well I fixed this one! I needed to copy the rpytools folder originally in <a href="C:\Users...\Documents\R\win-library\4.0\reticulate\python">this location</a> to <a href="C:\Users...\anaconda3\envs\r-reticulate\Lib">this location</a>. I almost pooped my pants when it works.</p>
+<p>Also, I omitted my user name in my hyperlinks.</p>
+<p>If I never have to run Python in R again, it will be too soon.</p></li>
+</ul>
 
-#getting-started img {
-  margin-right: 10px;
-}
-
-</style>
-<div class="row">
-<div class="col-sm-6">
-<p><img src="images/Logo.jpg" width="100%" id=logo style="display: block; margin: auto;" /></p>
-</div>
-<div id="welcome" class="section level3 col-sm-6" style="padding-top: 50px;">
-<h3>Welcome</h3>
-<p>Data can be complicated, my homepage is not.</p>
-<p>Check out my <a href="https://nathansprojects.com/part_1_the_plan.html">Visualization of Arlington, Virginia’s bike usage during Covid-19</a>.</p>
-</div>
-</div>
-
+<div id="rmd-source-code">LS0tDQp0aXRsZTogIkZpeGluZyBycHl0b29scyBFcnJvciINCm91dHB1dDoNCiAgaHRtbF9kb2N1bWVudDogDQogICAgaGlnaGxpZ2h0OiB6ZW5idXJuDQogICAgY29kZV9kb3dubG9hZDogdHJ1ZQ0KICAgIGluY2x1ZGVzOg0KICAgICAgaW5faGVhZGVyOiBoZWFkZXIuaHRtbA0KLS0tDQpcIA0KXCANClwgDQoNCisgT2NjYXNpb25hbGx5LCB3aGVuIEkgdXNlIHRoZSAncmV0aWN1bGF0ZScgcGFja2FnZSBpbiBSU3R1ZGlvLCBpdCBkb2Vzbid0IHdvcmsuIEknbGwgYmUgZXhlY3V0aW5nIFB5dGhvbiBjaHVua3MgbGlrZSBpdCdzIG5vYm9keSdzIGJ1c2luZXNzLCB0aGVuIGFsbCBvZiB0aGUgc3VkZGVuLCBJJ2xsIGdldCBhbiBlcnJvciBhbmQgbXkgUHl0aG9uIGNodW5rcyB0aGF0IHJhbiBncmVhdCBwcmV2aW91c2x5IHdpbGwgc3RvcCB3b3JraW5nLg0KDQorIE9jY2FzaW9uYWxseSwgaXQgd2lsbCBiZSB0aGUgJ3Igc2V0dXAnIGNvZGUgY2h1bmsgdGhhdCBjYWNoZXMgY29kZSBjaHVua3MgZ2xvYmFsbHkgdGhhdCBuZWVkcyB0byBiZSBkaXNhYmxlZDoNCmBgYA0KXGBgYHtyIHNldHVwLCBpbmNsdWRlPVRSVUV9DQprbml0cjo6b3B0c19jaHVuayRzZXQoY2FjaGU9VFJVRSkNClxgYGANCmBgYA0KDQorIE9jY2FzaW9uYWxseSwgdGhlIFB5dGhvbiBlbnZpcm9ubWVudCBpc24ndCBzZXR1cCBwcm9wZXJseSBhbmQgSSBuZWVkIHRvIHJlZmVyIHRvIHRoZXNlIHdlYiBwYWdlcyB0aGVuIHByYXk6DQpodHRwczovL3JzdHVkaW8uZ2l0aHViLmlvL3JldGljdWxhdGUvYXJ0aWNsZXMvcHl0aG9uX3BhY2thZ2VzLmh0bWwNCmh0dHBzOi8vcnN0dWRpby5naXRodWIuaW8vcmV0aWN1bGF0ZS9hcnRpY2xlcy92ZXJzaW9ucy5odG1sDQoNCisgT2NjYXNpb25hbGx5LCBJIGdldCB0aGUgZXJyb3I6ICoqRXZhbHVhdGlvbiBlcnJvcjogTW9kdWxlTm90Rm91bmRFcnJvcjogTm8gbW9kdWxlIG5hbWVkICdycHl0b29scycqKg0KDQogIFdlbGwgSSBmaXhlZCB0aGlzIG9uZSEgSSBuZWVkZWQgdG8gY29weSB0aGUgcnB5dG9vbHMgZm9sZGVyIG9yaWdpbmFsbHkgaW4gW3RoaXMgbG9jYXRpb25dKEM6XFVzZXJzXC4uLlxEb2N1bWVudHNcUlx3aW4tbGlicmFyeVw0LjBccmV0aWN1bGF0ZVxweXRob24pIHRvIFt0aGlzIGxvY2F0aW9uXShDOlxVc2Vyc1wuLi5cYW5hY29uZGEzXGVudnNcci1yZXRpY3VsYXRlXExpYikuIEkgYWxtb3N0IHBvb3BlZCBteSBwYW50cyB3aGVuIGl0IHdvcmtzLiANCg0KICBBbHNvLCBJIG9taXR0ZWQgbXkgdXNlciBuYW1lIGluIG15IGh5cGVybGlua3MuDQoNCiAgSWYgSSBuZXZlciBoYXZlIHRvIHJ1biBQeXRob24gaW4gUiBhZ2FpbiwgaXQgd2lsbCBiZSB0b28gc29vbi4NCg==</div>
 
 
 
@@ -368,6 +369,11 @@ $(document).ready(function () {
 </script>
 
 <!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeSourceEmbed("fixing_pyrtools_error.Rmd");
+});
+</script>
 
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
