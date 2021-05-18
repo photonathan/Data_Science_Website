@@ -1,6 +1,15 @@
 ---
-title: "Picking a Bikometer"
-output: github_document
+title: "Visualizing Arlington Bikometers"
+subtitle: "Part 5: Picking Which Bikeometers to Graph"
+output:
+  html_document: 
+    toc: yes
+    toc_depth: 2
+    toc_float: yes
+    highlight: zenburn
+    code_download: true
+    includes:
+      in_header: header.html
 ---
 
 # Goal

@@ -67,7 +67,7 @@ Generating these plots returned an error at the 'Year = 2020' plot: 'Warning: Re
 
 I wanted to look at the table to see what the data looked like exactly. So, I defined a SQL Select statement to filter by my desired date range and Bikeometer ID 28 (Rosslyn Bikeometer). The 'ORDER BY count desc' sorts the table by counts in descending order.
 
-I ran the dbGetQuery() which lets me execute a defined SQL Select command, creating a filtered table, I assigned to my_filtered_table.
+I ran the dbGetQuery() which lets me execute a defined SQL Select command creating a filtered table which I assigned to my_filtered_table.
 
 Using head(my_table), I was able to view the top 6 rows of my_table directly in R.
 
