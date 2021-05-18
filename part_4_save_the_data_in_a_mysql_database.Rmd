@@ -47,7 +47,7 @@ def create_new_engine(db_name):
     return create_engine(f'mysql+mysqldb://{input("Enter username: ")}:{getpass("Enter password: ")}@localhost/{db_name}', echo=False)
 ```
 
-```{python include=FALSE, cache=TRUE}
+```{python include=FALSE}
 # Workaround to get this document to Knit
 # Created temp user name that will be deleted once the post is uploaded.
 def create_new_engine(db_name):
@@ -58,7 +58,7 @@ def create_new_engine(db_name):
 ## Define the  function
 I've taken the *get_bikeometer_details* function from [Part 2](https://nathansprojects.com/part_2_query_the_api.html) as well as the GET request steps and made them into a single function *bikeometer_to_sql*.
 
-```{python cache=TRUE}
+```{python  }
 import requests
 import re
 import xml.etree.ElementTree as ET
@@ -121,27 +121,27 @@ def bikeometer_to_sql():
 
 ## Test the function
 Now we run the function.
-```{python cache=TRUE}
+```{python  }
 bikeometer_to_sql()
 ```
 Let's check to see what our new table looks like. 
 
 First we create a connection and assign it to *con*.
 
-```{python include=FALSE, cache=TRUE}
+```{python include=FALSE}
 # Workaround to get this document to Knit
 # Created temp user name that will be deleted once the post is uploaded.
 engine = create_engine(f'mysql+mysqldb://newuser:donteventry@localhost/bikeometers_db', echo=False)
 ```
 
-```{python cache=TRUE}
+```{python  }
 con = engine.connect()
 ```
 Then, we execute a MySQL statement.
 
 I'm going to run the MySQL commands from R so first I'll establish a connection to the database through R. You can run the MySQL commands in either the MysQL Workbench or the MySQL Command Line.
 
-```{r cache=TRUE}
+```{r  }
 library(DBI)
 con <- dbConnect(odbc::odbc(), .connection_string = "Driver={MySQL ODBC 8.0 Unicode Driver};", 
     server = "localhost", db = "bikeometers_db", user = "newuser", 
@@ -168,7 +168,7 @@ To make our life easier, let's select the oldest Bikeometer and use it's start d
 
 We will call the built-in Bike Arlington API method: 'getMinDates' on all the Bikeometer IDs in the below *bikeometer_id_list*.
 
-```{python cache=TRUE}
+```{python  }
 bikeometer_id_list = ['33','30','43','24','59','56','47','48','10','20',
                            '35','57','18','6', '3','58','61','62','38','44','14',
                            '60','5','42','37','27','26','8','7','51', '52',
@@ -177,7 +177,7 @@ bikeometer_id_list = ['33','30','43','24','59','56','47','48','10','20',
 ```
 
 Now, we will create a simple *for loop* to call the *getMinDates* method on all the Bikeometers.
-```{python cache=TRUE}
+```{python  }
 # Assign the url of the 
 url = 'http://webservices.commuterpage.com/counters.cfc?wsdl'
 
@@ -207,7 +207,7 @@ Note: The Bike Arlington documentation does not mention this, but some Bikeomete
 
 We will be using a few functions from the *datetime* module so we start by importing them.
 
-```{python cache=TRUE}
+```{python  }
 from datetime import date, datetime, timedelta
 
 def api_counts_to_list(bikeometer_id, 
@@ -263,7 +263,7 @@ Now that we have our helper function complete, let's create the **all_counts_by_
 
 When designing our function, it's important to remember that the Bike Arlington API will only allow requests of 1 year or less. There are many ways to get the data into your database. I choose to pull all the necessary data before saving it all in my database in one chunk. You may choose to incrementally pull and save the data 1 year at a time. Both ways have their pros and cons and it's up to you to decide and justify your decision.
 
-```{python cache=TRUE}
+```{python  }
 def all_counts_by_date_to_sql():
     # Creates the parameters to drive the connection
     engine = create_new_engine('bikeometers_db')
@@ -321,7 +321,7 @@ If you look at the last bit of code in the above function, after the data is sav
 
 Now that the function is defined, let's run it.
 
-```{python cache=TRUE}
+```{python  }
 all_counts_by_date_to_sql()
 ```
 
@@ -337,7 +337,7 @@ Now that we have our **all_counts_by_date_to_sql** function, we need our  **new_
 
 To only pull the new dates, let's make a helper function that will return the most recent date in our MySQL database.
 
-```{python cache=TRUE}
+```{python  }
 def last_sql_date_counts_daily(engine):
     ''' Returns the last date in the MySQL database as a datetime object'''
     with engine.connect() as con:
@@ -351,7 +351,7 @@ With our helper function defined, I'll use the previous function as a template a
 
 I also added a two checks in the beginning. The first is if the **last_sql_date_counts_daily** returns None, it most likely means there is no data in the database and the function stops. The second check is if yesterday's date is already in the database, the function returns 'No new data available' to the user without making any API requests. Everything else should be the same.
 
-```{python cache=TRUE}
+```{python}
 def new_counts_by_day_to_sql():
     engine = create_new_engine('counts')
     # Establish connection to MySQL database before making all the API calls.
