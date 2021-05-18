@@ -166,7 +166,7 @@ We can see that in 2019 and 2020 there is some missing data. In 2020, there is o
 
 When I manually queried the [Bike Arlingon web interface](%22http://counters.bikearlington.com/%22) for the 2020 dates, there is data in their database with count=0.
 
-[![2020 Web Query](images/id_33_2019_web_query.jpg "2020 Web Query")](http://webservices.commuterpage.com/counters.cfc?wsdl&method=GetCountInDateRange&counterid=33&startDate=03/12/2020&endDate=05/15/2020&direction=I&mode=B&interval=d)
+[![2020 Web Query](images/id_33_2020_web_query.jpg "2020 Web Query")](http://webservices.commuterpage.com/counters.cfc?wsdl&method=GetCountInDateRange&counterid=33&startDate=03/12/2020&endDate=05/15/2020&direction=I&mode=B&interval=d)
 
 However, for the 2019 missing dates, there was no data available.
 
@@ -182,4 +182,4 @@ After confirming that the missing data wasn't in the database and looking throug
 
 The MnDOT released their data quality management procedures in [Minnesota's Walking and Bicycling Data Collection Report Update](https://www.dot.state.mn.us/bike-ped-counting/reports/2018-2019%20MinnesotaPedBikeCountReport.pdf). Here, they list how they remove outlier, review suspicious data points, create a linear regression model, and use said regression model to **estimate daily traffic for missing days**. In the future, I'd like to preform a similar analysis to fill in the missing data.
 
-The [next post](https://nathansprojects.com/part_6_creating_initial_visualizations.html) will be about creating the geom_area plot that matches the [MnDOT's plot](blob:https://storymaps.arcgis.com/4b2c7653-8014-4c18-8bd0-368171a457b3).
+The [next post](https://nathansprojects.com/part_6_creating_initial_visualizations.html) will be about creating the geom_area plot that matches the [MnDOT's plot](https://storymaps.arcgis.com/stories/70a3a57003b541ed8e911cd11103dc6a).
