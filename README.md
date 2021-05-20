@@ -1,2 +1,2 @@
-# data_science_website
+# See gh-pages branch for website files
  
