@@ -25,9 +25,7 @@ library(ggplot2)
 library(dplyr)
 library(odbc)
 
-con <- dbConnect(odbc::odbc(), .connection_string = "Driver={MySQL ODBC 8.0 Unicode Driver};", 
-                 server = "localhost", db = "bikeometers_db", user = "root", 
-                 password = rstudioapi::askForPassword("Database password"))
+con <- dbConnect(odbc::odbc(), dsn = "N_MySQL", db='bikeometers_db')
 ```
 
 Next, we can use the dplyr function tbl(), pass in the connection object *con* and the name of the table we want to look at 'counts_daily'. This will create a 'lazy table', importing only the first 10 rows. You can tell the entire table has not been imported because instead of listing the number of rows, it lists: 'Source: table<counts_daily> [?? x 9]'

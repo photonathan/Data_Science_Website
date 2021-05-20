@@ -134,6 +134,13 @@ First we create a connection and assign it to *con*.
 engine = create_engine(f'mysql+mysqldb://newuser:donteventry@localhost/bikeometers_db', echo=False)
 ```
 
+```{python}
+engine = sa.create_engine(f'mysql+mysqldb://N_MySQL')
+```
+```{python}
+conn = pyodbc.connect('DSN=N_MySQL')
+```
+
 ```{python  }
 con = engine.connect()
 ```
