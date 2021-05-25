@@ -25,8 +25,10 @@ library(ggplot2)
 library(dplyr)
 library(odbc)
 
-con <- dbConnect(odbc::odbc(), dsn = "N_MySQL", db='bikeometers_db')
+con <- dbConnect(odbc::odbc(), dsn = "Bike_MySQL")
 ```
+
+If you've been following along with the previous posts, you'll notice my connection between R and MySQL has changed. Instead of defining every parameter of the odbc connection each time I wanted to connect, I can instead create a DSN from the odbc app in Windows. To read about why I chose a DSN, check out [this post](https://nathansprojects.com/note_knit_rmarkdown_db.html)
 
 Next, we can use the dplyr function tbl(), pass in the connection object *con* and the name of the table we want to look at 'counts_daily'. This will create a 'lazy table', importing only the first 10 rows. You can tell the entire table has not been imported because instead of listing the number of rows, it lists: 'Source: table<counts_daily> [?? x 9]'
 

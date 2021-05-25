@@ -74,11 +74,15 @@ Note: below is the how the function is supposed to look when using Python. Howev
 engine = create_engine(f'mysql+mysqldb://{input("Enter username: ")}:{getpass("Enter password: ")}@localhost/bikeometers_db')
 ```
 
-```{python include=FALSE, }
+So, instead of running the code above, I'll use the Python module *os* to import my *Environment Variables* **arlington_user** and **arlington_password** which wont be saved in this code, protecting my database credentials. 
+
+```{python}
+import os
 # Workaround to get this document to Knit
 # Created temp user name that will be deleted once the post is uploaded.
-engine = create_engine(f'mysql+mysqldb://newuser:donteventry@localhost/bikeometers_db', echo=False)
+engine = create_engine(f'mysql+mysqldb://{os.environ["arlington_user"]}:{os.environ["arlington_password"]}@localhost/bikeometers_db', echo=False)
 ```
+
 However, SQLAlchemy is 'lazy' and won't actually try to make the connection until we explicitly tell it. So, the below code will test the connection and throw an error if a connection cannot be made.
 
 ```{python }
@@ -128,18 +132,18 @@ library(odbc)
 library(DBI)
 ```
 
-Next, we will assign the connection to the variable 'con'. You will notice that another password package is used to enter your database password. This *'rstudioapi::askForPassword'* code will call the **askForPassword** function inside the *rstudioapi* package.
+Next, we will assign the connection to the variable 'con'. You will notice that another password package is used to enter your database password. This *'rstudioapi::askForPassword'* code will call the **askForPassword** function inside the *rstudioapi* package. 
 
 ```{r eval=FALSE}
 con <- dbConnect(odbc::odbc(), .connection_string = "Driver={MySQL ODBC 8.0 Unicode Driver};", 
                  server = "localhost", db = "bikeometers_db", user = readline(prompt = 'Enter user name: '), password = rstudioapi::askForPassword("Database password"))
 ```
 
-```{r include=FALSE, }
-# Workaround to get the document to knit
-# Created temp user name that will be deleted once the post is uploaded.
+However, I ran into a similar problem as before in that in 'building' this website, I can't use the *askForPassword* R library so again I have saved my database login credentials in as *Environment Variables*. I can now 'build' this post without problems and subsequently publish the code without exposing my credentials. To learn more about my decision to use Enviornment Variables, see my post [Publish Rmarkdown Documents With Database Connections Without Exposing Credentials](https://nathansprojects.com/note_knit_rmarkdown_db.html)
+
+```{r }
 con <- dbConnect(odbc::odbc(), .connection_string = "Driver={MySQL ODBC 8.0 Unicode Driver};", 
-                 server = "localhost", db = "bikeometers_db", user = 'newuser', password = rstudioapi::askForPassword("Database password"))
+                 server = "localhost", db = "bikeometers_db", user = Sys.getenv("arlington_user"), password = Sys.getenv("arlington_password"))
 ```
 
 If you are using RStudio, and your connection is successful, you will now see a list of your MySQL databases in your 'Connections' tab.

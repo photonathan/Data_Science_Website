@@ -7,6 +7,7 @@ output:
     includes:
       in_header: header.html
 ---
+
 # How to
 
 Follow instructions on [this website](https://www.r-bloggers.com/2018/05/setting-up-an-odbc-connection-with-ms-sql-server-on-windows/) to create Data Source Name (DSN) that securely stores your connection variables (user, password, connection information) in Windows so that a connection can be made from R just by calling the DSN 'Alias'.
@@ -14,80 +15,126 @@ Follow instructions on [this website](https://www.r-bloggers.com/2018/05/setting
 ## R
 
 ```{r}
-con <- dbConnect(odbc::odbc(), dsn = "N_MySQL", db='bikeometers_db')
+library(DBI)
+con <- dbConnect(odbc::odbc(), dsn = "Bike_MySQL")
+con
 ```
 
 ## Python
 
 ```{python}
+import os
+from sqlalchemy import create_engine
 
+engine = create_engine(f'mysql+mysqldb://{os.environ["arlington_user"]}:{os.environ["arlington_password"]}@localhost/bikeometers_db', echo=False)
+
+engine.connect()
 ```
-
 
 # Background
 
-Publishing my finished project and documenting every line of code I ran to complete it is a great way for people to replicate/validate my work and also enables people to learn from my methods. However, the problem with publishing every line of code is when it's time to login to my database, I need a way to hide my credentials. 
+Publishing my finished project and documenting every line of code I ran to complete it is a great way for people to replicate/validate my work and also enables people to learn from my methods. However, the problem with publishing every line of code is when it's time to login to my database, I need a way to hide my credentials.
 
 # R
+
 Originally, I made the connection using:
 
-```{r}
+```{r eval=FALSE}
 con <- dbConnect(odbc::odbc(), .connection_string = "Driver={MySQL ODBC 8.0 Unicode Driver};", 
                  server = "localhost", db = "bikeometers_db", user = "root", password = rstudioapi::askForPassword("Database password"))
 ```
 
 However this requires me to enter in a password each time I wanted to Knit the document. This was only a minor inconvenience when Knitting individual documents but when I wanted to add another post to my website, I couldn't use the 'Build Website' button in RStudio as it wouldn't call the 'rstudioapi::askForPassword' function.
 
-So, I needed a way to **securely** connect to my database from a **open source** RMarkdown document.  
+So, I needed a way to **securely** connect to my database from a **open source** RMarkdown document.
 
-Enter the great (but often hard to find in Google) [RStudio documentation](https://db.rstudio.com/best-practices/managing-credentials/). It lists 'Integrated Security with DSN' as the top method for securing your database credentials. A quick search for 'r DSN' brought me to [this website](https://www.r-bloggers.com/2018/05/setting-up-an-odbc-connection-with-ms-sql-server-on-windows/) which outlined how I could setup an 'alias' from the 'ODBC Data Sources' Windows app. Then from RStudio, I could call that DSN using the below code:
+Enter the great (but surprisingly not the top result on Google) [RStudio documentation](https://db.rstudio.com/best-practices/managing-credentials/). It lists 'Integrated Security with DSN' as the top method for securing your database credentials. A quick search for 'r DSN' brought me to [this website](https://www.r-bloggers.com/2018/05/setting-up-an-odbc-connection-with-ms-sql-server-on-windows/) which outlined how I could setup an 'alias' from the 'ODBC Data Sources' Windows app. Then from RStudio, I could call that DSN (Data Source Name) using the below code:
 
-```{r}
-con <- dbConnect(odbc::odbc(), dsn = "Nathan_MySQL", db='bikeometers_db')
+```{r evaluate=FALSE}
+library(odbc)
+con <- dbConnect(odbc::odbc(), dsn = "N_MySQL", db='bikeometers_db')
 ```
 
-This would allow me to make the connection from within a published RMarkdown document without exposing my credentials. 
+This would allow me to make the connection from within a published RMarkdown document without exposing my credentials.
 
-I could even specify the database name from within ODBC and just pass in the DSN name like below:
+I could even **specify the database** from within ODBC and just pass in the DSN name like below:
 
-```{r}
-con <- dbConnect(odbc::odbc(), dsn = "Nathan_MySQL")
+```{r eval=FALSE}
+con <- dbConnect(odbc::odbc(), dsn = "Bike_MySQL")
 ```
 
-# Python
-If you are including Python code to be run with the *reticulate* library, you have a few options and a few headaches. 
+![](images/ODBC%20Data%20Source%20Config.jpg "ODBC data source config")
+
+Easy peasy!
+
+[Here's](https://cran.r-project.org/web/packages/httr/vignettes/secrets.html) a great post by Hadley Wickham that goes over different scenarios when you may want to store 'secrets' and how best to accomplish them.
+
+# Python in R
+
+If you are including Python code to be run with the *reticulate* library, you have a few options and a few headaches.
 
 ## PyODBC
 
-PyODBC is an easy way to access your database via your DSN alias without.
+PyODBC is an easy way to access your database via your DSN alias, eliminating the need to hard-code your credentials. However, I can't figure out how to make it play nice with Pandas... see below.
 
 ## SQLAlchemy + Pandas
 
-Currently, I am using the Pandas method .to_sql() quite a lot to move my dataframes into MySQL. However, Pandas requires a SQLAlchemy 'engine' object. To create this 'engine' object I can't use my DSN method to make the database connection, which leaves me with my only option: 
+Currently, I am using the Pandas method .to_sql() quite a lot to move my dataframes into MySQL. However, Pandas requires a SQLAlchemy 'engine' object. To create this 'engine' object I can't use my DSN method to make the database connection. **Do not** hard-code your credentials like below.
 
 ```{python eval=FALSE}
 engine = create_engine(f'mysql+mysqldb://newuser:donteventry@localhost/bikeometers_db', echo=False)
 ```
 
-However after some research there are other options. The most straight forward [option](https://stackoverflow.com/a/2397905) seemed to be saving the username and password in a separate .py document which I could import like so:
+After some research there are other options. The most straight forward [option](https://stackoverflow.com/a/2397905) seemed to be saving the username and password in a separate .py document which I could import like so:
 
 ```{python eval=FALSE}
 from config.py import username, password
+engine = create_engine(f'mysql+mysqldb://{username}:{password}@localhost/bikeometers_db', echo=False)
+
 ```
 
-Obviously, just add this config.py document to the .gitignore file so it wont get uploaded to github. 
+Obviously, just add this config.py document to the .gitignore file so it wont get uploaded to github.
 
-Another [option](https://stackoverflow.com/a/30664318) is to store the credentials in an environment variable. 
+Another [option](https://stackoverflow.com/a/30664318) is to store the credentials in an environment variable.
 
 You can see all your environment variables by using the following R code:
-```{r}
+
+```{r eval=FALSE}
 Sys.getenv()
 ```
 
-Or you can use the Python 'os' module.
+Set an environment variable using:
+
+```{r}
+Sys.setenv(username = "nathan")
+```
+
+Call an environment variable using:
+
+```{r}
+Sys.getenv('username')
+```
+
+In Python you can use 'os' module to set and get environment variables.
+
+To see all environment variables:
+
 ```{python eval=FALSE}
 import os
 print(os.environ)
 ```
 
-Both options have major downsides. If I'm worrying about a bad actor gaining access to my computer, both credential storage methods leave me vulnerable while the 'config.py' method adds extra risk if the document is accidentally published to github. 
+To set an environment variable:
+```{python}
+os.environ['username'] = 'nathan'
+```
+
+Call an environment variable using:
+
+```{python}
+os.environ['username']
+```
+
+Both options have major downsides as any method where you record your credentials is not very secure. If I'm worrying about a bad actor gaining access to my computer, both credential storage methods leave me vulnerable while the 'config.py' method adds extra risk if the document is accidentally published to github.
+
+After reading over the above linked articles and [this](https://www.12factor.net/config) article, I'll choose using the environment variable in my project's virtual environment as it reduces the risk of accidentally publishing my password to Github. After the project is published I can then remove the password from the environment variable.

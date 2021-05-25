@@ -42,20 +42,21 @@ First, let's define a **helper function** that will create a SQLAlchemy *engine*
 
 ## Connect to the database
 
-```{python eval=FALSE}
-def create_new_engine(db_name):
-    return create_engine(f'mysql+mysqldb://{input("Enter username: ")}:{getpass("Enter password: ")}@localhost/{db_name}', echo=False)
-```
+Check out [Part 3](https://nathansprojects.com/part_3_setup_your_database.html) to learn how I connect to my database.
 
-```{python include=FALSE}
+Below I define a function that will connect to my database.
+
+```{python}
+import os
+from sqlalchemy import create_engine
 # Workaround to get this document to Knit
 # Created temp user name that will be deleted once the post is uploaded.
 def create_new_engine(db_name):
-  return create_engine(f'mysql+mysqldb://newuser:donteventry@localhost/bikeometers_db', echo=False)
-
+  return create_engine(f'mysql+mysqldb://{os.environ["arlington_user"]}:{os.environ["arlington_password"]}@localhost/bikeometers_db', echo=False)
 ```
 
 ## Define the  function
+
 I've taken the *get_bikeometer_details* function from [Part 2](https://nathansprojects.com/part_2_query_the_api.html) as well as the GET request steps and made them into a single function *bikeometer_to_sql*.
 
 ```{python  }
@@ -63,7 +64,6 @@ import requests
 import re
 import xml.etree.ElementTree as ET
 import pandas as pd
-from sqlalchemy import create_engine
 
 def bikeometer_to_sql():
     '''
@@ -121,39 +121,20 @@ def bikeometer_to_sql():
 
 ## Test the function
 Now we run the function.
-```{python  }
+```{python cache=TRUE}
 bikeometer_to_sql()
 ```
-Let's check to see what our new table looks like. 
 
-First we create a connection and assign it to *con*.
+Let's check to see what our new table looks like by executing a MySQL statement.
 
-```{python include=FALSE}
-# Workaround to get this document to Knit
-# Created temp user name that will be deleted once the post is uploaded.
-engine = create_engine(f'mysql+mysqldb://newuser:donteventry@localhost/bikeometers_db', echo=False)
-```
+I'm going to run the MySQL commands from R so first I'll establish a connection to the database through R. You can also run the MySQL commands in the MysQL Workbench or the MySQL Command Line.
 
-```{python}
-engine = sa.create_engine(f'mysql+mysqldb://N_MySQL')
-```
-```{python}
-conn = pyodbc.connect('DSN=N_MySQL')
-```
-
-```{python  }
-con = engine.connect()
-```
-Then, we execute a MySQL statement.
-
-I'm going to run the MySQL commands from R so first I'll establish a connection to the database through R. You can run the MySQL commands in either the MysQL Workbench or the MySQL Command Line.
-
-```{r  }
+```{r }
 library(DBI)
 con <- dbConnect(odbc::odbc(), .connection_string = "Driver={MySQL ODBC 8.0 Unicode Driver};", 
-    server = "localhost", db = "bikeometers_db", user = "newuser", 
-    password = rstudioapi::askForPassword("Database password"))
+                 server = "localhost", db = "bikeometers_db", user = Sys.getenv("arlington_user"), password = Sys.getenv("arlington_password"))
 ```
+
 
 ```{sql connection=con}
 SELECT * FROM bikeometer_details
@@ -328,7 +309,7 @@ If you look at the last bit of code in the above function, after the data is sav
 
 Now that the function is defined, let's run it.
 
-```{python  }
+```{python cache=TRUE}
 all_counts_by_date_to_sql()
 ```
 
@@ -358,7 +339,7 @@ With our helper function defined, I'll use the previous function as a template a
 
 I also added a two checks in the beginning. The first is if the **last_sql_date_counts_daily** returns None, it most likely means there is no data in the database and the function stops. The second check is if yesterday's date is already in the database, the function returns 'No new data available' to the user without making any API requests. Everything else should be the same.
 
-```{python}
+```{python eval=FALSE}
 def new_counts_by_day_to_sql():
     engine = create_new_engine('counts')
     # Establish connection to MySQL database before making all the API calls.

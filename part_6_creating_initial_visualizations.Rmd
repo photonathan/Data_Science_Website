@@ -23,7 +23,7 @@ library(odbc)
 library(reshape2)
 library(tidyr)
 
-con <- dbConnect(odbc::odbc(), dsn = "N_MySQL", db='bikeometers_db')
+con <- dbConnect(odbc::odbc(), dsn = "Bike_MySQL")
 ```
 
 # Combining 'In' and 'Out' Values
@@ -69,11 +69,7 @@ counts_daily_total <- counts_daily %>%
             month = month, day = day, year = year, month_day = month_day) %>% collect()
 counts_daily_total
 ```
-```{r}
-counts_daily_total <- counts_daily %>% 
-  group_by(date, bikeometer_id) %>% summarise() %>% collect()
-counts_daily_total
-```
+
 Essentially, *dplyr* translates your code into a MySQL statement. To view the MySQL command that *dplyr* generates, pipe *show_query()* to the end of your code.
 ```{r}
 counts_daily_total <- counts_daily %>% 

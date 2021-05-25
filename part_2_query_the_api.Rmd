@@ -208,7 +208,7 @@ df[["name", "latitude", "longitude", "region", 'region_id']] = df[["name", "lati
 df[["bikeometer_id"]] = df[["bikeometer_id"]].astype('int')
 ```
 
-```{python  , autodep=TRUE, cache.lazy=FALSE}
+```{python autodep=TRUE, cache.lazy=FALSE}
 df
 ```
 
@@ -229,7 +229,7 @@ Note: The Bike Arlington API allows for queries of 1 year or less. This limitati
 
 Again, we'll use the 'requests' library to make a 'GET' request to the base Bike Arlington URL and this time pass in the 'GetCountInDateRange' method as a parameter. 
 
-```{python  , autodep=TRUE, cache.lazy=FALSE}
+```{python autodep=TRUE, cache.lazy=FALSE}
 # Assign the url of the 
 url = 'http://webservices.commuterpage.com/counters.cfc?wsdl'
 # Defines the method in a dictionary used to make the request
@@ -379,7 +379,7 @@ bikeometer_id_list = ['33','30','43','24','59','56','47','48','10','20',
 
 Next, I'll create a Russian nesting doll of a **for loop** to dive into the appropriate sections to pull the information I want. I'll use the **datetime** module to separate out the 
 
-```{python  }
+```{python cache=TRUE }
 from datetime import date, datetime, timedelta
 
 def api_counts_to_list(): 
