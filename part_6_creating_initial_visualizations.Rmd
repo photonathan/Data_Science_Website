@@ -14,6 +14,10 @@ output:
       in_header: header.html
 ---
 
+# Goal
+
+Create a post with similar parameters to the [Minnesota DOT's](https://storymaps.arcgis.com/stories/70a3a57003b541ed8e911cd11103dc6a) *Covid-19 & Historic Total Traffic Count* graph.
+
 # Connect to MySQL Database
 
 ```{r echo = FALSE, message = FALSE, warning= FALSE, include=TRUE}
@@ -28,71 +32,41 @@ con <- dbConnect(odbc::odbc(), dsn = "Bike_MySQL")
 
 # Combining 'In' and 'Out' Values
 
-Right now, the table with both 'In' and 'Out' *Direction* looks like this:
+In Part 5, we used the below *dplyr* code to combine the 'I' and 'O' values.
 
-```{r}
-counts_daily <- tbl(con, 'counts_daily')
-head(counts_daily)
-```
-
-In MySQL, I'll create a new view in MySQL that takes the sum of both the 'I' and 'O' values and group them by 'date' and 'bikeometer_id'.
-
-```{sql connection=con, evaluate=FALSE}
-CREATE OR REPLACE VIEW counts_daily_total AS
-SELECT 
-cd.date AS date,
-SUM(cd.count) AS count,
-cd.bikeometer_id AS bikeometer_id,
-cd.is_weekend AS is_weekend,
-cd.month AS month,
-cd.day AS day,
-cd.year as year,
-cd.month_day as month_day
-FROM counts_daily cd 
-GROUP BY cd.date, cd.bikeometer_id;
-```
-
-For those not familiar with MySQL views, they look like tables but are actually recalculated each time they are accessed. This is what we want so the view is automatically updated to include the new data as our Python program imports the new Bike Arlington data into my 'counts_daily' MySQL table.  Thus, we don't need to change our Python program to generate new and useful tables in MySQL.
-
-Now, let's take a look at our new view.
-
-```{r}
-counts_daily_total <- tbl(con, 'counts_daily_total')
-head(counts_daily_total)
-```
-
-**Alternatively**, instead of using a MySQL statement, you can use the R package *dplyr* to pull the data from MySQL.
 ```{r}
 counts_daily_total <- counts_daily %>% 
-  group_by(date) %>% 
-  summarise(count = sum(count), bikeometer_id=bikeometer_id, is_weekend = is_weekend, 
-            month = month, day = day, year = year, month_day = month_day) %>% collect()
+  group_by(date, bikeometer_id) %>% 
+  summarize(count = sum(count), is_weekend = is_weekend, 
+            month = month, day = day, year = year, month_day = month_day) %>% 
+  collect()
 counts_daily_total
 ```
 
-Essentially, *dplyr* translates your code into a MySQL statement. To view the MySQL command that *dplyr* generates, pipe *show_query()* to the end of your code.
-```{r}
-counts_daily_total <- counts_daily %>% 
-  group_by(date) %>% 
-  summarise(count = sum(count), bikeometer_id=bikeometer_id, is_weekend = is_weekend, 
-            month = month, day = day, year = year, month_day = month_day) %>%
-  show_query()
-```
 
-In both cases you can see the 'I' and 'O' directions are combined!
-
-Next, we will filter for the dates similar to those chosen by the MnDOT. We will also look at 
 # Filtering for Date Range and Bikeometer ID
 
-In a previous post, I chose a time-frame and which Bikeometers were best to plot. So I'll filter by creating a new view in MySQL called 'vw_filtered_counts_daily_total_2017_to_2019'.
-
+In a previous post, I chose a time-frame and which Bikeometers were best to plot. I'll outline how to filter using *dplyr* or MySQL. 
+## dplyr
 
 ```{r}
-counts_daily_total %>% select(bikeometer_id=c(14,15,16,18,22,31,39), year=c(2017, 2018, 2019))
+counts_daily_total %>% filter(between(year, 2017, 2019) & bikeometer_id %in% c(14,15,16,18,22,31,39))
+```
+### Future note to self
+Originally, class(counts_daily_total$year,month,day == 'S3 value Bigint' which doesn't play nicely with dplyr. Be sure to convert number columns into *int* before applying filters.
+
+```{r}
+counts_daily_filtered <- counts_daily_total %>% 
+  filter(date >= '2017-03-12' & date <= '2017-05-15' & bikeometer_id == '28'| 
+         date >= '2018-03-12' & date <= '2018-05-15' & bikeometer_id == '28'|
+         date >= '2019-03-12' & date <= '2019-05-15' & bikeometer_id == '28'| 
+         date >= '2020-03-12' & date <= '2020-05-15' & bikeometer_id == '28') %>%
+  print()
 ```
 
+# MySQL
 
-```{sql connection=con, evaluate=FALSE}
+```{sql connection=con}
 CREATE OR REPLACE VIEW vw_filtered_counts_daily_total_2017_to_2019 AS 
 SELECT * FROM bikeometers_db.counts_daily_total 
 WHERE bikeometer_id IN (14,15,16,18,22,31,39) 
@@ -121,7 +95,7 @@ counts_daily_average_2017_to_2019 <- tbl(con, 'counts_daily_average_2017_to_2019
 counts_daily_average_2017_to_2019
 ```
 
-Can use this as a select statement to view these two tables, minus the first line
+Can use this as a select statement to view these two tables, minus the first line (CREATE TABLE the_best_table AS).
 
 ```{sql connection=con, evaluate=FALSE}
 CREATE TABLE the_best_table AS

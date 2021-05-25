@@ -44,7 +44,42 @@ The MnDOT combines directions 'I' and 'O' together so let's do that now.
 
 In order to create our new 'combined' table, we want 'date = 2010-12-08, bikeometer_id=3, direction=I' combined with 'date = 2010-12-08, bikeometer_id=3, direction=O'. In order to do this, we will need to group our observations not only by date, but also by bikeometer_id. Remember, there are many observations with date=2010-12-08 as each Bikeometer may have data for that date.
 
+I'll outline two options to combine the 'I' and 'O' variables: using a MySQL Statement or using the R 'dplyr' package. 
+
+## MySQL Statement
+
+In MySQL, I'll create a new view in MySQL that takes the sum of both the 'I' and 'O' values and group them by 'date' and 'bikeometer_id'.
+
+```{sql connection=con, evaluate=FALSE}
+CREATE OR REPLACE VIEW counts_daily_total AS
+SELECT 
+cd.date AS date,
+SUM(cd.count) AS count,
+cd.bikeometer_id AS bikeometer_id,
+cd.is_weekend AS is_weekend,
+cd.month AS month,
+cd.day AS day,
+cd.year as year,
+cd.month_day as month_day
+FROM counts_daily cd 
+GROUP BY cd.date, cd.bikeometer_id;
+```
+
+For those not familiar with MySQL views, they look like tables but are actually recalculated each time they are accessed. This is what we want so the view is automatically updated to include the new data as our Python program imports the new Bike Arlington data into my 'counts_daily' MySQL table.  Thus, we don't need to change our Python program to generate new and useful tables in MySQL.
+
+## R 'dplyr'
+
 We will pipe our counts_daily table into the group_by() and summarize() functions found in the *dplyr* package. To combine the 'I' and 'O' counts we will use the function sum() then just specify the other variables we want to include in our new *counts_daily_total* table.
+
+Essentially, *dplyr* translates your code into a MySQL statement. To view the MySQL command that *dplyr* generates, pipe *show_query()* to the end of your code.
+
+```{r}
+counts_daily_total <- counts_daily %>% 
+  group_by(date, bikeometer_id) %>% 
+  summarize(count = sum(count), is_weekend = is_weekend, 
+            month = month, day = day, year = year, month_day = month_day) %>% 
+  collect() %>% show_query()
+```
 
 ```{r}
 counts_daily_total <- counts_daily %>% 
@@ -53,8 +88,9 @@ counts_daily_total <- counts_daily %>%
             month = month, day = day, year = year, month_day = month_day) %>% 
   collect()
 counts_daily_total
-
 ```
+
+Whether you use a MySQL Statement or 'dplyr' you can see the 'I' and 'O' directions are combined!
 
 To do a quick check, we can add the 'I' and 'O' values for bikeometer_id=3, date=2010-12-08 (16+96=112). Looking at our new table, we can look at the first observation to see that it worked.
 
