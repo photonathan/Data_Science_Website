@@ -30,9 +30,17 @@ library(tidyr)
 con <- dbConnect(odbc::odbc(), dsn = "Bike_MySQL")
 ```
 
+# Load the table into R
+
+```{r}
+counts_daily <- tbl(con, 'counts_daily')
+head(counts_daily)
+```
+
 # Combining 'In' and 'Out' Values
 
 In Part 5, we used the below *dplyr* code to combine the 'I' and 'O' values.
+
 
 ```{r}
 counts_daily_total <- counts_daily %>% 
@@ -43,40 +51,108 @@ counts_daily_total <- counts_daily %>%
 counts_daily_total
 ```
 
+```{r}
+class(counts_daily_total$month_day)
+```
+
+I'm going to manipulate the counts_daily_total *tibble* using the *mutate* function.
+
+I realized that I should have used a hyphen instead of an underscore for 'month-day' rows so first I need to do some character replacement. I'll use the gsub() function to replace the underscore with a hyphen.   
+
+Then, we will add an arbitrary year to the end of month_day to make it easier to convert to a *date* class and subsequently graph.
+
+```{r}
+counts_daily_total <- counts_daily_total %>% mutate(month_day = gsub("[_]", "-", month_day))
+
+counts_daily_total <- counts_daily_total %>% mutate(month_day=paste(month_day, '-2020', sep = ''))
+counts_daily_total
+
+```
+
+### Note to self
+Originally, class(counts_daily_total$year,month,day == 'S3 value Bigint' which doesn't play nicely with dplyr. Be sure to convert number columns into *int* before applying filters. Also, for when mutating a column, don't assign the mutate like this:
+
+```{r eval=FALSE}
+# Don't use this
+counts_daily_total$month_day <- counts_daily_total %>% mutate(month_day = gsub("[_]", "-", month_day))
+
+# Use this!
+counts_daily_total <- counts_daily_total %>% mutate(month_day = gsub("[_]", "-", month_day))
+
+```
+
 
 # Filtering for Date Range and Bikeometer ID
 
-In a previous post, I chose a time-frame and which Bikeometers were best to plot. I'll outline how to filter using *dplyr* or MySQL. 
-## dplyr
-
-```{r}
-counts_daily_total %>% filter(between(year, 2017, 2019) & bikeometer_id %in% c(14,15,16,18,22,31,39))
-```
-### Future note to self
-Originally, class(counts_daily_total$year,month,day == 'S3 value Bigint' which doesn't play nicely with dplyr. Be sure to convert number columns into *int* before applying filters.
+In a previous post, I chose a time-frame and which Bikeometers were best to plot. 
 
 ```{r}
 counts_daily_filtered <- counts_daily_total %>% 
-  filter(date >= '2017-03-12' & date <= '2017-05-15' & bikeometer_id == '28'| 
-         date >= '2018-03-12' & date <= '2018-05-15' & bikeometer_id == '28'|
-         date >= '2019-03-12' & date <= '2019-05-15' & bikeometer_id == '28'| 
-         date >= '2020-03-12' & date <= '2020-05-15' & bikeometer_id == '28') %>%
-  print()
+  filter(date >= '2017-03-12' & date <= '2017-05-15' & bikeometer_id %in% c(14,15,16,18,22,31,39)| 
+         date >= '2018-03-12' & date <= '2018-05-15' & bikeometer_id %in% c(14,15,16,18,22,31,39)|
+         date >= '2019-03-12' & date <= '2019-05-15' & bikeometer_id %in% c(14,15,16,18,22,31,39)| 
+         date >= '2020-03-12' & date <= '2020-05-15' & bikeometer_id %in% c(14,15,16,18,22,31,39))
+  
+counts_daily_filtered
 ```
 
-# MySQL
+Let's convert month_day to a *date* class so it is easier to manipulate.
 
-```{sql connection=con}
-CREATE OR REPLACE VIEW vw_filtered_counts_daily_total_2017_to_2019 AS 
-SELECT * FROM bikeometers_db.counts_daily_total 
-WHERE bikeometer_id IN (14,15,16,18,22,31,39) 
-AND Year(Date) in (2017,2018,2019);
+
+```{r}
+class(counts_daily_filtered$month_day)
+```
+
+May need to convert month_day to 04-06 format instead of 4_6
+
+
+
+```{r}
+counts_daily_filtered$month_day <- mutate(counts_daily_filtered, month_day = gsub("[_]", "-", month_day))
+class(counts_daily_filtered$month_day[1])
+
+counts_daily_filtered %>% mutate(month_day = gsub("[_]", "-", month_day))
+
+counts_daily_filtered %>% mutate(month_day = str_replace(month_day, "_", "-"))
+
+m_d <- '4_6' 
+m_d
+m_d <- str_replace(m_d, "_", "-")
+m_d  
+counts_daily_filtered$month_day <- strptime(counts_daily_filtered$month_day, '%m-%d-%Y')
+class(counts_daily_filtered$month_day[1])
+
+counts_daily_filtered$month_day <- as.Date(counts_daily_filtered$month_day)
+class(counts_daily_filtered$month_day[1])
+```
+```{r}
+counts_daily_filtered
+
 ```
 
 ```{r}
-filtered_counts_daily_total_2017_to_2019 <- tbl(con, 'vw_filtered_counts_daily_total_2017_to_2019')
-filtered_counts_daily_total_2017_to_2019
+m_d <- '4_6' 
+m_d
+m_d <- gsub("[_]", "-", m_d)
+m_d
+m_d <- strptime(m_d, '%m-%d')
+m_d
 ```
+
+```
+
+counts_daily_filtered$month_day
+```
+
+```{r}
+counts_daily_filtered %>% summarise(
+  average_count = mean(count)),
+  group_by(month_day, bikeometer_id)
+```
+```{r}
+counts_daily_filtered %>% group_by(month_day) %>% summarise(avg_counts = mean(count))
+```
+
 
 # Creating the 2017-2019 Daily Average column
 
@@ -121,16 +197,6 @@ Here I added the year to the end of the all the month_day values then convert th
 df.long <- mutate(df.long, month_day=paste(month_day, '-2020', sep = ''))
 df.long <- collect(df.long)
 ```
-
-Next, I converted each character string in the month_day column into a date class.
-
-\#\`\`\`{r} df.long$month_day \<- mutate(month_day = as.Date(month_day, format='%m/%d/%Y'))
-
-df.long
-
-\#\`\`\`
-
-Then I'll filter for the dates in my range
 
 ```{r}
 df.long.filtered <- df.long %>% filter(month_day >= '03-12-2020' & month_day <= '05-15-2020') %>% collect()
