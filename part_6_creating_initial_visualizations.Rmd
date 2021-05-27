@@ -113,6 +113,10 @@ counts_daily_filtered_2020 <- counts_daily_total %>%
 counts_daily_filtered_2020
 ```
 
+# Group the 2020 Bikeometer counts
+
+Now we can can group the counts by taking their average. I'll rename the column '2020_counts' to make it easier to merge the table later.
+
 ```{r}
 counts_daily_filtered_2020_grouped <- counts_daily_filtered_2020 %>% group_by(month_day) %>% summarise('2020_counts' = mean(count))
 
@@ -140,7 +144,15 @@ counts_daily_filtered_2017_to_2019 %>% select(month_day, count, date, bikeometer
 
 This matches the 'avg_counts' value for the '2020-03-12' date! 
 
-Let's now join the 'counts_daily_filtered_2017_to_2019_grouped' and the 'counts_daily_filtered_2020' tables so we can graph them.
+```{r}
+counts_daily_filtered_2020_grouped
+```
+```{r}
+counts_daily_filtered_2017_to_2019_grouped
+```
+
+Let's now join the 'counts_daily_filtered_2017_to_2019_grouped' and the 'counts_daily_filtered_2020_grouped' tables so we can graph them.
+
 
 ```{r}
 df <- merge(x = counts_daily_filtered_2017_to_2019_grouped, y = counts_daily_filtered_2020_grouped, by = 'month_day')
@@ -151,42 +163,29 @@ In order for this table to be easily read by R, we need to covert it from a wide
 
 ```{r}
 df.long <- pivot_longer(df, cols=2:3, names_to='year', values_to='counts')
-```
-
-Here I added the year to the end of the all the month_day values then convert that to a date class so R has an easy time graphing it.
-
-```{r}
-df.long <- mutate(df.long, month_day=paste(month_day, '-2020', sep = ''))
-df.long <- collect(df.long)
+df.long
 ```
 
 ```{r}
-df.long.filtered <- df.long %>% filter(month_day >= '03-12-2020' & month_day <= '05-15-2020') %>% collect()
-df.long.filtered
-```
-
-Finally I convert the month_day values from a 'character class' to a time class. Be sure to lowercase the 'm' and 'd' in '%m-%d-%Y'.
-
-```{r}
-df.long.filtered$month_day <- strptime(df.long.filtered$month_day, '%m-%d-%Y')
-class(df.long.filtered$month_day[1])
-df.long.filtered$month_day <- as.Date(df.long.filtered$month_day)
-class(df.long.filtered$month_day[1])
-```
-```{r}
-df.long.filtered$counts <- as.integer(df.long.filtered$counts)
+df.long %>% ggplot(aes(month_day, counts, group = year, color = year)) + geom_line() + geom_area(aes(fill = year, group = year), alpha = 0.5, position = 'identity')
 ```
 
 ```{r}
-df.long.filtered
+ggplot(df.long, aes(x = month_day)) +
+  geom_area(stat = 'bin', binwidth = 1, position = "identity", alpha = .5)
 ```
+
 ```{r}
-line <- ggplot(df.long.filtered, (aes(x=month_day, y=counts, fill=year, group=year))) + geom_line()
+line <- ggplot(df.long, (aes(x=month_day, y=counts, fill=year, group=year, color = year))) + geom_density(alpha = 0.2)
 line
 ```
+
 ```{r}
+library(plotly)
+library(ggplot2)
 ggplotly(line)
 ```
+
 ```{r}
 line + geom_area()
 ```
