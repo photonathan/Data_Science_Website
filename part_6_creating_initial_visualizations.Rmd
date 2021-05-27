@@ -9,10 +9,11 @@ output:
     highlight: zenburn
     code_download: true
     df_print: paged
-    code_folding: hide
     includes:
       in_header: header.html
 ---
+\ 
+\ 
 
 # Goal
 
@@ -39,10 +40,9 @@ head(counts_daily)
 
 # Combining 'In' and 'Out' Values
 
-In Part 5, we used the below *dplyr* code to combine the 'I' and 'O' values.
+Below is the code we created in In [Part 5](https://nathansprojects.com/part_5_picking_bikeometers_to_graph.html), to combine the 'I' and 'O' values.
 
-
-```{r}
+```{r warning=FALSE}
 counts_daily_total <- counts_daily %>% 
   group_by(date, bikeometer_id) %>% 
   summarize(count = sum(count), is_weekend = is_weekend, 
@@ -55,7 +55,7 @@ counts_daily_total
 class(counts_daily_total$month_day)
 ```
 
-I'm going to manipulate the counts_daily_total *tibble* using the *mutate* function.
+I'm going to manipulate the counts_daily_total 'tibble' using the *mutate* function.
 
 I realized that I should have used a hyphen instead of an underscore for 'month-day' rows so first I need to do some character replacement. I'll use the *mutate()* function to make changes to columns and pass in the *gsub()* function to replace the underscore with a hyphen.   
 
@@ -167,16 +167,21 @@ df.long
 ```
 
 ```{r}
-df.long %>% ggplot(aes(month_day, counts, group = year, color = year)) + geom_line() + geom_area(aes(fill = year, group = year), alpha = 0.5, position = 'identity')
+line <- df.long %>% ggplot(aes(month_day, counts, group = year, color = year)) +
+  geom_area(aes(fill = year, group = year), alpha = 0.5, position = 'identity')
+line
+```
+If you don't include 'position = 'identity' then the counts will stack on top of each other instead of overlapping like above.
+
+You can see the default arguments for a plot by using the *args()* function.
+
+```{r}
+args(geom_area)
 ```
 
 ```{r}
-ggplot(df.long, aes(x = month_day)) +
-  geom_area(stat = 'bin', binwidth = 1, position = "identity", alpha = .5)
-```
-
-```{r}
-line <- ggplot(df.long, (aes(x=month_day, y=counts, fill=year, group=year, color = year))) + geom_density(alpha = 0.2)
+library(ggthemes)
+line <- line + theme_calc() + labs(x = 'Date', title = 'COVID-19 & Historic Total Bike Count')
 line
 ```
 
@@ -186,56 +191,11 @@ library(ggplot2)
 ggplotly(line)
 ```
 
-```{r}
-line + geom_area()
-```
+It looks like there definitely was an increase for some days during the 2020 COVID Pandemic but the data isn't as significant as the MnDOT plot. 
 
+Let's investigate this a little.
 
-```{r}
-p <- ggplot(df.long.filtered, (aes(x=month_day, y=counts))) + geom_area((aes(colour=year, fill=year)))
-p
-```
-```{r}
-ggplotly(p)
-```
-
-```{r}
-library(plotly)
-```
-
-
-
-
-```{r}
-ggplot(diamonds, aes(price, fill = cut)) +
-     geom_density(bins = 50, stat = "bin", alpha = 0.3) 
-```
-
-
-```{r}
-time <- as.numeric(rep(seq(1,7),each=7))  # x Axis
-value <- runif(49, 10, 100)               # y Axis
-group <- rep(LETTERS[1:7],times=7)        # group, one shape per group
-data <- data.frame(time, value, group)
-
-# stacked area chart
-test <- ggplot(data, aes(x=time, y=value, fill=group)) + 
-    geom_area()
-test
-```
-
-```{r}
-ggplotly(test)
-```
-
-```{r}
-data
-```
-
-
-It looks like there definitely was an increase but it doesn't look as nice as the MnDOT plot. Let's investigate this a little.
-
-# Bikeometer Locations
+# Investigating Bikeometer Locations
 
 I'll map the locations of the Bikeometers to see where exactly they are in Arlington. To accomplish this, I found [this video](https://www.youtube.com/watch?v=2k8O-Y_uiRU&t=3s) by Professor Lisa Lendway very helpful along with [her website](https://mapping-in-r.netlify.app/).
 
