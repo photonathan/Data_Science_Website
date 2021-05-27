@@ -57,7 +57,7 @@ class(counts_daily_total$month_day)
 
 I'm going to manipulate the counts_daily_total *tibble* using the *mutate* function.
 
-I realized that I should have used a hyphen instead of an underscore for 'month-day' rows so first I need to do some character replacement. I'll use the gsub() function to replace the underscore with a hyphen.   
+I realized that I should have used a hyphen instead of an underscore for 'month-day' rows so first I need to do some character replacement. I'll use the *mutate()* function to make changes to columns and pass in the *gsub()* function to replace the underscore with a hyphen.   
 
 Then, we will add an arbitrary year to the end of month_day to make it easier to convert to a *date* class and subsequently graph.
 
@@ -67,6 +67,20 @@ counts_daily_total <- counts_daily_total %>% mutate(month_day = gsub("[_]", "-",
 counts_daily_total <- counts_daily_total %>% mutate(month_day=paste(month_day, '-2020', sep = ''))
 counts_daily_total
 
+```
+Now, let's convert month_day to a *date* class.
+
+```{r}
+class(counts_daily_total$month_day[1])
+
+counts_daily_total$month_day <- strptime(counts_daily_total$month_day, '%m-%d-%Y')
+class(counts_daily_total$month_day[1])
+
+counts_daily_total$month_day <- as.Date(counts_daily_total$month_day)
+class(counts_daily_total$month_day[1])
+```
+```{r}
+counts_daily_total
 ```
 
 ### Note to self
@@ -81,104 +95,56 @@ counts_daily_total <- counts_daily_total %>% mutate(month_day = gsub("[_]", "-",
 
 ```
 
-
 # Filtering for Date Range and Bikeometer ID
 
 In a previous post, I chose a time-frame and which Bikeometers were best to plot. 
 
 ```{r}
-counts_daily_filtered <- counts_daily_total %>% 
+counts_daily_filtered_2017_to_2019 <- counts_daily_total %>% 
   filter(date >= '2017-03-12' & date <= '2017-05-15' & bikeometer_id %in% c(14,15,16,18,22,31,39)| 
          date >= '2018-03-12' & date <= '2018-05-15' & bikeometer_id %in% c(14,15,16,18,22,31,39)|
-         date >= '2019-03-12' & date <= '2019-05-15' & bikeometer_id %in% c(14,15,16,18,22,31,39)| 
-         date >= '2020-03-12' & date <= '2020-05-15' & bikeometer_id %in% c(14,15,16,18,22,31,39))
-  
-counts_daily_filtered
-```
-
-Let's convert month_day to a *date* class so it is easier to manipulate.
-
-
-```{r}
-class(counts_daily_filtered$month_day)
-```
-
-May need to convert month_day to 04-06 format instead of 4_6
-
-
-
-```{r}
-counts_daily_filtered$month_day <- mutate(counts_daily_filtered, month_day = gsub("[_]", "-", month_day))
-class(counts_daily_filtered$month_day[1])
-
-counts_daily_filtered %>% mutate(month_day = gsub("[_]", "-", month_day))
-
-counts_daily_filtered %>% mutate(month_day = str_replace(month_day, "_", "-"))
-
-m_d <- '4_6' 
-m_d
-m_d <- str_replace(m_d, "_", "-")
-m_d  
-counts_daily_filtered$month_day <- strptime(counts_daily_filtered$month_day, '%m-%d-%Y')
-class(counts_daily_filtered$month_day[1])
-
-counts_daily_filtered$month_day <- as.Date(counts_daily_filtered$month_day)
-class(counts_daily_filtered$month_day[1])
+         date >= '2019-03-12' & date <= '2019-05-15' & bikeometer_id %in% c(14,15,16,18,22,31,39))
+counts_daily_filtered_2017_to_2019
 ```
 ```{r}
-counts_daily_filtered
-
-```
-
-```{r}
-m_d <- '4_6' 
-m_d
-m_d <- gsub("[_]", "-", m_d)
-m_d
-m_d <- strptime(m_d, '%m-%d')
-m_d
-```
-
-```
-
-counts_daily_filtered$month_day
-```
-
-```{r}
-counts_daily_filtered %>% summarise(
-  average_count = mean(count)),
-  group_by(month_day, bikeometer_id)
+counts_daily_filtered_2020 <- counts_daily_total %>% 
+  filter(date >= '2020-03-12' & date <= '2020-05-15' & bikeometer_id %in% c(14,15,16,18,22,31,39))
+counts_daily_filtered_2020
 ```
 ```{r}
-counts_daily_filtered %>% group_by(month_day) %>% summarise(avg_counts = mean(count))
-```
+counts_daily_filtered_2020_grouped <- counts_daily_filtered_2020 %>% group_by(month_day) %>% summarise('2020_counts' = count)
 
+counts_daily_filtered_2020_grouped
+```
 
 # Creating the 2017-2019 Daily Average column
 
-```{sql connection=con, evaluate=FALSE }
-CREATE OR REPLACE VIEW counts_daily_average_2017_to_2019
-AS select 
-cd.month_day as month_day,
-AVG(cd.count) as average
-FROM vw_filtered_counts_daily_total_2017_to_2019 cd
-LEFT JOIN vw_filtered_counts_daily_total_2017_to_2019 a ON cd.month_day = a.month_day
-GROUP BY cd.month_day;
+Now that we have two tables, one with 2017-2019 data and one with 2020 data, let's add a column to the counts_daily_filtered_2017_to_2019 table that shows the average across all Bikeometers.
+
+```{r}
+counts_daily_filtered_2017_to_2019_grouped <- counts_daily_filtered_2017_to_2019 %>% group_by(month_day) %>% summarise('2017-2019_avg_counts' = mean(count))
+
+counts_daily_filtered_2017_to_2019_grouped
+```
+We should check to see if the average is being taken correctly. We can manually check the first 'month_day' below.
+
+```{r}
+counts_daily_filtered_2017_to_2019 %>% select(month_day, count, date, bikeometer_id) %>%  filter(month_day =='2020-03-12') 
 ```
 
-```{r cache=TRUE}
-counts_daily_average_2017_to_2019 <- tbl(con, 'counts_daily_average_2017_to_2019')
-counts_daily_average_2017_to_2019
+```{r}
+(16 + 140 + 34 + 51 + 250 + 131 + 108 + 28 + 228 + 54 + 48 + 408)/12
 ```
 
-Can use this as a select statement to view these two tables, minus the first line (CREATE TABLE the_best_table AS).
+This matches the 'avg_counts' value for the '2020-03-12' date! 
 
-```{sql connection=con, evaluate=FALSE}
-CREATE TABLE the_best_table AS
-SELECT a.month_day, a.average_2017_to_2019, average_2020
-FROM counts_daily_average_2017_to_2019 A 
-INNER JOIN counts_daily_average_2020 B ON B.month_day = A.month_day
+Let's now join the 'counts_daily_filtered_2017_to_2019_grouped' and the 'counts_daily_filtered_2020' tables so we can graph them.
+
+```{r}
+df <- merge(x = counts_daily_filtered_2017_to_2019_grouped, y = counts_daily_filtered_2020_grouped, by = 'month_day')
+df
 ```
+
 
 ```{r message=FALSE}
 df <- tbl(con, 'the_best_table')
