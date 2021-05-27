@@ -109,10 +109,12 @@ counts_daily_filtered_2017_to_2019
 ```{r}
 counts_daily_filtered_2020 <- counts_daily_total %>% 
   filter(date >= '2020-03-12' & date <= '2020-05-15' & bikeometer_id %in% c(14,15,16,18,22,31,39))
+
 counts_daily_filtered_2020
 ```
+
 ```{r}
-counts_daily_filtered_2020_grouped <- counts_daily_filtered_2020 %>% group_by(month_day) %>% summarise('2020_counts' = count)
+counts_daily_filtered_2020_grouped <- counts_daily_filtered_2020 %>% group_by(month_day) %>% summarise('2020_counts' = mean(count))
 
 counts_daily_filtered_2020_grouped
 ```
@@ -143,12 +145,6 @@ Let's now join the 'counts_daily_filtered_2017_to_2019_grouped' and the 'counts_
 ```{r}
 df <- merge(x = counts_daily_filtered_2017_to_2019_grouped, y = counts_daily_filtered_2020_grouped, by = 'month_day')
 df
-```
-
-
-```{r message=FALSE}
-df <- tbl(con, 'the_best_table')
-# These Bikeometers are all located in the Arlington region
 ```
 
 In order for this table to be easily read by R, we need to covert it from a wide table to a long table. [This]('https://mgimond.github.io/ES218/Week03b.html') is the resource I used to understand how to do the conversion.
