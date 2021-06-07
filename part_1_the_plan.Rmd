@@ -12,11 +12,6 @@ output:
 \ 
 \ 
 
-# Short Bike Story
-Recently, after helping teach my friend how to ride a bike, we all excitedly visited the local bike shop to purchase a bike. Unfortunately, over a year into the pandemic, we were told if we ordered today, the bike would be delivered in **6 months**.
-
-Later that day, I visited the local *used* bike shop and was excitedly told that for \$400, I could have a refurbished 1997 Bianchi Timber Wolf, a bike which according to BikePedia.com, originally sold for \$300. Either this bike had a [holographic Charizard](https://www.polygon.com/22356401/holographic-charizard-ebay-300k-sold-pokemon-cards) in its spokes, or demand for bikes is still very high.
-
 # Background
 In 2020, Minnesota's Department of Transportaion put out a [great visualization](https://storymaps.arcgis.com/stories/70a3a57003b541ed8e911cd11103dc6a) of Minneapolis' surge in bicycle and pedestrian usage soon after Minneapolis governor Tim Walz declared a 'Peacetime Emergency' on March 13, 2020 and a 'Stay at Home' order twelve days later on March 
 
@@ -24,12 +19,12 @@ In 2020, Minnesota's Department of Transportaion put out a [great visualization]
 Similarly explore Arlington, Virginia's bicycle ridership numbers around Virginia Governor Northram's [State of Emergency](https://www.governor.virginia.gov/newsroom/all-releases/2020/march/headline-853537-en.html) Declaration on March 12, 2020 and [Stay at Home order](https://www.governor.virginia.gov/newsroom/all-releases/2020/march/headline-855702-en.html) on March 30, 2020.
 
 ## Follow along or explore on your own
-Subsequent posts for this project will outline step by step how I went about creating similar visualizations to the Minnesota DOT. I believe this is a great project for those new to Python, R, or databases. Each *Part* of this project will have a **Goal** section. The best way to learn is to give the goals a shot on your own before looking at how I accomplished them. If you have any questions, comments, or are working on your own analysis, [send me an email](mailto:mail.nathansprojects@gmail.com)!
+Subsequent posts for this project will outline step by step how I went about creating similar visualizations to the Minnesota DOT. I believe this is a great project for those new to Python, R, or databases. Each *Part* of this project will have a **Goal** section. You have the option to give the goals a shot on your own before looking at how I accomplished them. If you have any questions, comments, or are working on your own analysis, [send me an email](mailto:mail.nathansprojects@gmail.com)!
 
 ## Requirements
-To start the project, the only requirements are listed below. I'll document as best I can how to set up the MySQL database and connect everything together in [part 3](https://nathansprojects.com/part_3_setup_your_database.html).
+Before you start the project, the requirements are listed below. I'll document as best I can how to set up the MySQL database and connect everything together in [part 3](https://nathansprojects.com/part_3_setup_your_database.html).
 1. Python 3.6 or later
-2. R Studio
+2. R/R Studio
 3. Very basic [Python](https://ocw.mit.edu/courses/electrical-engineering-and-computer-science/6-0001-introduction-to-computer-science-and-programming-in-python-fall-2016/) and [R](https://www.edx.org/course/data-science-r-basics) knowledge
 
 Note: To make my life easier, I installed the [full Anaconda suite](https://www.anaconda.com/products/individual) and use the Spyder IDE when working in Python. I played around with installing [Miniconda](https://docs.conda.io/en/latest/miniconda.html) but when it comes to managing the conda environments in R using the [Reticulate library](https://rstudio.github.io/reticulate/), it gave me a headache. 
@@ -37,10 +32,7 @@ Note: To make my life easier, I installed the [full Anaconda suite](https://www.
 # The Datasets
 One of the best parts of living in Arlington, Virginia is its beautiful paved bike paths, particularly the [Arlington Loop](https://www.bikearlington.com/wp-content/uploads/2017/04/Self-Guided-Route-Map_Arlington-Loop-min.pdf). Riders of the loop probably have noticed the [Bikeometer](https://www.bikearlington.com/wp-content/uploads/2017/03/bikeometer-min.jpg) near the Francis Scott Key Memorial Bridge displaying the daily, monthly, and yearly bicycle counts. To my delight, these numbers are not only [publicly available](http://counters.bikearlington.com/), but also easily requested using an API and [detailed documentation](http://counters.bikearlington.com/bike/assets/File/Regional_bikearlington_webservices.pdf). Additionally, Covid-19 case/vaccine data from the [Virginia Health Department](https://www.vdh.virginia.gov/coronavirus/) will be used to visualize how trail usage is affected by major events like a global pandemic.
 
-# Project requirements
-Python, SQL(MySQL), R 
-
-## Python
+# Python
 Python will be used to automate a number of actions:
 1.  Request ridership counts from the [BikeArlington API](http://counters.bikearlington.com/counter-dashboard/)
 2.  Request Covid-19 data from the Virginia Health Department on [Total Number of Cases per Locality](https://data.virginia.gov/Government/VDH-COVID-19-PublicUseDataset-Cases/bre9-aqqr) and [Total Vaccines Administered](https://data.virginia.gov/dataset/VDH-COVID-19-PublicUseDataset-Vaccines-DosesAdmini/28k2-x2rj)
@@ -48,12 +40,17 @@ Python will be used to automate a number of actions:
 4.  Store the data in a database
 5.  Automate steps 1-3 for new data
 
-## MySQL
+# MySQL
 One of my aims for this project was to create a pipeline that foregoes saving individual 'data' files (e.g. csv, xml, json, txt) to the computer and instead used a database to store the data. After reading over [this great article](https://realpython.com/python-mysql/) that gives a good overview of SQLite, PostgreSQL, and MySQL, I decided on MySQL to handle my database. A second factor in my decision was because my favorite Udemy instructor Colt Steele had a MySQL course on sale [The Ultimate MySQL Bootcamp: Go from SQL Beginner to Expert](https://www.udemy.com/course/the-ultimate-mysql-bootcamp-go-from-sql-beginner-to-expert/) recommend I highly recommend.
 
-## R
+# R
 R will be used to pull data out of the MySQL database and create visualizations. According to the Minnesota Department of Transportation's report: [*Minnesota's Walking and Bicycling Data Collection Report Update Annual Data from 2014 to 2019*](https://www.dot.state.mn.us/bike-ped-counting/reports/2018-2019%20MinnesotaPedBikeCountReport.pdf), "When irregularities are found, the data are run through a statistical model in 'R Studio' and cleaned up." I hope to employ similar methods to analyze and clean the data in R. 
 
 [Check out Part 2, Query the Bike Arlington API](https://nathansprojects.com/part_2_query_the_api.html)
+
+# Short Bike Story
+Recently, after helping teach my friend how to ride a bike, we excitedly visited the local bike shop to hopefully make a purchase. Unfortunately, over a year into the pandemic, we were told if we ordered today, the bike would be delivered in **6 months**.
+
+Later that day, I visited the local *used* bike shop and was excitedly told that for \$400, I could have a refurbished 1997 Bianchi Timber Wolf, a bike which according to BikePedia.com, originally sold for \$300. Either this bike had [holographic Charizards](https://www.polygon.com/22356401/holographic-charizard-ebay-300k-sold-pokemon-cards) in its spokes, or demand for bikes is still very high.
 
 
