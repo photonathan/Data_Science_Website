@@ -17,7 +17,7 @@ output:
 
 # Introduction
 
-One of the aims for this project was to create a pipeline that foregoes saving individual 'data' files (e.g. csv, xml, json, txt) to the computer and instead uses a database to store the data. After reading over [this great article](https://realpython.com/python-mysql/) that gives a good overview of SQLite, PostgreSQL, and MySQL, I decided on MySQL to handle my database. Also, my favorite Udemy instructor Colt Steele had a MySQL course on sale [The Ultimate MySQL Bootcamp: Go from SQL Beginner to Expert](https://www.udemy.com/course/the-ultimate-mysql-bootcamp-go-from-sql-beginner-to-expert/) that I highly recommend.
+One of the aims for this project was to create a pipeline that foregoes saving individual 'data' files (e.g. csv, xml, json, txt) to the computer and instead uses a database to store the data. After reading over [this great article](https://realpython.com/python-mysql/) that gives a good overview of SQLite, PostgreSQL, and MySQL, I decided on MySQL to handle my database. Also, my favorite Udemy instructor, Colt Steele, had a MySQL course on sale [The Ultimate MySQL Bootcamp: Go from SQL Beginner to Expert](https://www.udemy.com/course/the-ultimate-mysql-bootcamp-go-from-sql-beginner-to-expert/) that I highly recommend.
 
 ## Goal
 
@@ -64,9 +64,9 @@ from sqlalchemy import create_engine
 from getpass import getpass
 ```
 
-Now, let's make the connection to the database.
+Now, let's make the connection from Python to the database.
 
-Using the SQLAlchemy **create_engine** function, pass in the name of your database of your database as an [f-string](https://realpython.com/python-f-strings/) like I do below.
+Using the SQLAlchemy **create_engine** function, pass in the name of your database as an [f-string](https://realpython.com/python-f-strings/) like I do below.
 
 Note: below is the how the function is supposed to look when using Python. However, to create this post I'm actually using R and executing the Python code using an R library called 'reticulate' and I couldn't get the the python module **getpass** to work. However, I've tried this code in Python and it works like a charm.
 
@@ -74,12 +74,11 @@ Note: below is the how the function is supposed to look when using Python. Howev
 engine = create_engine(f'mysql+mysqldb://{input("Enter username: ")}:{getpass("Enter password: ")}@localhost/bikeometers_db')
 ```
 
-So, instead of running the code above, I'll use the Python module *os* to import my *Environment Variables* **arlington_user** and **arlington_password** which wont be saved in this code, protecting my database credentials. 
+As an alternative to securely entering your password each time you connect using the code above, I'll use the Python module *os* to import my *Environment Variables* **arlington_user** and **arlington_password** which wont be saved in this code, protecting my database credentials. 
 
 ```{python}
 import os
 # Workaround to get this document to Knit
-# Created temp user name that will be deleted once the post is uploaded.
 engine = create_engine(f'mysql+mysqldb://{os.environ["arlington_user"]}:{os.environ["arlington_password"]}@localhost/bikeometers_db', echo=False)
 ```
 
@@ -122,7 +121,7 @@ Great! Now that Python can talk to MySQL, we will connect R to MySQL.
 
 RStudio has a great website about connecting R and MySQL [here](https://db.rstudio.com/databases/my-sql/) that you can use if you are having trouble making the connection. I'll outline the steps I used below.
 
-In step 1, we installed the MySQL/odbc Connector when we installed MySQL. If you didn't install the connector, you can find it [here](https://dev.mysql.com/downloads/connector/odbc/). After installation, you will want to restart your computer to ensure it is properly recognized.
+In Step 1 of this post, we installed the MySQL/odbc Connector when we installed MySQL. If you didn't install the connector, you can find it [here](https://dev.mysql.com/downloads/connector/odbc/). After installation, you will want to restart your computer to ensure it is properly recognized.
 
 Once installed, make sure that both the **odbc** and **DBI** packages are installed in R.
 
@@ -139,7 +138,7 @@ con <- dbConnect(odbc::odbc(), .connection_string = "Driver={MySQL ODBC 8.0 Unic
                  server = "localhost", db = "bikeometers_db", user = readline(prompt = 'Enter user name: '), password = rstudioapi::askForPassword("Database password"))
 ```
 
-However, I ran into a similar problem as before in that in 'building' this website, I can't use the *askForPassword* R library so again I have saved my database login credentials in as *Environment Variables*. I can now 'build' this post without problems and subsequently publish the code without exposing my credentials. To learn more about my decision to use Enviornment Variables, see my post [Publish Rmarkdown Documents With Database Connections Without Exposing Credentials](https://nathansprojects.com/note_knit_rmarkdown_db.html)
+However, I ran into a similar problem as before in that when 'building' this website, I can't use the *askForPassword* R library. So again, I have saved my database login credentials in as *Environment Variables*. I can now 'build' this post without problems and subsequently publish the code without exposing my credentials. To learn more about my decision to use Enviornment Variables, see my post [Publish Rmarkdown Documents With Database Connections Without Exposing Credentials](https://nathansprojects.com/note_knit_rmarkdown_db.html)
 
 ```{r }
 con <- dbConnect(odbc::odbc(), .connection_string = "Driver={MySQL ODBC 8.0 Unicode Driver};", 
@@ -150,7 +149,7 @@ If you are using RStudio, and your connection is successful, you will now see a 
 
 Let's send a MySQL Command from R to MySQL to confirm the two can communicate.
 
-We will use R to send the same MySQL command as before.
+We will use R to send the same MySQL command as we did above using Python. 
 ```{r }
 sql_cmd <- "SHOW DATABASES;"
 bikeometers_db <- dbGetQuery(con, sql_cmd)
