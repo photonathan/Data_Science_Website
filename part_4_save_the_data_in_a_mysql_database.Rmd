@@ -19,8 +19,8 @@ I will be building on the Python code we wrote in [Part 2: Query the API](https:
 
 # Goals
 1. Add functionality to our code from [Part 2](https://nathansprojects.com/part_2_query_the_api.html) that takes a Pandas Data Frame and puts it in our MySQL database. 
-2. Create seperate **helper functions** that create a *SQLAlchemy Engine* object, make API Requests, and query our MySQL database for the most recent date.
-3. Integrate these helper functions into or two main functions: one to pull and save all data starting from the oldest date in the Bike Arlington database and one to pull only the data missing from our MySQL database. 
+2. Create separate **helper functions** that create a *SQLAlchemy Engine* object, make API Requests, and query our MySQL database for the most recent date.
+3. Integrate these helper functions into two main functions: one to pull and save all data starting from the oldest date in the Bike Arlington database and one to pull only the data missing from our MySQL database. 
 4. Save all Bike Arlington data on the details of each Bikeometer and all data on the actual bicycle counts to our MySQL database.
 
 Note: If I were to do this project again, I'd break the functions up into smaller functions to make testing easier. A common recommendation is that each function should only do one thing. If you are describing the functionality and you have to use the word 'and', you should break the function up.
