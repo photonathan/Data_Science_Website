@@ -16,8 +16,10 @@ navbar:
           href: part_4_save_the_data_in_a_mysql_database.html 
         - text: "Part 5: Picking Which Bikeometers to Graph"
           href: part_5_picking_bikeometers_to_graph.html
-        - text: "Part 6: Creating the Initial Visualizations"
+        - text: "Part 6: Creating the Visualizations"
           href: part_6_creating_initial_visualizations.html
+        - text: "Part 7: Investigating Bikeometer GPS Locations"
+          href: part_7_investigating_bikometer_gps_locations.html
     - text: "Notes"
       menu:
         - text: "Fixing rpytools error"

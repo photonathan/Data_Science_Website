@@ -80,7 +80,7 @@ counts_daily_total <- counts_daily %>%
   group_by(date, bikeometer_id) %>% 
   summarize(count = sum(count), is_weekend = is_weekend, 
             month = month, day = day, year = year, month_day = month_day) %>% 
-  collect() %>% show_query()
+  show_query()
 ```
 
 ```{r}

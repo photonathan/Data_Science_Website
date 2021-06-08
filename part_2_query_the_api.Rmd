@@ -394,7 +394,7 @@ bikeometer_id_list = ['33','30','43','24','59','56','47','48','10','20',
 
 Next, I'll create a Russian nesting doll of a **for loop** to dive into the appropriate sections to pull the information I want. I'll use the **datetime** module to separate out the year, month, and day so they can be separate columns in my database.
 
-```{python cache=TRUE }
+```{python}
 from datetime import date, datetime, timedelta
 
 def api_counts_to_list(): 
