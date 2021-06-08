@@ -30,7 +30,7 @@ con <- dbConnect(odbc::odbc(), dsn = "Bike_MySQL")
 
 If you've been following along with the previous posts, you'll notice my connection between R and MySQL has changed. Instead of defining every parameter of the odbc connection each time I wanted to connect, I can instead create a DSN from the odbc app in Windows. To read about why I chose a DSN, check out [this post](https://nathansprojects.com/note_knit_rmarkdown_db.html)
 
-Next, we can use the dplyr function tbl(), pass in the connection object *con* and the name of the table we want to look at 'counts_daily'. This will create a 'lazy table', importing only the first 10 rows. You can tell the entire table has not been imported because instead of listing the number of rows, it lists: 'Source: table<counts_daily> [?? x 9]'
+Next, we can use the **dplyr** function *tbl()*, pass in the connection object *con* and the name of the table we want to look at 'counts_daily'. This will create a 'lazy table', importing only the first 10 rows. You can tell the entire table has not been imported because instead of listing the number of rows, it lists: *'Source: table<counts_daily> [?? x 9]'*.
 
 ```{r paged.print=TRUE}
 # Imports to a lazy table
@@ -44,7 +44,9 @@ The MnDOT combines directions 'I' and 'O' together so let's do that now.
 
 In order to create our new 'combined' table, we want 'date = 2010-12-08, bikeometer_id=3, direction=I' combined with 'date = 2010-12-08, bikeometer_id=3, direction=O'. In order to do this, we will need to group our observations not only by date, but also by bikeometer_id. Remember, there are many observations with date=2010-12-08 as each Bikeometer may have data for that date.
 
-I'll outline two options to combine the 'I' and 'O' variables: using a MySQL Statement or using the R 'dplyr' package. 
+I'll outline two options to combine the 'I' and 'O' variables: 
+1. Using a MySQL Statement 
+2. Using the R 'dplyr' package 
 
 ## MySQL Statement
 
@@ -65,11 +67,11 @@ FROM counts_daily cd
 GROUP BY cd.date, cd.bikeometer_id;
 ```
 
-For those not familiar with MySQL views, they look like tables but are actually recalculated each time they are accessed. This is what we want so the view is automatically updated to include the new data as our Python program imports the new Bike Arlington data into my 'counts_daily' MySQL table.  Thus, we don't need to change our Python program to generate new and useful tables in MySQL.
+For those not familiar with MySQL views, they look like tables but are actually recalculated each time they are accessed. This is exactly what we want so the view is automatically updated to include the new data as our Python program imports the new Bike Arlington data into my 'counts_daily' MySQL table.  Thus, we don't need to change our Python program to generate new tables in MySQL.
 
 ## R 'dplyr'
 
-We will pipe our counts_daily table into the group_by() and summarize() functions found in the *dplyr* package. To combine the 'I' and 'O' counts we will use the function sum() then just specify the other variables we want to include in our new *counts_daily_total* table.
+Instead of using MySQL statements, we can use the *dplyr* package in R. We will pipe our counts_daily table into the **group_by()** and **summarize()** functions found in the *dplyr* package. To combine the 'I' and 'O' counts we will use the function **sum()** then just specify the other variables we want to include in our new *counts_daily_total* table.
 
 Essentially, *dplyr* translates your code into a MySQL statement. To view the MySQL command that *dplyr* generates, pipe *show_query()* to the end of your code.
 
@@ -90,9 +92,9 @@ counts_daily_total <- counts_daily %>%
 counts_daily_total
 ```
 
-Whether you use a MySQL Statement or 'dplyr' you can see the 'I' and 'O' directions are combined!
+Whether you choose to use a MySQL Statement or 'dplyr' you can see the 'I' and 'O' directions are combined!
 
-To do a quick check, we can add the 'I' and 'O' values for bikeometer_id=3, date=2010-12-08 (16+96=112). Looking at our new table, we can look at the first observation to see that it worked.
+To do a quick manual check, we can add the 'I' and 'O' values for bikeometer_id=3, date=2010-12-08 (16+96=112). Looking at our new table, we can look at the first observation to see that it worked.
 
 Even though it isn't mentioned in the Bike Arlington documentation, it's important to account for the 'A' direction. When the Bikeometer can't distinguish between outbound and inbound directions, the direction is classified as 'A'.
 
@@ -110,7 +112,7 @@ counts_daily_a <- counts_daily %>% filter(bikeometer_id == '14') %>% collect()
 counts_daily_a
 ```
 
-The only difference is that we lost the *direction* variable in our *counts_daily_total* table which we don't need anymore.
+The *counts* are the same and the only difference is that we lost the *direction* variable in our *counts_daily_total* table which we don't need anymore.
 
 # Creating the inital visualizations
 
@@ -161,15 +163,15 @@ counts_daily_filtered %>% arrange(desc(count))
 
 It looks like on May 2, 2020 there were 2669 bikers recorded by Bikeometer 28.
 
-We can also see that in 2020 there are some dates with 0 bikers recorded. As I've chosen to only include Bikometers without missing data, we can eliminate this Bikeometer.
+We can also see from the plot that in 2020 there are some dates with 0 bikers recorded. As I've chosen to only include Bikometers without missing data, we can eliminate this Bikeometer.
 
 # Function to Plot Every Bikeometer
 
 To get a better view of the data, we will need to plot every Bikeometer individually.
 
-From what I've [read](https://stackoverflow.com/questions/7142767/why-are-loops-slow-in-r), using 'for loops' are slow in R but I haven't been able to find another way to generate plots this easily.
+From what I've [read](https://stackoverflow.com/questions/7142767/why-are-loops-slow-in-r), using 'for loops' are slow in R but I haven't been able to find another way to generate plots for every Bikeometer and Year this easily.
 
-So, we can use a nested *for loop* to easily generate plots for each counter in the Arlington region. I've commented out all but one Bikeometer ID (28) to only generate plots for one Bikeometer for this post, but to test out the code, you can un-comment the rest of the vector to generate all the plots yourself.
+So, we can use a nested *for loop* to easily generate plots for each counter in the Arlington region and each year from 2017-2021. I've commented out all but one Bikeometer ID (28) to only generate plots for one Bikeometer for this post, but to test out the code, you can un-comment the rest of the vector to generate all the plots yourself.
 
 ```{r message=FALSE, paged.print=TRUE}
 for (id in c(33)){#28,30,24,59,10,20,18,3,58,61,62,14,60,5,6,27,26,8,7,22,21,9,16,15,31,11,2,25,19)){
@@ -208,7 +210,7 @@ However, for the 2019 missing dates, there was no data available.
 
 [![2019 Web Query](images/id_33_2019_web_query.jpg "2019 Web Query")](http://webservices.commuterpage.com/counters.cfc?wsdl&method=GetCountInDateRange&counterid=33&startDate=03/12/2019&endDate=05/15/2019&direction=I&mode=B&interval=d)
 
-If I were to recreate my database of counts, I would include a clause 'if there is no data to import for a time-point, count = 0'. The Bike Arlington people probably have a similar clause, which probably prevents the web interface from breaking when a vaild query is made but no data is in the server.
+If I were to recreate my database of counts, I would include a clause 'if there is no data to import for a time-point, count = 0'. The Bike Arlington people probably have a similar clause, which probably prevents the web interface from breaking when a valid query is made but no data is in the server.
 
 # Choosing the Bikeometers
 
@@ -216,6 +218,6 @@ After confirming that the missing data wasn't in the database and looking throug
 
 # Filling in the missing data?
 
-The MnDOT released their data quality management procedures in [Minnesota's Walking and Bicycling Data Collection Report Update](https://www.dot.state.mn.us/bike-ped-counting/reports/2018-2019%20MinnesotaPedBikeCountReport.pdf). Here, they list how they remove outlier, review suspicious data points, create a linear regression model, and use said regression model to **estimate daily traffic for missing days**. In the future, I'd like to preform a similar analysis to fill in the missing data.
+The MnDOT released their data quality management procedures in [Minnesota's Walking and Bicycling Data Collection Report Update](https://www.dot.state.mn.us/bike-ped-counting/reports/2018-2019%20MinnesotaPedBikeCountReport.pdf). Here, they list how they remove outliers, review suspicious data points, create a linear regression model, and use said regression model to **estimate daily traffic for missing days**. In the future, I'd like to perform a similar analysis to fill in the missing data.
 
 The [next post](https://nathansprojects.com/part_6_creating_initial_visualizations.html) will be about creating the geom_area plot that matches the [MnDOT's plot](https://storymaps.arcgis.com/stories/70a3a57003b541ed8e911cd11103dc6a).

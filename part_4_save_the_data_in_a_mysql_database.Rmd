@@ -121,7 +121,7 @@ def bikeometer_to_sql():
 
 ## Test the function
 Now we run the function.
-```{python cache=TRUE}
+```{python eval=FALSE, cache=TRUE}
 bikeometer_to_sql()
 ```
 
@@ -164,7 +164,8 @@ bikeometer_id_list = ['33','30','43','24','59','56','47','48','10','20',
                            '54','55','31','28','11','2','25','19']
 ```
 
-Now, we will create a simple *for loop* to call the *getMinDates* method on all the Bikeometers.
+Now we will create a simple *for loop* to call the *getMinDates* method on all the Bikeometers.
+
 ```{python  }
 # Assign the url of the 
 url = 'http://webservices.commuterpage.com/counters.cfc?wsdl'
@@ -177,6 +178,7 @@ for bikeometer_id in bikeometer_id_list:
   response.text
 
 ```
+
 Skimming through the returned responses, we can see that the first date was 4/1/2010. This will be our first *start date* in our function. 
 
 ## Create helper functions
@@ -249,7 +251,7 @@ def api_counts_to_list(bikeometer_id,
 
 Now that we have our helper function complete, let's create the **all_counts_by_date_to_sql** which will pull all the data starting on 4/1/2010. 
 
-When designing our function, it's important to remember that the Bike Arlington API will only allow requests of 1 year or less. There are many ways to get the data into your database. I choose to pull all the necessary data before saving it all in my database in one chunk. You may choose to incrementally pull and save the data 1 year at a time. Both ways have their pros and cons and it's up to you to decide and justify your decision.
+When designing our function, it's important to remember that the Bike Arlington API will only allow requests of 1 year or less. There are many ways to get the data into your database. I chose to pull all the necessary data before saving it all in my database in one chunk. You may choose to incrementally pull and save the data 1 year at a time. Both ways have their pros and cons and it's up to you to decide and justify your decision.
 
 ```{python  }
 def all_counts_by_date_to_sql():
@@ -278,7 +280,8 @@ def all_counts_by_date_to_sql():
             # parameters like the start_date, which is the first datapoint in
             # Bike Arlington server. Optimally, these would not be hardcoded to  
             # make the porgram more future-proof.
-            api_counts_to_list(bikeometer_id, clean_start_date, clean_end_date, count_in_date_range_list, interval='d')
+            api_counts_to_list(bikeometer_id, clean_start_date, clean_end_date, \
+            count_in_date_range_list, interval='d')
         # If end date is yesterday's date, congratulations, you pulled all available dates
         # We won't pull today's date in case the data has not been uploaded to their servers yet
         if end_date == date.today() - timedelta(days=1):
@@ -309,7 +312,7 @@ If you look at the last bit of code in the above function, after the data is sav
 
 Now that the function is defined, let's run it.
 
-```{python cache=TRUE}
+```{python eval=FALSE, cache=TRUE}
 all_counts_by_date_to_sql()
 ```
 
@@ -321,7 +324,7 @@ SELECT * FROM counts_daily GROUP BY bikeometer_id ORDER BY bikeometer_id asc;
 
 ## Create new_counts_by_date_to_sql function
 
-Now that we have our **all_counts_by_date_to_sql** function, we need our  **new_counts_by_date_to_sql** function which will only pull the new dates.
+Now that we have our **all_counts_by_date_to_sql** function, we need our **new_counts_by_date_to_sql** function which will only pull the new dates.
 
 To only pull the new dates, let's make a helper function that will return the most recent date in our MySQL database.
 
@@ -335,11 +338,12 @@ def last_sql_date_counts_daily(engine):
     return date
 
 ```
+
 With our helper function defined, I'll use the previous function as a template and just change how the start date and end date variables are first defined. 
 
-I also added a two checks in the beginning. The first is if the **last_sql_date_counts_daily** returns None, it most likely means there is no data in the database and the function stops. The second check is if yesterday's date is already in the database, the function returns 'No new data available' to the user without making any API requests. Everything else should be the same.
+I also added two checks in the beginning. The first is if the **last_sql_date_counts_daily** returns None, it most likely means there is no data in the database and the function stops. The second check is if yesterday's date is already in the database, the function returns 'No new data available' to the user without making any API requests. Everything else should be the same.
 
-```{python eval=FALSE}
+```{python}
 def new_counts_by_day_to_sql():
     engine = create_new_engine('counts')
     # Establish connection to MySQL database before making all the API calls.
@@ -401,8 +405,12 @@ def new_counts_by_day_to_sql():
             print(f'The newest date in counts_daily is {last_day}')
     # Do we need engine.dispose?
     engine.dispose()
+```
+
+```{python}
 new_counts_by_day_to_sql()
 ```
-Because I ran the previous function today, this function returns 'No new data available'. Try it for yourself tomorrow and compare the time it takes to pull 1 day's worth of data compared to over 10 years worth of data.
+
+I ran the previous function today so this function returns 'No new data available'. Try it for yourself tomorrow and compare the time it takes to pull 1 day's worth of data compared to over 10 years worth of data.
 
 In the [next post](https://nathansprojects.com/part_5_creating_initial_visualizations.html) I'll start creating visualizations of the data.

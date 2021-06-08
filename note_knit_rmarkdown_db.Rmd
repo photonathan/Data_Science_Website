@@ -35,7 +35,7 @@ engine.connect()
 
 # Background
 
-Publishing my finished project and documenting every line of code I ran to complete it is a great way for people to replicate/validate my work and also enables people to learn from my methods. However, the problem with publishing every line of code is when it's time to login to my database, I need a way to hide my credentials.
+Publishing my finished projects and documenting every line of code I run to complete it is a great way for people to replicate/validate my work and also enables people to learn from my methods. The problem with publishing every line of code is when it's time to login in to my database, I need a way to hide my credentials.
 
 ### R
 

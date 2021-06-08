@@ -55,9 +55,9 @@ counts_daily_total
 class(counts_daily_total$month_day)
 ```
 
-I'm going to manipulate the counts_daily_total 'tibble' using the *mutate* function.
+I'm going to manipulate the *counts_daily_total* 'tibble' using the *mutate()* function.
 
-I realized that I should have used a hyphen instead of an underscore for 'month-day' rows so first I need to do some character replacement. I'll use the *mutate()* function to make changes to columns and pass in the *gsub()* function to replace the underscore with a hyphen.   
+I realized that I should have used a hyphen instead of an underscore for the 'month-day' values so first I need to do some character replacement. I'll use the *mutate()* function to make changes to columns and pass in the *gsub()* function to replace the underscore with a hyphen.   
 
 Then, we will add an arbitrary year to the end of month_day to make it easier to convert to a *date* class and subsequently graph.
 
@@ -79,12 +79,14 @@ class(counts_daily_total$month_day[1])
 counts_daily_total$month_day <- as.Date(counts_daily_total$month_day)
 class(counts_daily_total$month_day[1])
 ```
+You can see that the column goes from classes 'character' to 'POSIXlt POSIXt' to finally 'Date'.
+
 ```{r}
 counts_daily_total
 ```
 
 ### Note to self
-Originally, class(counts_daily_total$year,month,day == 'S3 value Bigint' which doesn't play nicely with dplyr. Be sure to convert number columns into *int* before applying filters. Also, for when mutating a column, don't assign the mutate like this:
+Originally, class(counts_daily_total$year,month,day == 'S3 value Bigint' which doesn't play nicely with dplyr. Be sure to convert number columns into *int* before applying filters. Also, when mutating a column, don't assign the mutate like this:
 
 ```{r eval=FALSE}
 # Don't use this
