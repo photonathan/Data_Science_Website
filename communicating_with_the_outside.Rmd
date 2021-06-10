@@ -1,0 +1,153 @@
+---
+title: "Python for genomic data"
+subtitle: "Communicating with the outside"
+output:
+  html_document: 
+    toc: yes
+    toc_depth: 2
+    toc_float: yes
+    highlight: zenburn
+    code_download: true
+---
+\ 
+\ 
+
+# Reading and opening files
+```{python}
+try:
+    f = open('test.txt')
+except IOError:
+    print('the file does not exist')
+
+```
+
+```{python}
+for line in f:
+    print(line)
+
+```
+
+If you first iterate through a document, you will be at the end. If you are at the end, you can't read anything else using .read()
+f.read(). You must use the .seek() method to go to the beginning
+```{python}
+f.seek(0)
+```
+
+Now .read() method works
+```{python}
+f.read()
+f.seek(0)
+```
+
+.readline() reads the file line by line
+```{python}
+f.readline()
+```
+
+Open() defaults to 'r' read only. If we want ot write to the file, specify 'a' to append.
+```{python}
+f = open('test.txt', 'a')
+```
+
+.write() method writes the contents of a string to the file
+```{python}
+f.write('This is a third line')
+f.close()
+```
+
+To read the file, open it in 'r' read mode
+```{python}
+f = open('test.txt', 'r')
+f.seek(0)
+f.read()
+f.close()
+
+```
+
+
+# Build a dictionary containing all sequences from a FASTA file
+```{python eval=FALSE}
+try:
+    f = open('file.fa')
+except IOError:
+    print('the file does not exist')
+seqs = {}
+for line in f:
+    # discard the newline and whitespace at the end of the line (if any)
+    line = line.rstrip()
+    # distinguish header from sequence
+    if line[0] == '>': # can also use line.startswith('>')
+        # Split method returns a list of words in a string default sep is white space
+        words = line.split()
+        # grabs the first word but ignores the first character which is a '>'
+        name = words[0][1:]
+        # Initialzes a new dictionary sequence
+        seqs[name]=''
+    else: # it's a sequence, not a header
+        seqs[name] = seqs[name] + line
+f.close()
+```
+
+# Retrieving Data from Dictionaries
+
+Retrieve the key and value from our dictionary using items() method
+```{python eval=FALSE}
+for name, seq in seqs.items():
+    print(name,seq)
+    
+```
+
+# Command line args
+Scripts often need to process command line arguments. Suppose a script that parses a FASTA file is called processfasta.py and you want to run it on a file whose name we give as an argument in the command line.
+
+`>python processfasta.py myfile.fa`
+
+# The arguments of the above command are stored in the sys module's argv attribute as a list
+```{python}
+import sys
+print(sys.argv)
+```
+sys.argv[0] will be the scripts name (processfasta.py) and sys.argv[1] will be an argument you passed to the program when you ran it (myfile.fa).
+
+Because these are saved in a list when the program is run, we can actually call these variables using sys.argv[1] from within the program.  
+
+# Parsing command line arguments with getopt
+Python's *getopt* module can help with processing the arguments of sys.argv.
+
+```{python eval=FALSE}
+o, a = getopt.getopt(sys.argv[1:], 'l:h')
+opts = {}
+seqlen = 0
+
+for k,v in o:
+  opts[k] = v
+
+if '-h' in opts.key():
+  # You can put two lines of code on one line with a ';'
+  usage(); sys.exit()
+
+if len(a) <1:
+  usage(); sys.exit("input fasta file is missing")
+
+if '-l' in opts.key():
+  if int(opts['1'])<0:
+    print("Length of sequence should be positive!"); sys.exit(0)
+  seqlen = opts['-l']
+```
+
+# Interfacing with external programs
+
+You can call/execute an external program from within your script using subprocesses. This helps you automate certain tasks that would be difficult to do within Python.
+
+```{python}
+import subprocess
+```
+The 'tophat' program needs to be in the path to call it like this. The rest are arguments required to run tophat. It needs and index then two reads that are paired end.
+```{python eval=FALSE}
+subprocess.call(["tophat", "genome_mouse_idx", "PE_reads_1.fq.gz", "PE_reads_2.fq.gz"])
+```
+
+
+
+
+

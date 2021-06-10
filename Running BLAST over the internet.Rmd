@@ -1,0 +1,63 @@
+---
+title: "Running BLAST over the internet"
+output:
+  html_document: 
+    toc: yes
+    toc_depth: 2
+    toc_float: yes
+    highlight: zenburn
+    code_download: true
+---
+
+
+Import the NCBI web methods from Bioblast
+```{python}
+from Bio.Blast import NCBIWWW
+```
+
+First, read the FASTA file into memory.
+Second, us the *qblast* method to call the *blastn* program that compares nucleotides, search the 'nt' database, and pass in the FASTA sequence to search.
+
+```{python cache=TRUE}
+fasta_string = open("example_fasta.fa").read()
+result_handle = NCBIWWW.qblast("blastn", "nt", fasta_string)
+```
+
+# The BLAST Record
+The BLAST record contains:
+1. descriptions: list (title, score, e, num_alignments)
+2. alignments: list (title, length, hsps:list (score, bits, expect, num_alighnments, identities, positives, gaps, strand, frame, query, query_start, match, sbjct, sbjct_start))
+3. multiple_alignment
+
+
+
+
+```{python}
+from Bio.Blast import NCBIXML
+blast_record = NCBIXML.read(result_handle)
+```
+```{python}
+len(blast_record.alignments)
+```
+```{python}
+E_VALUE_THRESH = 0.01
+```
+
+Set the *e value* to be 1% so that we only look at matches that are less than 1% to be a chance match.
+```{python cache=TRUE}
+for alignment in blast_record.alignments:
+  for hsp in alignment.hsps:
+    if hsp.expect < E_VALUE_THRESH:
+      print('****Alignment****')
+      print('sequence:', alignment.title)
+      print('length', alignment.length)
+      print('e value:', hsp.expect)
+      print(hsp.query)
+      print(hsp.match)
+      print(hsp.sbjct)
+
+```
+
+
+
+

@@ -20,6 +20,12 @@ navbar:
           href: part_6_creating_initial_visualizations.html
         - text: "Part 7: Investigating Bikeometer GPS Locations"
           href: part_7_investigating_bikometer_gps_locations.html
+    - text: "Bioinformatics Notes"
+      menu:
+        - text: "Running BLAST Over the Internet"
+          href: Running-BLAST-over-the-internet.html
+        - text: "Communicating with the Outside"
+          href: communicating_with-the_outside.html
     - text: "Notes"
       menu:
         - text: "Fixing rpytools error"
