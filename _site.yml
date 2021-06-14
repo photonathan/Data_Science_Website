@@ -29,7 +29,7 @@ navbar:
     - text: "Notes"
       menu:
         - text: "Fixing rpytools error"
-          href: note_fixing_rpytools_error.html
+          href: note_fixing_pyrtools_error.html
         - text: "Publish Rmarkdown Documents With Database Connections Without Exposing Credentials"
           href: note_knit_rmarkdown_db.html
     - text: "Photography"
