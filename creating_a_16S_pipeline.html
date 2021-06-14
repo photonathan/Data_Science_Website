@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Creating a 16S pipeline</title>
+
+<script src="site_libs/header-attrs-2.7/header-attrs.js"></script>
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<script src="site_libs/navigation-1.1/sourceembed.js"></script>
+<link rel="apple-touch-icon" sizes="180x180" href="~/assets/favicon/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon/favicon-16x16.png">
+<link rel="manifest" href="/assets/favicon/site.webmanifest">
+<link rel="mask-icon" href="/assets/favicon/safari-pinned-tab.svg" color="#5bbad5">
+<link rel="shortcut icon" href="/assets/favicon/favicon.ico">
+<meta name="msapplication-TileColor" content="#da532c">
+<meta name="msapplication-config" content="/assets/favicon/browserconfig.xml">
+<meta name="theme-color" content="#ffffff">
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+
+
+<style type="text/css">
+#rmd-source-code {
+  display: none;
+}
+</style>
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.tab('show');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-sm-12 col-md-4 col-lg-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-sm-12 col-md-8 col-lg-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Nathan's Projects</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Visualizing Arlington Bikeometers
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="part_1_the_plan.html">Part 1: The Plan</a>
+    </li>
+    <li>
+      <a href="part_2_query_the_api.html">Part 2: Query the API</a>
+    </li>
+    <li>
+      <a href="part_3_setup_your_database.html">Part 3: Setup and Connect Your Database</a>
+    </li>
+    <li>
+      <a href="part_4_save_the_data_in_a_mysql_database.html">Part 4: Save the Data in Your Local MySQL Database</a>
+    </li>
+    <li>
+      <a href="part_5_picking_bikeometers_to_graph.html">Part 5: Picking Which Bikeometers to Graph</a>
+    </li>
+    <li>
+      <a href="part_6_creating_initial_visualizations.html">Part 6: Creating the Visualizations</a>
+    </li>
+    <li>
+      <a href="part_7_investigating_bikometer_gps_locations.html">Part 7: Investigating Bikeometer GPS Locations</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Bioinformatics Notes
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="Running-BLAST-over-the-internet.html">Running BLAST Over the Internet</a>
+    </li>
+    <li>
+      <a href="communicating_with-the_outside.html">Communicating with the Outside</a>
+    </li>
+    <li>
+      <a href="creating_a_16S_pipeline.html">Creating a 16S pipeline</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Notes
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="note_fixing_pyrtools_error.html">Fixing rpytools error</a>
+    </li>
+    <li>
+      <a href="note_knit_rmarkdown_db.html">Publish Rmarkdown Documents With Database Connections Without Exposing Credentials</a>
+    </li>
+  </ul>
+</li>
+<li>
+  <a href="photography.html">Photography</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/photonathan">Github</a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+<div class="btn-group pull-right float-right">
+<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
+<li><a id="rmd-download-source" href="#">Download Rmd</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">Creating a 16S pipeline</h1>
+
+</div>
+
+
+<p>   </p>
+<div id="steps" class="section level1">
+<h1>Steps</h1>
+<ol style="list-style-type: decimal">
+<li>Prepare the sample</li>
+<li>Sequence</li>
+<li>Pre-process the data</li>
+<li>Analyze the data</li>
+<li>Explore the data further    </li>
+</ol>
+</div>
+<div id="pre-process-the-data" class="section level1">
+<h1>3. Pre-process the data</h1>
+<p>   </p>
+<div id="input-data" class="section level3">
+<h3>Input Data</h3>
+<p>Nephele v2 supports demultiplexed paired-end and single-end FASTQ files.    </p>
+</div>
+<div id="demultiplex" class="section level3">
+<h3>Demultiplex</h3>
+</div>
+<div id="quality-check" class="section level3">
+<h3>Quality check</h3>
+<p>Nephele provides a pre-processing quality check pipeline for demultiplexed paired-end and single-end FASTQ files.The Nephele QC pipeline can run a quality control check (FastQC), Trim primers and/or adapters, Trim and/or Filter reads based on quality scores, Merge read pairs, and provides summary graphs of the QC steps Learn more</p>
+<p><img src="https://nephele.niaid.nih.gov/static/images/fastqc_per_base_sequence_quality_plot.png" /></p>
+<div id="fastqc" class="section level4">
+<h4>1. FastQC</h4>
+<p>FastQC is always run first in the pipeline with default parameters. FastQC analyzes the input FASTQ files and reports summary statistics about each file in both tabular and graphical format, including number of reads, average per base quality score, etc. Nephele uses FastQC v0.11.7.</p>
+</div>
+<div id="adapterprimer-trimming" class="section level4">
+<h4>2. Adapter/Primer trimming</h4>
+<p>Adapter and/or primer trimming is optional. Nephele uses the cutadapt plugin from QIIME 2 version 2018.6 for primer and adapter trimming. cutadapt trims the sequences specified by the user from either the 5’ or 3’ ends of reads. To trim primers for amplicon sequence data, the primer sequence should be specified as the Forward and/or Reverse front 5’ adapter.</p>
+</div>
+<div id="quality-trimming" class="section level4">
+<h4>3. Quality trimming</h4>
+<p>Quality trimming is optional. Trimmomatic v0.38 is used for quality trimming. Trimmomatic uses a sliding window from the 5’ to the 3’ end of the read. When the average quality in the window drops below the required quality score, the read is trimmed to remove the 3’ low quality end of the read. Poor quality sequence can also be trimmed at the start of a read using the Leading quality trim option. Further help can be found in the Trimmomatic manual. 4. Paired-end read merging Read merging is only for paired-end data sets and is optional. For merging read pairs, Nephele uses FLASH2 v2.2.00 which is based on the FLASH read merger. FLASH is designed to merge pairs of reads when the original fragment length is shorter than twice the length of reads. It merges read pairs if the rate of mismatches in the overlapping region is less than the user-specified Maximum mismatch density. See user options below for more information. 5. Summary graphs Summary graphs are always made as the final step of the pipeline. Nephele uses MultiQC v1.8dev. MultiQC summarizes the output of FastQC, cutadapt, Trimmomatic, and FLASh (if any of those steps are chosen by the user) and produces a single html report with graphs. # 4. Analyze the data</p>
+</div>
+</div>
+<div id="mapping-file-template" class="section level3">
+<h3>Mapping File Template</h3>
+<p>INSTRUCTIONS for mapping file required by QIIME, mothur, or DADA2 Demultiplexed* pipelines.</p>
+<p><img src="images/bioinformatics/mapping_file_template.png" /></p>
+<p>There should not be spaces anywhere in your mapping file except for the Description. You can use a comma separated file, a tab-delimited (.txt) file, OR an Excel (.xlsx, .xls, not Strict) file in this format.</p>
+<p>Column A (#SampleID): Use unique ID. Use only alphanumeric characters and period (.)</p>
+<p>Column B (ForwardFastqFIle): Add file name of forward read FASTQ file for each sample. Enter the exact file name the same, including extensions (i.e. .gz or .tar.gz)</p>
+<p>Column C (ReverseFastqFile): Add file name of reverse read FASTQ file for each sample. Enter the exact file name the same, including extensions(i.e. .gz or .tar.gz)</p>
+<p>Column D (TreatmentGroup): Add metadata values here. You must have at least two different values. (see Note below). CANNOT be left blank</p>
+<p>Column E (Description): Add keywords to describe the samples. Spaces are ok.</p>
+<p>Note: If desired, add additional metadata columns (e.g. tissue, time) between columns labeled with “TreatmentGroup” and “Description”. Each additional metadata column must have at least two different terms. NO spaces allowed. For example, if you add an additional column with header “Time”, some samples could have “time0” and other samples could have “time1” but not all samples can be “time0” or “time1”.</p>
+<p>*Demutiplexed FASTQ file pairs do not contain barcode and linker sequences therefore it is not necessary to add these sequences to this template.</p>
+</div>
+<div id="dada2" class="section level3">
+<h3>DADA2</h3>
+<p>The DADA2 pipeline accepts amplicon single or paired-end FASTQ data, and outputs sequence variants, their sample-wise abundances after removing substitution and chimera errors, and summary plots.</p>
+</div>
+<div id="qiime2-new" class="section level3">
+<h3>QIIME2 (NEW)</h3>
+<p>The QIIME 2.0 16S pipeline starts with FASTQ data and finishes with a rarefaction plot, taxonomy barplot and a biom file that can be further explored using the Downstream Analysis pipeline. It relies on VSEARCH for De novo, Open and Closed reference clustering into OTUs. For Single-End data, it also provides the DEBLUR denoising algorithm.</p>
+</div>
+<div id="biobakery" class="section level3">
+<h3>BioBakery</h3>
+<p>Pipeline for metagenome shotgun data.</p>
+</div>
+</div>
+<div id="explore-the-data-further" class="section level1">
+<h1>5. Explore the data further</h1>
+<div id="downstream-analysis" class="section level3">
+<h3>Downstream analysis</h3>
+<p>You can use biom files from your 16S or ITS pipeline outputs to run the downstream analysis (DA) pipeline. Nephele’s DA pipeline uses QIIME 2 to provide sample observation and taxonomic summaries and diversity analyses of an OTU table.</p>
+</div>
+</div>
+<div id="sources" class="section level1">
+<h1>Sources</h1>
+<p><a href="https://nephele.niaid.nih.gov/index" class="uri">https://nephele.niaid.nih.gov/index</a></p>
+</div>
+
+<div id="rmd-source-code">LS0tDQp0aXRsZTogIkNyZWF0aW5nIGEgMTZTIHBpcGVsaW5lIg0Kb3V0cHV0Og0KICBodG1sX2RvY3VtZW50OiANCiAgICB0b2M6IHllcw0KICAgIHRvY19kZXB0aDogNA0KICAgIHRvY19mbG9hdDogeWVzDQogICAgaGlnaGxpZ2h0OiB6ZW5idXJuDQogICAgY29kZV9kb3dubG9hZDogdHJ1ZQ0KICAgIGluY2x1ZGVzOg0KICAgICAgaW5faGVhZGVyOiBoZWFkZXIuaHRtbA0KLS0tDQpcIA0KXCANCg0KIyBTdGVwcw0KMS4gUHJlcGFyZSB0aGUgc2FtcGxlDQoyLiBTZXF1ZW5jZQ0KMy4gUHJlLXByb2Nlc3MgdGhlIGRhdGENCjQuIEFuYWx5emUgdGhlIGRhdGENCjUuIEV4cGxvcmUgdGhlIGRhdGEgZnVydGhlcg0KXCANClwgDQoNCiMgMy4gUHJlLXByb2Nlc3MgdGhlIGRhdGENClwgDQpcIA0KDQojIyMgSW5wdXQgRGF0YQ0KDQpOZXBoZWxlIHYyIHN1cHBvcnRzIGRlbXVsdGlwbGV4ZWQgcGFpcmVkLWVuZCBhbmQgc2luZ2xlLWVuZCBGQVNUUSBmaWxlcy4NClwgDQpcIA0KDQojIyMgRGVtdWx0aXBsZXgNCg0KDQojIyMgUXVhbGl0eSBjaGVjaw0KTmVwaGVsZSBwcm92aWRlcyBhIHByZS1wcm9jZXNzaW5nIHF1YWxpdHkgY2hlY2sgcGlwZWxpbmUgZm9yIGRlbXVsdGlwbGV4ZWQgcGFpcmVkLWVuZCBhbmQgc2luZ2xlLWVuZCBGQVNUUSBmaWxlcy5UaGUgTmVwaGVsZSBRQyBwaXBlbGluZSBjYW4gcnVuIGEgcXVhbGl0eSBjb250cm9sIGNoZWNrIChGYXN0UUMpLCBUcmltIHByaW1lcnMgYW5kL29yIGFkYXB0ZXJzLCBUcmltIGFuZC9vciBGaWx0ZXIgcmVhZHMgYmFzZWQgb24gcXVhbGl0eSBzY29yZXMsIE1lcmdlIHJlYWQgcGFpcnMsIGFuZCBwcm92aWRlcyBzdW1tYXJ5IGdyYXBocyBvZiB0aGUgUUMgc3RlcHMgTGVhcm4gbW9yZQ0KDQohW10oaHR0cHM6Ly9uZXBoZWxlLm5pYWlkLm5paC5nb3Yvc3RhdGljL2ltYWdlcy9mYXN0cWNfcGVyX2Jhc2Vfc2VxdWVuY2VfcXVhbGl0eV9wbG90LnBuZykNCg0KIyMjIyAxLiBGYXN0UUMNCkZhc3RRQyBpcyBhbHdheXMgcnVuIGZpcnN0IGluIHRoZSBwaXBlbGluZSB3aXRoIGRlZmF1bHQgcGFyYW1ldGVycy4gRmFzdFFDIGFuYWx5emVzIHRoZSBpbnB1dCBGQVNUUSBmaWxlcyBhbmQgcmVwb3J0cyBzdW1tYXJ5IHN0YXRpc3RpY3MgYWJvdXQgZWFjaCBmaWxlIGluIGJvdGggdGFidWxhciBhbmQgZ3JhcGhpY2FsIGZvcm1hdCwgaW5jbHVkaW5nIG51bWJlciBvZiByZWFkcywgYXZlcmFnZSBwZXIgYmFzZSBxdWFsaXR5IHNjb3JlLCBldGMuIE5lcGhlbGUgdXNlcyBGYXN0UUMgdjAuMTEuNy4NCg0KIyMjIyAyLiBBZGFwdGVyL1ByaW1lciB0cmltbWluZw0KQWRhcHRlciBhbmQvb3IgcHJpbWVyIHRyaW1taW5nIGlzIG9wdGlvbmFsLiBOZXBoZWxlIHVzZXMgdGhlIGN1dGFkYXB0IHBsdWdpbiBmcm9tIFFJSU1FIDIgdmVyc2lvbiAyMDE4LjYgZm9yIHByaW1lciBhbmQgYWRhcHRlciB0cmltbWluZy4gY3V0YWRhcHQgdHJpbXMgdGhlIHNlcXVlbmNlcyBzcGVjaWZpZWQgYnkgdGhlIHVzZXIgZnJvbSBlaXRoZXIgdGhlIDUnIG9yIDMnIGVuZHMgb2YgcmVhZHMuIFRvIHRyaW0gcHJpbWVycyBmb3IgYW1wbGljb24gc2VxdWVuY2UgZGF0YSwgdGhlIHByaW1lciBzZXF1ZW5jZSBzaG91bGQgYmUgc3BlY2lmaWVkIGFzIHRoZSBGb3J3YXJkIGFuZC9vciBSZXZlcnNlIGZyb250IDUnIGFkYXB0ZXIuIA0KDQojIyMjIDMuIFF1YWxpdHkgdHJpbW1pbmcNClF1YWxpdHkgdHJpbW1pbmcgaXMgb3B0aW9uYWwuDQpUcmltbW9tYXRpYyB2MC4zOCBpcyB1c2VkIGZvciBxdWFsaXR5IHRyaW1taW5nLg0KVHJpbW1vbWF0aWMgdXNlcyBhIHNsaWRpbmcgd2luZG93IGZyb20gdGhlIDUnIHRvIHRoZSAzJyBlbmQgb2YgdGhlIHJlYWQuIFdoZW4gdGhlIGF2ZXJhZ2UgcXVhbGl0eSBpbiB0aGUgd2luZG93IGRyb3BzIGJlbG93IHRoZSByZXF1aXJlZCBxdWFsaXR5IHNjb3JlLCB0aGUgcmVhZCBpcyB0cmltbWVkIHRvIHJlbW92ZSB0aGUgMycgbG93IHF1YWxpdHkgZW5kIG9mIHRoZSByZWFkLg0KUG9vciBxdWFsaXR5IHNlcXVlbmNlIGNhbiBhbHNvIGJlIHRyaW1tZWQgYXQgdGhlIHN0YXJ0IG9mIGEgcmVhZCB1c2luZyB0aGUgTGVhZGluZyBxdWFsaXR5IHRyaW0gb3B0aW9uLg0KRnVydGhlciBoZWxwIGNhbiBiZSBmb3VuZCBpbiB0aGUgVHJpbW1vbWF0aWMgbWFudWFsLg0KNC4gUGFpcmVkLWVuZCByZWFkIG1lcmdpbmcNClJlYWQgbWVyZ2luZyBpcyBvbmx5IGZvciBwYWlyZWQtZW5kIGRhdGEgc2V0cyBhbmQgaXMgb3B0aW9uYWwuDQpGb3IgbWVyZ2luZyByZWFkIHBhaXJzLCBOZXBoZWxlIHVzZXMgRkxBU0gyIHYyLjIuMDAgd2hpY2ggaXMgYmFzZWQgb24gdGhlIEZMQVNIIHJlYWQgbWVyZ2VyLg0KRkxBU0ggaXMgZGVzaWduZWQgdG8gbWVyZ2UgcGFpcnMgb2YgcmVhZHMgd2hlbiB0aGUgb3JpZ2luYWwgZnJhZ21lbnQgbGVuZ3RoIGlzIHNob3J0ZXIgdGhhbiB0d2ljZSB0aGUgbGVuZ3RoIG9mIHJlYWRzLiBJdCBtZXJnZXMgcmVhZCBwYWlycyBpZiB0aGUgcmF0ZSBvZiBtaXNtYXRjaGVzIGluIHRoZSBvdmVybGFwcGluZyByZWdpb24gaXMgbGVzcyB0aGFuIHRoZSB1c2VyLXNwZWNpZmllZCBNYXhpbXVtIG1pc21hdGNoIGRlbnNpdHkuIFNlZSB1c2VyIG9wdGlvbnMgYmVsb3cgZm9yIG1vcmUgaW5mb3JtYXRpb24uDQo1LiBTdW1tYXJ5IGdyYXBocw0KU3VtbWFyeSBncmFwaHMgYXJlIGFsd2F5cyBtYWRlIGFzIHRoZSBmaW5hbCBzdGVwIG9mIHRoZSBwaXBlbGluZS4NCk5lcGhlbGUgdXNlcyBNdWx0aVFDIHYxLjhkZXYuDQpNdWx0aVFDIHN1bW1hcml6ZXMgdGhlIG91dHB1dCBvZiBGYXN0UUMsIGN1dGFkYXB0LCBUcmltbW9tYXRpYywgYW5kIEZMQVNoIChpZiBhbnkgb2YgdGhvc2Ugc3RlcHMgYXJlIGNob3NlbiBieSB0aGUgdXNlcikgYW5kIHByb2R1Y2VzIGEgc2luZ2xlIGh0bWwgcmVwb3J0IHdpdGggZ3JhcGhzLg0KIyA0LiBBbmFseXplIHRoZSBkYXRhDQoNCiMjIyBNYXBwaW5nIEZpbGUgVGVtcGxhdGUNCg0KSU5TVFJVQ1RJT05TIGZvciBtYXBwaW5nIGZpbGUgcmVxdWlyZWQgYnkgUUlJTUUsIG1vdGh1ciwgb3IgREFEQTIgRGVtdWx0aXBsZXhlZCogcGlwZWxpbmVzLg0KDQohW10oaW1hZ2VzL2Jpb2luZm9ybWF0aWNzL21hcHBpbmdfZmlsZV90ZW1wbGF0ZS5wbmcpDQoNClRoZXJlIHNob3VsZCBub3QgYmUgc3BhY2VzIGFueXdoZXJlIGluIHlvdXIgbWFwcGluZyBmaWxlIGV4Y2VwdCBmb3IgdGhlIERlc2NyaXB0aW9uLiANCllvdSBjYW4gdXNlIGEgY29tbWEgc2VwYXJhdGVkIGZpbGUsIGEgdGFiLWRlbGltaXRlZCAoLnR4dCkgZmlsZSwgT1IgYW4gRXhjZWwgKC54bHN4LCAueGxzLCBub3QgU3RyaWN0KSBmaWxlIGluIHRoaXMgZm9ybWF0Lg0KDQpDb2x1bW4gQSAoI1NhbXBsZUlEKTogVXNlIHVuaXF1ZSBJRC4gIFVzZSBvbmx5IGFscGhhbnVtZXJpYyBjaGFyYWN0ZXJzIGFuZCBwZXJpb2QgKC4pIA0KDQpDb2x1bW4gQiAoRm9yd2FyZEZhc3RxRklsZSk6IEFkZCBmaWxlIG5hbWUgb2YgZm9yd2FyZCByZWFkIEZBU1RRIGZpbGUgZm9yIGVhY2ggc2FtcGxlLiBFbnRlciB0aGUgZXhhY3QgZmlsZSBuYW1lIHRoZSBzYW1lLCBpbmNsdWRpbmcgZXh0ZW5zaW9ucyAoaS5lLiAuZ3ogb3IgLnRhci5neikNCg0KQ29sdW1uIEMgKFJldmVyc2VGYXN0cUZpbGUpOiBBZGQgZmlsZSBuYW1lIG9mIHJldmVyc2UgcmVhZCBGQVNUUSBmaWxlIGZvciBlYWNoIHNhbXBsZS4gRW50ZXIgdGhlIGV4YWN0IGZpbGUgbmFtZSB0aGUgc2FtZSwgaW5jbHVkaW5nIGV4dGVuc2lvbnMoaS5lLiAuZ3ogb3IgLnRhci5neikNCg0KQ29sdW1uIEQgKFRyZWF0bWVudEdyb3VwKTogQWRkIG1ldGFkYXRhIHZhbHVlcyBoZXJlLiBZb3UgbXVzdCBoYXZlIGF0IGxlYXN0IHR3byBkaWZmZXJlbnQgdmFsdWVzLiAoc2VlIE5vdGUgYmVsb3cpLiBDQU5OT1QgYmUgbGVmdCBibGFuaw0KDQpDb2x1bW4gRSAoRGVzY3JpcHRpb24pOiBBZGQga2V5d29yZHMgdG8gZGVzY3JpYmUgdGhlIHNhbXBsZXMuICBTcGFjZXMgYXJlIG9rLg0KDQpOb3RlOiBJZiBkZXNpcmVkLCBhZGQgYWRkaXRpb25hbCBtZXRhZGF0YSBjb2x1bW5zIChlLmcuIHRpc3N1ZSwgdGltZSkgYmV0d2VlbiBjb2x1bW5zIGxhYmVsZWQgd2l0aCAiVHJlYXRtZW50R3JvdXAiIGFuZCAiRGVzY3JpcHRpb24iLiBFYWNoIGFkZGl0aW9uYWwgbWV0YWRhdGEgY29sdW1uIG11c3QgaGF2ZSBhdCBsZWFzdCB0d28gZGlmZmVyZW50IHRlcm1zLiAgTk8gc3BhY2VzIGFsbG93ZWQuIEZvciBleGFtcGxlLCBpZiB5b3UgYWRkIGFuIGFkZGl0aW9uYWwgY29sdW1uIHdpdGggaGVhZGVyICJUaW1lIiwgc29tZSBzYW1wbGVzIGNvdWxkIGhhdmUgInRpbWUwIiBhbmQgb3RoZXIgc2FtcGxlcyBjb3VsZCBoYXZlICJ0aW1lMSIgYnV0IG5vdCBhbGwgc2FtcGxlcyBjYW4gYmUgInRpbWUwIiAgb3IgInRpbWUxIi4gIA0KDQoqRGVtdXRpcGxleGVkIEZBU1RRIGZpbGUgcGFpcnMgZG8gbm90IGNvbnRhaW4gYmFyY29kZSBhbmQgbGlua2VyIHNlcXVlbmNlcyB0aGVyZWZvcmUgaXQgaXMgbm90IG5lY2Vzc2FyeSB0byBhZGQgdGhlc2Ugc2VxdWVuY2VzIHRvIHRoaXMgdGVtcGxhdGUuDQoNCg0KIyMjIERBREEyDQoNClRoZSBEQURBMiBwaXBlbGluZSBhY2NlcHRzIGFtcGxpY29uIHNpbmdsZSBvciBwYWlyZWQtZW5kIEZBU1RRIGRhdGEsIGFuZCBvdXRwdXRzIHNlcXVlbmNlIHZhcmlhbnRzLCB0aGVpciBzYW1wbGUtd2lzZSBhYnVuZGFuY2VzIGFmdGVyIHJlbW92aW5nIHN1YnN0aXR1dGlvbiBhbmQgY2hpbWVyYSBlcnJvcnMsIGFuZCBzdW1tYXJ5IHBsb3RzLg0KDQojIyMgUUlJTUUyIChORVcpDQoNClRoZSBRSUlNRSAyLjAgMTZTIHBpcGVsaW5lIHN0YXJ0cyB3aXRoIEZBU1RRIGRhdGEgYW5kIGZpbmlzaGVzIHdpdGggYSByYXJlZmFjdGlvbiBwbG90LCB0YXhvbm9teSBiYXJwbG90IGFuZCBhIGJpb20gZmlsZSB0aGF0IGNhbiBiZSBmdXJ0aGVyIGV4cGxvcmVkIHVzaW5nIHRoZSBEb3duc3RyZWFtIEFuYWx5c2lzIHBpcGVsaW5lLiBJdCByZWxpZXMgb24gVlNFQVJDSCBmb3IgRGUgbm92bywgT3BlbiBhbmQgQ2xvc2VkIHJlZmVyZW5jZSBjbHVzdGVyaW5nIGludG8gT1RVcy4gRm9yIFNpbmdsZS1FbmQgZGF0YSwgaXQgYWxzbyBwcm92aWRlcyB0aGUgREVCTFVSIGRlbm9pc2luZyBhbGdvcml0aG0uDQoNCiMjIyBCaW9CYWtlcnkgDQpQaXBlbGluZSBmb3IgbWV0YWdlbm9tZSBzaG90Z3VuIGRhdGEuIA0KDQojIDUuIEV4cGxvcmUgdGhlIGRhdGEgZnVydGhlcg0KDQojIyMgRG93bnN0cmVhbSBhbmFseXNpcw0KWW91IGNhbiB1c2UgYmlvbSBmaWxlcyBmcm9tIHlvdXIgMTZTIG9yIElUUyBwaXBlbGluZSBvdXRwdXRzIHRvIHJ1biB0aGUgZG93bnN0cmVhbSBhbmFseXNpcyAoREEpIHBpcGVsaW5lLiBOZXBoZWxlJ3MgREEgcGlwZWxpbmUgdXNlcyBRSUlNRSAyIHRvIHByb3ZpZGUgc2FtcGxlIG9ic2VydmF0aW9uIGFuZCB0YXhvbm9taWMgc3VtbWFyaWVzIGFuZCBkaXZlcnNpdHkgYW5hbHlzZXMgb2YgYW4gT1RVIHRhYmxlLg0KDQojIFNvdXJjZXMNCg0KaHR0cHM6Ly9uZXBoZWxlLm5pYWlkLm5paC5nb3YvaW5kZXg=</div>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeSourceEmbed("creating_a_16S_pipeline.Rmd");
+});
+</script>
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3,h4",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
