@@ -34,7 +34,8 @@ navbar:
           href: general_pipeline_overview.html
         - text: 'EZ Bio MTP Guide'
           href: ez_bio_mtp_guide.html
-          
+        - text: 'General Notes'
+          href: general_notes.html
     - text: "Notes"
       menu:
         - text: "Fixing rpytools error"

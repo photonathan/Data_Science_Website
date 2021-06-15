@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>General Notes</title>
+
+<script src="site_libs/header-attrs-2.8/header-attrs.js"></script>
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.tab('show');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Nathan's Projects</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Visualizing Arlington Bikeometers
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="part_1_the_plan.html">Part 1: The Plan</a>
+    </li>
+    <li>
+      <a href="part_2_query_the_api.html">Part 2: Query the API</a>
+    </li>
+    <li>
+      <a href="part_3_setup_your_database.html">Part 3: Setup and Connect Your Database</a>
+    </li>
+    <li>
+      <a href="part_4_save_the_data_in_a_mysql_database.html">Part 4: Save the Data in Your Local MySQL Database</a>
+    </li>
+    <li>
+      <a href="part_5_picking_bikeometers_to_graph.html">Part 5: Picking Which Bikeometers to Graph</a>
+    </li>
+    <li>
+      <a href="part_6_creating_initial_visualizations.html">Part 6: Creating the Visualizations</a>
+    </li>
+    <li>
+      <a href="part_7_investigating_bikometer_gps_locations.html">Part 7: Investigating Bikeometer GPS Locations</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Bioinformatics Notes
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="Running-BLAST-over-the-internet.html">Running BLAST Over the Internet</a>
+    </li>
+    <li>
+      <a href="communicating_with-the_outside.html">Communicating with the Outside</a>
+    </li>
+    <li>
+      <a href="creating_a_16S_pipeline.html">Creating a 16S pipeline</a>
+    </li>
+    <li>
+      <a href="dada2_nephele_pipeline.html">DADA2 Nephele Pipeline</a>
+    </li>
+    <li>
+      <a href="general_pipeline_overview.html">General Pipeline Overview</a>
+    </li>
+    <li>
+      <a href="ez_bio_mtp_guide.html">EZ Bio MTP Guide</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Notes
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="note_fixing_pyrtools_error.html">Fixing rpytools error</a>
+    </li>
+    <li>
+      <a href="note_knit_rmarkdown_db.html">Publish Rmarkdown Documents With Database Connections Without Exposing Credentials</a>
+    </li>
+  </ul>
+</li>
+<li>
+  <a href="photography.html">Photography</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/photonathan">Github</a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">General Notes</h1>
+
+</div>
+
+
+<p>Paired vs single end Paired End: Paired-end sequencing involves sequencing DNA from both ends of a fragment. Choose this option if your sequence files are paired and have been demultiplexed. For example, Illumina MiSeq Paired End fastq files consist of two files for each sample with names ending on “R1_001.fastq” and “R2_001.fastq” Single End: Single-end sequencing involves sequencing DNA from only one end. Choose this option if your samples only got sequenced from one end or if you don’t want to use the reverse fastq file. How does DNA replicate and how do you get DNA to protein and how do modifications occur to turn on and off genes occur? Signals from the environment or from other cells activate proteins called transcription factors. These proteins bind to regulatory regions of a gene and increase or decrease the level of transcription. single nucleotide polymorphism DNA Sequencing When building a pipeline, you build it for the questions you want to answer. If you want to look at variant discovery, don’t do RNA seq because looking for mutations in the RNA is difficult. Whole genome shotgun sequencing, get all the DNA you can from the sample, fragment it, and sequence the fragments. It will pick up all the genes so we know what the microbe is capable of. You will also probably get host DNA in your microbe sample. Larger genomespace because you your microbe could potentially be any microbe that’s in the database. You may find that some genetic elements like the virulence factor of salomnilla came in via bacteriophage and can show up in other microbes and if you get a match, you may think you have pathogenic salmonilla. Targeted Sequencing Can get around some problems of DNA sequencing but also has problems. You pick a gene that is common to all your species of interest that should have some conserved regions that you can prime to and some variable regions that you can use to identify the different species, but the best you can do is infer function of the gene or region, you’re not sequencing other genes so the best you can do is: E.coli tends to behave a certain way, I’m seeing E. Coli so I infer these will behave the same way. RNA sequencing/ Metatranscriptomics Transcripts can be tied back to origin by sequence. If a gene isn’t being expressed, you wont see it in the transcriptome. Need to remove rRNA. You want the mRNA not the rRNA. You will get quantative gene expression, so you know what they are doing because you know what genes are activated. What to look for in a targeted sequencing gene? Must be sequenceable, if it has high GC content, you don’t want to use it. You want highly conserved regions surrounded by highly variable regions. It has to be present in your target species, obviously. Ideally you want it absent in non-targeted species. 16S is in microbes, but not in archea and eukaryotes. When sequencing the 16S gene, we are sequencing the part of the ribosome that is shown below, that is involved in the translation of mRNA to amino acids.</p>
+<p>16S Sequencing challenges Illumina makes 2% base call errors. Nanopore makes more errors but makes long reads, long enough to read the entire 16S region. Errors are a problem because if you make an error, you may be confusing the error for real diversity or a new species. Somehow, we need to deal with errors. You can Blur or Sharpen. Blur (clustering) I won’t worry about single nucleotide differences. You separate into Operational Taxonomic Units that contain a cluster of related microbes. If you run more samples, your clustering may change. OTU picking can be guided by reference sequences in your sample and you build you clusters around the reference sequences. You can also do de novo (reference free). Closed reference is when OTUs are limited to the references. Open reference is you try to use the reference species but if you don’t have a close enough match to said reference you can de novo cluster which is when you build clusters from the sample. OTU approach You combine sequences that are 97% or more identical to the same species though this may only get you down to genus level. 1. Preprocessing (demultiplexing, etc) 2. Pick OTUs a. Fast and efficient if guided by a reference set but limited to a reference set b. Slower if using Open References c. Very slow if doing de novo assembly 3. Extract representative sequence from each OUT (each cluster will have a consensus sequence that describes the OTU or use the consensus sequence to compare it to a reference that it looks most like. 4. Conduct further analysis with representative sequences that can represent one or more organisms from your sample to look at diversity… etc. ASV (Amplicon sequence variant)</p>
+<p>Considers frequency of the number of sequences that match a specific species. You know that you saw 2 counts of one species but you also know that error frequency would account for seeing 2 of those reads. You use the error model for the run to determine what variations we expect to see based on the error model. If our error model predicts we will see this error x% and we see that error x%, we can say that those are just artifacts of sequencing and those species don’t actually exist. We can see that statistically, what we are seeing is not a statistical artifact. Target gene sequencing Throws out amplicon sequences that lack strong statistical support for not being artifacts of sequencing. Cost: potential loss of real sequence that was present at very low levels. 1. Preprocess reads (demultiplex, etc) 2. Trim and filter reads to retain highest possible quality sequence 3. Build an error model for forward and reverse reads. Error model determines the probability of seeing a change in a certain base quantity 4. Merge forward and reverse reads into a single amplicon at an overlap region (good to use MiSeq because it has long reads) 5. Count occurrences of each amplicon. 6. Use error model to determine support for rare amplicons based on the frequency. Which of those rare amplicons can be explained using sequence error. 7. Eliminate poorly-supported amplicons 8. Conduct further analysis. You don’t need to use a consensus sequence like OTUs. You can actually use the sequence.</p>
+<p>Sharpen DADA2 to do ASV analysis. ASVs vs OTUs OTUs are great if you want to compare to older samples because they are the original method and have been used for longer. You can build OTUs pretty compultationally easily by using the reference databases. Databases are overrepresented for E. coli, Human samples, and food samples ASVs don’t use any reference One option is to build OTUs de novo which you would do if you are building an environmental microbiome sample. Problems: de novo OTU building is computationally expensive (slow, better computer doesn’t matter, can’t run in parallel). If you cluster on some samples then get more samples, you have to cluster again with the new and old samples. Compare that to ASV where if you just have ASV, this is the exact sequence of a microbe that I can support as existing in my sample and not a potential sequence error. Clustering (building OTUs) is like blurring where you group microbiota together. Building a reference genome de novo for one species: It is very hard and expensive. If you are going to do it. Look up hybrid assembly, use a nanopore because its easier to find.</p>
+<p>Type Species The goal of this ambitious but, given the currently available technologies, assuredly tractable initiative is to sequence the genome of at least one representative of every bacterial and archaeal species whose name has been validly published in accordance with the International Code of Nomenclature of Bacteria (Bacteriological Code) [14]–[19]. Each of these approximately 11,000 bacterial and archaeal species has a designated type strain, a living culture that serves as a fixed reference point for the assignment of bacterial and archaeal names, thus often also denoted as a reference strain (see Box 1). A type strain is not the archetypal representative of a species, a common misperception. Thus, type strains play a crucial role in defining the phylogenomic and taxonomic space of Bacteria and Archaea, facilitating efforts to assign evolutionary relationships and identify new species. By definition, type strains are descendants of the original isolates used in species and subspecies descriptions, as defined by the Bacteriological Code [14], that exhibit all of the relevant phenotypic and genotypic properties cited in the original published taxonomic circumscriptions. They are made available in pure culture (except in cases such as symbionts) for subsequent taxonomic revision in accordance with the rules defined by the Bacteriological Code [14],[17]–[19]. The type strains represent the only area of the microbiological sciences in which the deposit and availability of biological material is mandatory, allowing the verification of past work and potentially extending to further aspects as time and technology become available by using the same biological material. 16S rRNA The DNA of different bacteria can be highly variable but the 16S rRNA gene is highly conserved between bacteria. ANI</p>
+<p>The average nucleotide identity (ANI) determines if two genomes belong to the same species. Average Nucleotide Identity (ANI) is a measure of nucleotide-level genomic similarity between the coding regions of two genomes The average nucleotide identity (ANI) is a similarity index between a given pair of genomes that can be applicable to prokaryotic organisms independently of their G+C content, and a cutoff score of &gt;95% indicates that they belong to the same species (1, 2). Despite the fact that some of the genomes published in Genome Announcements include ANI values with closely related genomes (3,–6), these data are missing in many studies. The genome sequencing studies may use different software packages for ANI determination (3,–6). The currently available software tools for ANI calculation include programs that have to be downloaded, like JSpecies (<a href="http://www.imedea.uib.es/jspecies" class="uri">http://www.imedea.uib.es/jspecies</a>) and Gegenees (<a href="http://www.gegenees.org/documentation.html" class="uri">http://www.gegenees.org/documentation.html</a>), as well as online calculation tools, like the one at the EzGenome (<a href="http://www.ezbiocloud.net/ezgenome/ani" class="uri">http://www.ezbiocloud.net/ezgenome/ani</a>) and the ANI calculator (<a href="http://enve-omics.ce.gatech.edu/ani/index" class="uri">http://enve-omics.ce.gatech.edu/ani/index</a>). However, there is a lack of information indicating whether these tools provide consistent results. In a recent study using ANI calculations and a multilocus phylogenetic analysis (MLPA), we discovered that 14 (36%) of the 39 Aeromonas genomes deposited in the GenBank genome database were taxonomically mislabeled and that ANI values can vary using different calculation tools (7). Of the different tools employed, the ANI calculator always provided higher values than the JSpecies and the EzGenome tools that provided very similar results, but the magnitude of the differences depended on the specific genomes that were compared. For instance, the ANI calculator provided results between the genomes Aeromonas hydrophila HZM (GenBank accession no. JEMQ01) and A. hydrophila ATCC 7966T (GenBank accession no. CP000462) of 89.0%, but when using JSpecies, the ANI was 86.6%. These results were &lt;95% (the species ANI cutoff value) and therefore showed that the genome A. hydrophila HZM does not affiliate with A. hydrophila. This was also confirmed by the MLPA, because in the obtained tree, A. hydrophila HZM did not cluster with the type strain of A. hydrophila but with that of Aeromonas caviae instead. In fact, the ANI comparison between the genome of A. hydrophila HZM with that of A. caviae Ae398 (GenBank accession no. CACP01) showed results of &gt;95% (98.4% with ANI calculator and 98.1% with JSpecies), clearly indicating that HZM belongs to the species A. caviae.</p>
+<p>16S Pipeline Figure S2. Bioinformatics pipeline for bacterial community analysis. The primer sequences were discarded using in-house JAVA program. Non-specific amplicons that do not encode 16S rRNA are detected by HMMER’s hmmsearch program (Eddy, 2011) with 16S rRNA profiles. All sequences were denoised by DUDE-Seq (<a href="http://data.snu.ac.kr/pub/dude-seq/" class="uri">http://data.snu.ac.kr/pub/dude-seq/</a>) and non-redundant reads were extracted by UCLUST-clustering (Edgar, 2010). Taxonomic identification was assigned against the EzBioCloud database using USEARCH (8.1.1861_i86linux32) (Edgar, 2010) followed by more precise pairwise alignment (Myers &amp; Miller, 1988). The chimera sequences were detected by UCHIME (Edgar et al., 2011). Only sequencing reads with lower than 97% similarity to EzBioCloud database were considered for chimera detection. Operational taxonomic units (OTUs) in the sample were investigated using open-reference method (Rideout et al., 2014) with CD-HIT (Fu et al., 2012) and UCLUST (Edgar, 2010). The alpha diversity indices and rarefaction curves were estimated by in-house code.</p>
+<p>All genomes were identified taxonomically at the genus, species or subspecies levels using a combination of gene-based search and OrthoANI [10] calculations. OAT <a href="https://www.ezbiocloud.net/tools/orthoani" class="uri">https://www.ezbiocloud.net/tools/orthoani</a> Welcome to ChunLab’s Orthologous Average Nucleotide Identity Tool (OAT), a similarity measurement tool for genomes. Overview OAT uses OrthoANI to measure the overall similarity between two genome sequences. ANI and OrthoANI are comparable algorithms: they share the same species demarcation cut-off at 95~96% and large comparison studies have demonstrated both algorithms to produce near identical reciprocal similarities. Details of the OrthoANI algorithm is given in (Lee et al. 2015). OAT employs an easy-to-follow Graphical User Interface that allow researchers to calculate OrthoANI values between genomes of interest without unfamiliar Command Line Environments. Moreover, the OAT_cmd command-line software can be integrated into preexisting bioinformatics pipelines.</p>
+<p>What is ContEst16S? <a href="https://www.ezbiocloud.net/tools/contest16s" class="uri">https://www.ezbiocloud.net/tools/contest16s</a> The result of microbial genome sequencing projects often contain unwanted information originated from contamination by either cells or DNAs from other organisms. It is nearly impossible to detect every contamination event, especially from partially sequenced genome assemblies. However, using a robust phylogenetic marker that is not easily subjected to lateral gene transfer may provide a way to detect some clear contamination cases. Here, we present a new method named ContEst16S (Contamination Estimator by 16S), in which 16S rRNA gene fragments from the query genome assemblies are screened to see if the genome assembly is contaminated or not.</p>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
