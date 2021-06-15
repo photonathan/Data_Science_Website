@@ -26,16 +26,6 @@ navbar:
           href: Running-BLAST-over-the-internet.html
         - text: "Communicating with the Outside"
           href: communicating_with-the_outside.html
-        - text: 'Creating a 16S pipeline'
-          href: creating_a_16S_pipeline.html
-        - text: 'DADA2 Nephele Pipeline'
-          href: dada2_nephele_pipeline.html
-        - text: 'General Pipeline Overview'
-          href: general_pipeline_overview.html
-        - text: 'EZ Bio MTP Guide'
-          href: ez_bio_mtp_guide.html
-        - text: 'General Notes'
-          href: general_notes.html
     - text: "Notes"
       menu:
         - text: "Fixing rpytools error"
