@@ -11,7 +11,7 @@
 
 
 
-<title>Nathan’s Projects</title>
+<title>DADA2 Tutorial</title>
 
 <script src="site_libs/header-attrs-2.8/header-attrs.js"></script>
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
@@ -32,15 +32,6 @@
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
-<link rel="apple-touch-icon" sizes="180x180" href="~/assets/favicon/apple-touch-icon.png">
-<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon/favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon/favicon-16x16.png">
-<link rel="manifest" href="/assets/favicon/site.webmanifest">
-<link rel="mask-icon" href="/assets/favicon/safari-pinned-tab.svg" color="#5bbad5">
-<link rel="shortcut icon" href="/assets/favicon/favicon.ico">
-<meta name="msapplication-TileColor" content="#da532c">
-<meta name="msapplication-config" content="/assets/favicon/browserconfig.xml">
-<meta name="theme-color" content="#ffffff">
 
 <style type="text/css">
   code{white-space: pre-wrap;}
@@ -345,30 +336,36 @@ $(document).ready(function () {
 
 
 
-<h1 class="title toc-ignore">Nathan’s Projects</h1>
+<h1 class="title toc-ignore">DADA2 Tutorial</h1>
 
 </div>
 
 
-<style type="text/css">
-.title {
-  display: none;
-}
-
-#getting-started img {
-  margin-right: 10px;
-}
-
-</style>
-<div class="row">
-<div class="col-sm-6">
-<p><img src="images/Logo.jpg" width="100%" id=logo style="display: block; margin: auto;" /></p>
-</div>
-<div id="welcome" class="section level3 col-sm-6" style="padding-top: 50px;">
-<h3>Welcome</h3>
-<p>Data can be complicated, my homepage is not.</p>
-<p>Check out my <a href="https://nathansprojects.com/part_1_the_plan.html">Visualization of Arlington, Virginia’s bike usage during Covid-19</a>.</p>
-</div>
+<p>DADA2 Pipeline Tutorial (1.16) Here we walk through version 1.16 of the DADA2 pipeline on a small multi-sample dataset. Our starting point is a set of Illumina-sequenced paired-end fastq files that have been split (or “demultiplexed”) by sample and from which the barcodes/adapters have already been removed. The end product is an amplicon sequence variant (ASV) table, a higher-resolution analogue of the traditional OTU table, which records the number of times each exact amplicon sequence variant was observed in each sample. We also assign taxonomy to the output sequences, and demonstrate how the data can be imported into the popular phyloseq R package for the analysis of microbiome data.</p>
+<pre class="r"><code>setwd(&quot;C:/Users/MDNat/Downloads/N2_16S_example_data&quot;)
+path &lt;- (&#39;C:/Users/MDNat/Downloads/N2_16S_example_data&#39;)
+fnFs &lt;- sort(list.files(path, pattern=&quot;_R1&quot;, full.names = TRUE))
+fnRs &lt;- sort(list.files(path, pattern=&quot;_R2_&quot;, full.names = TRUE))
+sample.names &lt;- sapply(strsplit(basename(fnFs), &quot;_&quot;), `[`, 1)
+plotQualityProfile(fnFs[1:2])</code></pre>
+<p>The forward reads are good quality. We generally advise trimming the last few nucleotides to avoid less well-controlled errors that can arise there. These quality profiles do not suggest that any additional trimming is needed. We will truncate the forward reads at position 240 (trimming the last 10 nucleotides).</p>
+<pre class="r"><code>plotQualityProfile(fnRs[1:2])</code></pre>
+<p>The reverse reads are of significantly worse quality, especially at the end, which is common in Illumina sequencing. This isn’t too worrisome, as DADA2 incorporates quality information into its error model which makes the algorithm robust to lower quality sequence, but trimming as the average qualities crash will improve the algorithm’s sensitivity to rare sequence variants. Based on these profiles, we will truncate the reverse reads at position 160 where the quality distribution crashes.</p>
+<p>Considerations for your own data: Your reads must still overlap after truncation in order to merge them later! The tutorial is using 2x250 V4 sequence data, so the forward and reverse reads almost completely overlap and our trimming can be completely guided by the quality scores. If you are using a less-overlapping primer set, like V1-V2 or V3-V4, your truncLen must be large enough to maintain 20 + biological.length.variation nucleotides of overlap between them.</p>
+<div id="filter-and-trim" class="section level1">
+<h1>Filter and trim</h1>
+<p>Assign the filenames for the filtered fastq.gz files.</p>
+<pre class="r"><code># Place filtered files in filtered/ subdirectory
+filtFs &lt;- file.path(path, &quot;filtered&quot;, paste0(sample.names, &quot;_F_filt.fastq.gz&quot;))
+filtRs &lt;- file.path(path, &quot;filtered&quot;, paste0(sample.names, &quot;_R_filt.fastq.gz&quot;))
+names(filtFs) &lt;- sample.names
+names(filtRs) &lt;- sample.names</code></pre>
+<p>We’ll use standard filtering parameters: maxN=0 (DADA2 requires no Ns), truncQ=2, rm.phix=TRUE and maxEE=2. The maxEE parameter sets the maximum number of “expected errors” allowed in a read, which is a better filter than simply averaging quality scores.</p>
+<pre class="r"><code>out &lt;- filterAndTrim(fnFs, filtFs, fnRs, filtRs, truncLen=c(240,160),
+              maxN=0, maxEE=c(2,2), truncQ=2, rm.phix=TRUE,
+              compress=TRUE, multithread=FALSE) # On Windows set multithread=FALSE
+head(out)</code></pre>
+<p>Considerations for your own data: The standard filtering parameters are starting points, not set in stone. If you want to speed up downstream computation, consider tightening maxEE. If too few reads are passing the filter, consider relaxing maxEE, perhaps especially on the reverse reads (eg. maxEE=c(2,5)), and reducing the truncLen to remove low quality tails. Remember though, when choosing truncLen for paired-end reads you must maintain overlap after truncation in order to merge them later.</p>
 </div>
 
 

@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>EZ Bio MTP Guide</title>
+
+<script src="site_libs/header-attrs-2.8/header-attrs.js"></script>
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.tab('show');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Nathan's Projects</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Visualizing Arlington Bikeometers
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="part_1_the_plan.html">Part 1: The Plan</a>
+    </li>
+    <li>
+      <a href="part_2_query_the_api.html">Part 2: Query the API</a>
+    </li>
+    <li>
+      <a href="part_3_setup_your_database.html">Part 3: Setup and Connect Your Database</a>
+    </li>
+    <li>
+      <a href="part_4_save_the_data_in_a_mysql_database.html">Part 4: Save the Data in Your Local MySQL Database</a>
+    </li>
+    <li>
+      <a href="part_5_picking_bikeometers_to_graph.html">Part 5: Picking Which Bikeometers to Graph</a>
+    </li>
+    <li>
+      <a href="part_6_creating_initial_visualizations.html">Part 6: Creating the Visualizations</a>
+    </li>
+    <li>
+      <a href="part_7_investigating_bikometer_gps_locations.html">Part 7: Investigating Bikeometer GPS Locations</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Bioinformatics Notes
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="Running-BLAST-over-the-internet.html">Running BLAST Over the Internet</a>
+    </li>
+    <li>
+      <a href="communicating_with-the_outside.html">Communicating with the Outside</a>
+    </li>
+    <li>
+      <a href="creating_a_16S_pipeline.html">Creating a 16S pipeline</a>
+    </li>
+    <li>
+      <a href="dada2_nephele_pipeline.html">DADA2 Nephele Pipeline</a>
+    </li>
+    <li>
+      <a href="general_pipeline_overview.html">General Pipeline Overview</a>
+    </li>
+    <li>
+      <a href="ez_bio_mtp_guide.html">EZ Bio MTP Guide</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Notes
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="note_fixing_pyrtools_error.html">Fixing rpytools error</a>
+    </li>
+    <li>
+      <a href="note_knit_rmarkdown_db.html">Publish Rmarkdown Documents With Database Connections Without Exposing Credentials</a>
+    </li>
+  </ul>
+</li>
+<li>
+  <a href="photography.html">Photography</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/photonathan">Github</a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">EZ Bio MTP Guide</h1>
+
+</div>
+
+
+<p><img src="https://help.ezbiocloud.net/wp/wp-content/uploads/2019/10/MTP-pipeline.png" /></p>
+<div id="merging-paired-end-reads" class="section level1">
+<h1>Merging paired-end reads:</h1>
+<p>In the case of paired-end sequencing (typically MiSeq 250 bp x 2), two sequences representing each end of the same PCR amplicon are merged using the overlapping sequence information. For single-end or CCS sequencing, this step is not required. Those reads that can not be merged are omitted from the subsequent steps. VSEARCH program (Rognes et al. 2016) is used, if applicable.</p>
+</div>
+<div id="trimming-primers" class="section level1">
+<h1>Trimming primers:</h1>
+<p>When PCR amplicons are sequenced, primers used for PCR are not considered “sequenced.” These regions for primers are from the annealing process, rather than direct sequencing. Therefore, our pipeline removes primer sequences that were used for PCR of 16S. An in-house code is used for processing.</p>
+</div>
+<div id="filtering-by-quality" class="section level1">
+<h1>Filtering by quality:</h1>
+<p>Even though present-day NGS machines produce high-quality sequences, sequences with low quality can be also generated. We applied several measures to detect and filter out the sequences with low quality [Learn more].</p>
+<p>#Extracting non-redundant reads:</p>
+<p>The identical sequences are de-replicated in this step to reduce computational time.</p>
+</div>
+<div id="taxonomic-assignment" class="section level1">
+<h1>Taxonomic assignment:</h1>
+<p>Dereplicated sequences are then subjected to taxonomic assignment. We use VSEARCH program (Rognes et al. 2016) to search and calculate sequence similarities of the query NGS reads against the EzBioCloud 16S database. 97% 16S similarity is used as the cutoff for species-level identification. Other sequence similarity cut-offs are used for genus or higher taxonomic ranks.</p>
+<p>x = sequence similarity to reference sequences; species (x ≥ 97%), genus (97&gt; x ≥94.5%), family (94.5&gt; x ≥86.5%), order (86.5&gt; x ≥82%), class (82&gt; x ≥78.5%), and phylum (78.5&gt; x ≥75%). Cutoff values are taken from Yarza et al. (2014).</p>
+<p>To reduce computation and accuracy, we built different versions of reference 16S databases that match various regions of 16S sequences. For example, full-length version (V1-V9) is used for PacBio ccs data whereas the V3-V4 version is used for MiSeq 250 bp paired-end sequencing data.</p>
+</div>
+<div id="detecting-chimeras" class="section level1">
+<h1>Detecting chimeras:</h1>
+<p>We assume that NGS sequencing reads which match the reference sequences in EzBioCloud database are not chimeric. Only the remaining reads are checked for chimera using the UCHIME program [Learn more].</p>
+</div>
+<div id="picking-otus" class="section level1">
+<h1>Picking OTUs:</h1>
+<p>OTU (operational taxonomic unit) is a widely used term in microbiome research and can be regarded as “species” [Learn more]. All sequences from a sample can be clustered into many OTUs using different algorithms and software tools. Rideout et al. (2014) evaluated three algorithms (de novo, close-reference and open-reference). EzBioCloud 16S-based MTP pipeline adopted “open-reference” method with the following four steps:</p>
+<p>All quality controlled query sequences are matched to EzBioCloud 16S database to achieve the species level identification (97% cutoff).</p>
+<p>The sequences that are not matched by 97% are then clustered using UCLUST tool with 97% similarity boundary. An OTU is defined as a group of clusters.</p>
+<p>The species identified in step (a) and OTUs obtained by step (b) are combined to become the final set of OTUs. This information is later used for calculating alpha diversity indices.</p>
+<p>Any remaining singletons are ignored in the OTU picking process. This is particularly important for Illumina short reads, which may over-estimate the number of OTUs [Learn more].</p>
+</div>
+<div id="estimating-alpha-diversity-indices" class="section level1">
+<h1>Estimating alpha diversity indices:</h1>
+<p>Using OTU information (number of OTUs and sequences in each OTU), various alpha diversity indices can be calculated. These include species richness, Shannon and Simpson diversity indices, and many more.</p>
+</div>
+<div id="secondary-analysis-using-ezbiocloud-16s-based-mtp-app" class="section level1">
+<h1>Secondary analysis using EzBioCloud 16S-based MTP app:</h1>
+<p>Once all calculations are carried out for a single microbiome sample in the EzBioCloud 16S-based MTP pipeline, all the information about that sample is saved as an object named Microbiome Taxonomic Profile (MTP). EzBioCloud 16S-based MTP app is installed on the Amazon Cloud, and you use the EzBioCloud web-based user-interface, to run comparative analysis and data-mining on sets of MTPs of your own choice. This process is called “secondary analysis”. Typical secondary analyses require only a few mouse clicks and you have the results in seconds.</p>
+</div>
+<div id="quality-filtering-for-16s-microbiome-taxonomic-profiling" class="section level1">
+<h1>Quality-filtering for 16S Microbiome Taxonomic Profiling</h1>
+<p>For 16S microbiome taxonomic profiling, the following criteria are used to filter out sequencing reads with low quality:</p>
+<p>Sequences with the lengths of &lt;100 bp or &gt;2,000 bp Averaged Q value is &lt;</p>
+<p>Not predicted as a 16S gene by the Hidden Markov Model (HMM) based search.</p>
+<p>Sequences are first assigned to the reference 16S database. All sequences that do not match any of reference sequences with at least 97% similarity cutoff are clustered using UCLUST method using 97% the cutoff. If a sequence is found to be a singleton, we assume that it is an erroneous one that should be excluded in the subsequent analyses. This algorithm is widely used, especially for Illumina short read sequencing [See QIIME manual’s step 5].</p>
+</div>
+<div id="mechanism-of-chimera-formation" class="section level1">
+<h1>Mechanism of chimera formation</h1>
+<p>PCR involves multiple cycles of (i) denaturation of DNA templates by heat to generate the single-stranded DNA templates, (ii) annealing of the primers to each of the DNA templates and (iii) extension/elongation by DNA polymerase. The major cause of the chimera formation is an aborted extension product from an earlier cycle of PCR which can act as a primer in a subsequent PCR cycle. If this aborted extension product anneals to and primes DNA synthesis from an incomplete template, a chimeric PCR product is formed (see the below figure).</p>
+<p><img src="https://help.ezbiocloud.net/wp/wp-content/uploads/2018/02/Chimera-formation.png" /></p>
+<p>The ratio of chimeras in PCR reactions varies depending on the DNA polymerase used, PCR conditions, and the product size and diversity of the DNA templates. Hass et al. (2011) reported that 15~20% chimeras were detected for 454 sequencing of 16S.</p>
+</div>
+<div id="how-to-detect-the-chimeras" class="section level1">
+<h1>How to detect the chimeras</h1>
+<p>There are two major approaches to detecting chimeras in NGS-based amplicon data.</p>
+<ol style="list-style-type: decimal">
+<li><p>Reference-dependent detection: As shown in the above example, each end of the PCR product matches to the strains A and B, respectively. However, as a whole sequence, it would not match to either strain A or B with high similarity. If we know the exact sequences of strains A and B, and there are substantial differences between two, we should be able to figure out that this chimeric product did not come from a single strain but from both strains. Using this principle, a large number of NGS reads can be screened for chimeras using a well established trusted, non-chimeric reference database. Needless to say, the quality of the reference chimera-free database is the key to success in this case. UCHIME and ChimeraSlayer provide this algorithm.</p></li>
+<li><p>De novo detection: In this algorithm, a chimera-free reference database is automatically generated for each NGS data. Initially, the reference database is empty. Then, NGS reads are considered in the order of decreasing abundance. If a sequence is classified as chimeric, it is discarded; otherwise, it is added to the reference database (so the size of the reference database grows). Candidate parents (PCR templates, strains A and B in the previous figure) are required to have more abundance than that of the query sequence, on the assumption that a chimera has undergone fewer rounds of amplification and will, therefore, be less abundant than its parents (Edgar et al., 2011). UCHIME provides this algorithm.</p></li>
+</ol>
+<p>Because there is a huge amount of full-length 16S sequences available, reference-dependent detection has been mostly used in recent studies, particularly for the human microbiome. UCHIME, as implemented in QIIME and MOTHUR packages, is most widely used and has been cited many times.</p>
+</div>
+<div id="rarefaction-alpha-diversity-and-statistics" class="section level1">
+<h1>Rarefaction, Alpha Diversity, and Statistics</h1>
+<p><a href="https://www.frontiersin.org/articles/10.3389/fmicb.2019.02407/full" class="uri">https://www.frontiersin.org/articles/10.3389/fmicb.2019.02407/full</a></p>
+<p>Summarize the structure of an ecological community with respect to its richness (number of taxonomic groups), evenness (distribution of abundances of the groups), or both. In microbial ecology, analyzing the alpha diversity of amplicon sequencing data is a common first approach to assessing differences between environments.</p>
+<p><a href="https://www.metagenomics.wiki/pdf/definition/alpha-beta-diversity" class="uri">https://www.metagenomics.wiki/pdf/definition/alpha-beta-diversity</a></p>
+<p>Alpha diversity Variation of microbes in a single sample</p>
+<p>Species richness “How many microbes?” How many different species could be detected in a microbial ecosystem?</p>
+<p>Species richness is the number of different species in a sample.</p>
+<p>Practically, we count the number of distinguishable taxa:</p>
+<p>→ DADA2 (QIIME-2) amplicon sequence variant (ASV) count</p>
+<p>→ QIIME-1 sequence clusters, OTU count</p>
+<p>Species diversity “How are the microbes balanced to each other?” Do we have species evenness (equal abundance) or do some species dominate others?</p>
+<p>Species diversity tells us how evenly the microbes are distributed in a sample.</p>
+<p>Shannon diversity index combines richness and diversity. It measures both the number of species and the inequality between species abundances. A large value is given by the presence of many species with well balanced abundances. Values can range from one (in case of a single dominant species) to the total number of all species (in case of all species having equal abundance).</p>
+<p>→ QIIME-1 alpha diversity</p>
+<p>Shannon evenness index (Shannon’s equitability index) is a pure diversity index, independent of species richness. It measures how evenly the microbes are distributed in a sample without considering the number of species. Values can range from zero to one: from high dominance of a single species to perfectly equal abundances across all species.</p>
+<p>Beta diversity Variation of microbial communities between samples</p>
+<p>How different is the microbial composition in one environment compared to another?</p>
+<p>Beta diversity shows the different between microbial communities from different environments. Main focus is on the difference in taxonomic abundance profiles from different samples.</p>
+<p>Bray–Curtis dissimilarity</p>
+<ul>
+<li><p>based on abundance or read count data</p></li>
+<li><p>differences in microbial abundances between two samples (e.g., at species level)</p>
+<p>values are from 0 to 1</p>
+<p>0 means both samples share the same species at exact the same abundances</p>
+<p>1 means both samples have complete different species abundances</p></li>
+</ul>
+<p>Jaccard distance</p>
+<ul>
+<li><p>based on presence or absence of species (does not include abundance information)</p></li>
+<li><p>different in microbial composition between two samples</p>
+<p>0 means both samples share exact the same species</p>
+<p>1 means both samples have no species in common</p></li>
+</ul>
+<p>UniFrac</p>
+<ul>
+<li><p>sequence distances (phylogenetic tree)</p></li>
+<li><p>based on the fraction of branch length that is shared between two samples or unique to one or the other sample</p></li>
+</ul>
+<p>unweighted UniFrac: purely based on sequence distances (does not include abundance information)</p>
+<p>weighted UniFrac: branch lengths are weighted by relative abundances (includes both sequence and abundance information)</p>
+</div>
+<div id="rarefaction" class="section level1">
+<h1>Rarefaction</h1>
+<p>a method that adjusts for differences in library sizes across samples to aid comparisons of alpha diversity.</p>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

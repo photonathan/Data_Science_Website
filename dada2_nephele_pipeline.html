@@ -11,7 +11,7 @@
 
 
 
-<title>Nathan’s Projects</title>
+<title>DADA2 Nephele Pipeline</title>
 
 <script src="site_libs/header-attrs-2.8/header-attrs.js"></script>
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
@@ -32,15 +32,6 @@
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
-<link rel="apple-touch-icon" sizes="180x180" href="~/assets/favicon/apple-touch-icon.png">
-<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon/favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon/favicon-16x16.png">
-<link rel="manifest" href="/assets/favicon/site.webmanifest">
-<link rel="mask-icon" href="/assets/favicon/safari-pinned-tab.svg" color="#5bbad5">
-<link rel="shortcut icon" href="/assets/favicon/favicon.ico">
-<meta name="msapplication-TileColor" content="#da532c">
-<meta name="msapplication-config" content="/assets/favicon/browserconfig.xml">
-<meta name="theme-color" content="#ffffff">
 
 <style type="text/css">
   code{white-space: pre-wrap;}
@@ -345,30 +336,46 @@ $(document).ready(function () {
 
 
 
-<h1 class="title toc-ignore">Nathan’s Projects</h1>
+<h1 class="title toc-ignore">DADA2 Nephele Pipeline</h1>
 
 </div>
 
 
-<style type="text/css">
-.title {
-  display: none;
-}
-
-#getting-started img {
-  margin-right: 10px;
-}
-
-</style>
-<div class="row">
-<div class="col-sm-6">
-<p><img src="images/Logo.jpg" width="100%" id=logo style="display: block; margin: auto;" /></p>
-</div>
-<div id="welcome" class="section level3 col-sm-6" style="padding-top: 50px;">
-<h3>Welcome</h3>
-<p>Data can be complicated, my homepage is not.</p>
-<p>Check out my <a href="https://nathansprojects.com/part_1_the_plan.html">Visualization of Arlington, Virginia’s bike usage during Covid-19</a>.</p>
-</div>
+<div id="pipeline-steps" class="section level1">
+<h1>Pipeline steps</h1>
+<p>Plot quality profiles of forward and reverse reads. These graphs are saved as qualityProfile_R1.pdf and qualityProfile_R2.pdf.</p>
+<pre class="r"><code>pqp1 &lt;- plotQualityProfile(file.path(datadir, r1))
+pqp2 &lt;- plotQualityProfile(file.path(datadir, r2))</code></pre>
+<p>Preprocess sequence data with filterAndTrim. The maxEE, trimLeft, truncQ, and truncLen parameters can be set by the user (defaults used below as example). The filtered sequence files, *_trim.fastq.gz, are output to the filtered_data directory.</p>
+<pre class="r"><code>filterAndTrim(fwd = file.path(datadir, readslist$R1), filt = file.path(filt.dir, trimlist$R1), 
+    rev = file.path(datadir, readslist$R2), filt.rev = file.path(filt.dir, trimlist$R2), 
+    maxEE = 5, trimLeft = 20, truncQ = 4, truncLen = 0, rm.phix = TRUE, compress = TRUE, 
+    verbose = TRUE, multithread = nthread, minLen = 50)</code></pre>
+<p>Learn the error rates with learnErrors. The nbases parameter is set to 1e+08. The error rate graphs made with plotErrors are saved as errorRate_R1.pdf, errorRate_R2.pdf. The error profiles, err, are also saved as a list R binary object in the intermediate_files directory.</p>
+<pre class="r"><code>errR1 &lt;- learnErrors(r1, multithread = nthread, nbases = nbases, randomize = TRUE)
+pe1 &lt;- plotErrors(errR1, nominalQ = TRUE)</code></pre>
+<p>Dereplicate reads with derepFastq and run the dada sequence-variant inference algorithm.</p>
+<pre class="r"><code>derepR1 &lt;- derepFastq(r1[sample], verbose = TRUE)
+ddR1 &lt;- dada(derepR1, err = errR1, multithread = nthread, verbose = 1)</code></pre>
+<p>For paired-end data, merge the overlapping denoised reads with mergePairs. The minOverlap parameter is set to 12. trimOverhang, justConcatenate, and maxMismatch are set by the user. The sequence table, seqtab, containing the final amplicon sequence variants (ASVs), is saved as an R binary object to the intermediate_files directory.</p>
+<pre class="r"><code>mergePairs(dd$R1, derep$R1, dd$R2, derep$R2, verbose = TRUE, minOverlap = 12, trimOverhang = FALSE, 
+    justConcatenate = FALSE, maxMismatch = 0)
+seqtab &lt;- makeSequenceTable(mergedReads)</code></pre>
+<p>Filter out ASVs of length less than 75 bp. The sequence table is saved as seqtab_min75.rds. Also, filter out chimeras with removeBimeraDenovo, if the option is chosen.</p>
+<pre class="r"><code>seqtab &lt;- seqtab[, which(seqlengths &gt;= 75)]
+seqtabnochimera &lt;- removeBimeraDenovo(seqtab, verbose = TRUE, multithread = nthread)</code></pre>
+<p>Classify the remaining ASVs taxonomically with</p>
+<p>rdp using assignTaxonomy (default). The minBoot parameter for minimum bootstrap confidence is set to 80 and tryRC is set to TRUE. Add species annotation to the taxonomic identification using addSpecies. This final result is saved as a biom file taxa.biom.</p>
+<pre class="r"><code>taxa &lt;- assignTaxonomy(seqtab, refdb, multithread = nthread, minBoot = 80, tryRC = TRUE, 
+    verbose = TRUE)
+taxa.species &lt;- addSpecies(taxa, refdb_species, verbose = TRUE, tryRC = TRUE)</code></pre>
+<p>For PE data, if the mergePairs justConcatenate option is checked, species annotation will only be done using the forward reads (R1).</p>
+<p>IDTAXA using IdTaxa from the DECIPHER R package. The final result will be saved as taxa.biom</p>
+<pre class="r"><code>dna &lt;- DNAStringSet(getSequences(seqtab))
+ids &lt;- IdTaxa(dna, trainingSet, strand = &quot;both&quot;, processors = nthread, verbose = T)</code></pre>
+<p>The final results are also saved as a tab-separated text file OTU_table.txt. The final sequence variants used for taxonomic classification are output as seq.fasta. A summary of the counts in the OTU table is saved to otu_summary_table.txt.</p>
+<p>Output Files Complete descriptions of the intermediate and final output files can be found in the Pipeline Steps above.</p>
+<p>OTU_table.txt: tab-separated text file of ASV counts and taxonomic assignment seq.fasta: FASTA file of amplicon sequence variants taxa.biom: taxonomic assignment at the genus or species level depending on choice of database or method of assignment BIOM V1 format otu_summary_table.txt: summary of the sequence variant counts by sample taxonomy_table.txt: tab-separated taxonomy file suitable for importing into QIIME2 errorRate_R1/2.pdf: error profile plots qualityProfile_R1/2.pdf: quality profile plots filtered_data: trimmed sequence files intermediate_files: intermediate files produced by the pipeline; useful for debugging graphs: output of the visualization pipeline</p>
 </div>
 
 

@@ -10,6 +10,9 @@ output:
     includes:
       in_header: header.html
 ---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = FALSE)
+```
 \ 
 \ 
 
@@ -46,11 +49,13 @@ Nephele provides a pre-processing quality check pipeline for demultiplexed paire
 #### 2. Adapter/Primer trimming
 Adapter and/or primer trimming is optional. Nephele uses the **cutadapt** plugin from QIIME 2 version 2018.6 for primer and adapter trimming. cutadapt trims the sequences specified by the user from either the 5' or 3' ends of reads. To trim primers for amplicon sequence data, the primer sequence should be specified as the Forward and/or Reverse front 5' adapter.
 
+*DADA2* can do read trimming. Most pipelines have a technician look at the quality plots and select trimming points. How do we minimize or remove human interaction in trimmer parameter selection?
+
 Options include specifying the 3' and 5' adapter sequences. Partial matches can be made at the 5' end. Can change the maximum allowed error rate, can include Indels (allow insertions or deletions of bases), allow adapter overlap (requires this many bases of overlap between read and adapter for an adapter to be found), and can interperate IUPAC wildcards (e.g. N) in the adapter or reads.
 
 #### 3. Quality trimming
-Quality trimming is optional. **Trimmomatic** v0.38 is used for quality trimming. Trimmomatic uses a sliding window from the 5' to the 3' end of the read. When the average quality in the window drops below the required quality score, the read is trimmed to remove the 3' low quality end of the read.
-Poor quality sequence can also be trimmed at the start of a read using the Leading quality trim option.
+Quality trimming is optional. **Trimmomatic** v0.38 is used for quality trimming. Trimmomatic uses a sliding window from the 5' to the 3' end of the read. When the average quality in the window drops below the required quality score, the read is trimmed to remove the 3' low quality end of the read. We are trimming the low quality bases away without throwing the entire read out.
+Poor quality sequence can also be trimmed at the start of a read using the Leading quality trim option. We want to make a optimal trim so that we still overlap by at least 10bp.
 
 Options include changing the Window size, required quality, Minimum length (removes them if below), Average quality level.
 
@@ -59,9 +64,12 @@ Read merging is only for paired-end data sets and is optional. For merging read 
 
 Can set options for the Minimum and Maximum overlap between two reads to provide a confident overlap. Can also set maximum mismatch density (Maximum allowed ratio between number of mismatched base pairs and the overlap length (default:0.25)
 
+
 #### 5. Summary graphs
 Summary graphs are always made as the final step of the pipeline. Nephele uses **MultiQC** v1.8dev.
 **MultiQC** summarizes the output of FastQC, cutadapt, Trimmomatic, and FLASh (if any of those steps are chosen by the user) and produces a single html report with graphs.
+
+Interperting MultiQC results 
 
 # 4. Analyze the data
 
@@ -92,6 +100,23 @@ Note: If desired, add additional metadata columns (e.g. tissue, time) between co
 ### DADA2
 
 The DADA2 pipeline accepts amplicon single or paired-end FASTQ data, and outputs sequence variants, their sample-wise abundances after removing substitution and chimera errors, and summary plots.
+
+#### Chimera removal: 
+Chimeras are artifact sequences formed by two or more biological sequences incorrectly joined together. This often occurs during PCR reactions using mixed templates (i.e., uncultured environmental samples). Incomplete extensions during PCR allow subsequent PCR cycles to use a partially extended strand to bind to the template of a different, but similar, sequence. This partially extended strand then acts as a primer to extend and form a chimeric sequence. Once created, the chimeric sequence is then further amplified in subsequent cycles. The end result is a PCR artifact that does not represent a sequence that exists in nature.
+
+Studies have estimated that as many as 30% of the sequences from mixed template environmental samples may be chimeric. While chimera formation is most common in mixed template amplifications, in practice it is also seen at lower frequency in supposedly pure cultures.
+
+
+#### How is sampling depth calculated?
+
+Choosing a sampling depth is generally arbitrary. Generally, it's recommended to choose a value high enough that you are able to capture the diversity present in samples with high read counts, but low enough to include the majority of your samples. For a simple community with only a handful of abundant members, for example, a sampling depth of 5,000 or less may suffice for an accurate estimate of diversity. For a more complex community with many low abundant members, however, a much higher value for sampling depth, 10,000 or higher, is generally necessary.
+
+Nephele specifies the sampling depth of 10,000 reads as the minimum requirement for all downstream analysis. The pipelines use the following logics to determine the sampling depth:
+
+apply the user-specified sampling depth, if available
+set the sampling depth based on the sample with the least number of reads if it is greater than or equal to 10,000
+otherwise, no downstream analysis is performed.
+Note: Users are encouraged to specify the sampling depth that is most appropriate for their studies. There is really no formula that can precisely determine the most appropriate value simply based on the distribution of read counts and the number of samples. If the pipeline does not generate any downstream analysis for you samples, it is most likely that the sample with the least number of reads is below 10,000. You will need to lower the sampling depth in order to run the downstream analysis.
 
 ### QIIME2 (NEW)
 

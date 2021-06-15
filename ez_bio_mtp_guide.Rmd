@@ -1,0 +1,170 @@
+---
+title: "EZ Bio MTP Guide"
+output: html_document
+---
+
+![](https://help.ezbiocloud.net/wp/wp-content/uploads/2019/10/MTP-pipeline.png)
+
+# Merging paired-end reads:
+
+In the case of paired-end sequencing (typically MiSeq 250 bp x 2), two sequences representing each end of the same PCR amplicon are merged using the overlapping sequence information. For single-end or CCS sequencing, this step is not required. Those reads that can not be merged are omitted from the subsequent steps. VSEARCH program (Rognes et al. 2016) is used, if applicable.
+
+# Trimming primers:
+
+When PCR amplicons are sequenced, primers used for PCR are not considered “sequenced.” These regions for primers are from the annealing process, rather than direct sequencing. Therefore, our pipeline removes primer sequences that were used for PCR of 16S. An in-house code is used for processing.
+
+# Filtering by quality:
+
+Even though present-day NGS machines produce high-quality sequences, sequences with low quality can be also generated. We applied several measures to detect and filter out the sequences with low quality [Learn more].
+
+#Extracting non-redundant reads:
+
+The identical sequences are de-replicated in this step to reduce computational time.
+
+# Taxonomic assignment:
+
+Dereplicated sequences are then subjected to taxonomic assignment. We use VSEARCH program (Rognes et al. 2016) to search and calculate sequence similarities of the query NGS reads against the EzBioCloud 16S database. 97% 16S similarity is used as the cutoff for species-level identification. Other sequence similarity cut-offs are used for genus or higher taxonomic ranks.
+
+x = sequence similarity to reference sequences; species (x ≥ 97%), genus (97> x ≥94.5%), family (94.5> x ≥86.5%), order (86.5> x ≥82%), class (82> x ≥78.5%), and phylum (78.5> x ≥75%). Cutoff values are taken from Yarza et al. (2014).
+
+To reduce computation and accuracy, we built different versions of reference 16S databases that match various regions of 16S sequences. For example, full-length version (V1-V9) is used for PacBio ccs data whereas the V3-V4 version is used for MiSeq 250 bp paired-end sequencing data.
+
+# Detecting chimeras:
+
+We assume that NGS sequencing reads which match the reference sequences in EzBioCloud database are not chimeric. Only the remaining reads are checked for chimera using the UCHIME program [Learn more].
+
+# Picking OTUs:
+
+OTU (operational taxonomic unit) is a widely used term in microbiome research and can be regarded as “species” [Learn more]. All sequences from a sample can be clustered into many OTUs using different algorithms and software tools. Rideout et al. (2014) evaluated three algorithms (de novo, close-reference and open-reference). EzBioCloud 16S-based MTP pipeline adopted “open-reference” method with the following four steps:
+
+All quality controlled query sequences are matched to EzBioCloud 16S database to achieve the species level identification (97% cutoff).
+
+The sequences that are not matched by 97% are then clustered using UCLUST tool with 97% similarity boundary. An OTU is defined as a group of clusters.
+
+The species identified in step (a) and OTUs obtained by step (b) are combined to become the final set of OTUs. This information is later used 
+for calculating alpha diversity indices.
+
+Any remaining singletons are ignored in the OTU picking process. This is particularly important for Illumina short reads, which may over-estimate the number of OTUs [Learn more].
+
+# Estimating alpha diversity indices:
+
+Using OTU information (number of OTUs and sequences in each OTU), various alpha diversity indices can be calculated. These include species richness, Shannon and Simpson diversity indices, and many more.
+
+# Secondary analysis using EzBioCloud 16S-based MTP app:
+
+Once all calculations are carried out for a single microbiome sample in the EzBioCloud 16S-based MTP pipeline, all the information about that sample is saved as an object named Microbiome Taxonomic Profile (MTP).  EzBioCloud 16S-based MTP app is installed on the Amazon Cloud, and you use the EzBioCloud web-based user-interface, to run comparative analysis and data-mining on sets of MTPs of your own choice. This process is called “secondary analysis”. Typical secondary analyses require only a few mouse clicks and you have the results in seconds.
+
+# Quality-filtering for 16S Microbiome Taxonomic Profiling
+
+For 16S microbiome taxonomic profiling, the following criteria are used to filter out sequencing reads with low quality:
+
+Sequences with the lengths of <100 bp or >2,000 bp
+Averaged Q value is <
+
+Not predicted as a 16S gene by the Hidden Markov Model (HMM) based search.
+
+Sequences are first assigned to the reference 16S database. All sequences that do not match any of reference sequences with at least 97% similarity cutoff are clustered using UCLUST method using 97% the cutoff. If a sequence is found to be a singleton, we assume that it is an erroneous one that should be excluded in the subsequent analyses. This algorithm is widely used, especially for Illumina short read sequencing [See QIIME manual’s step 5].
+
+# Mechanism of chimera formation
+
+PCR involves multiple cycles of (i) denaturation of DNA templates by heat to generate the single-stranded DNA templates, (ii) annealing of the primers to each of the DNA templates and (iii) extension/elongation by DNA polymerase. The major cause of the chimera formation is an aborted extension product from an earlier cycle of PCR which can act as a primer in a subsequent PCR cycle. If this aborted extension product anneals to and primes DNA synthesis from an incomplete template, a chimeric PCR product is formed (see the below figure).
+
+![](https://help.ezbiocloud.net/wp/wp-content/uploads/2018/02/Chimera-formation.png)
+
+The ratio of chimeras in PCR reactions varies depending on the DNA polymerase used, PCR conditions, and the product size and diversity of the DNA templates. Hass et al. (2011) reported that 15~20% chimeras were detected for 454 sequencing of 16S.
+
+# How to detect the chimeras
+
+There are two major approaches to detecting chimeras in NGS-based amplicon data.
+
+(1) Reference-dependent detection: As shown in the above example, each end of the PCR product matches to the strains A and B, respectively. However, as a whole sequence, it would not match to either strain A or B with high similarity. If we know the exact sequences of strains A and B, and there are substantial differences between two, we should be able to figure out that this chimeric product did not come from a single strain but from both strains. Using this principle, a large number of NGS reads can be screened for chimeras using a well established trusted, non-chimeric reference database. Needless to say, the quality of the reference chimera-free database is the key to success in this case. UCHIME and ChimeraSlayer provide this algorithm.
+
+(2) De novo detection: In this algorithm, a chimera-free reference database is automatically generated for each NGS data. Initially, the reference database is empty. Then, NGS reads are considered in the order of decreasing abundance. If a sequence is classified as chimeric, it is discarded; otherwise, it is added to the reference database (so the size of the reference database grows). Candidate parents (PCR templates, strains A and B in the previous figure) are required to have more abundance than that of the query sequence, on the assumption that a chimera has undergone fewer rounds of amplification and will, therefore, be less abundant than its parents (Edgar et al., 2011). UCHIME provides this algorithm.
+
+Because there is a huge amount of full-length 16S sequences available, reference-dependent detection has been mostly used in recent studies, particularly for the human microbiome. UCHIME, as implemented in QIIME and MOTHUR packages, is most widely used and has been cited many times.
+
+# Rarefaction, Alpha Diversity, and Statistics
+
+https://www.frontiersin.org/articles/10.3389/fmicb.2019.02407/full
+
+Summarize the structure of an ecological community with respect to its richness (number of taxonomic groups), evenness (distribution of abundances of the groups), or both. In microbial ecology, analyzing the alpha diversity of amplicon sequencing data is a common first approach to assessing differences between environments.
+
+https://www.metagenomics.wiki/pdf/definition/alpha-beta-diversity
+
+Alpha diversity
+Variation of microbes in a single sample
+
+Species richness   "How many microbes?"
+How many different species could be detected in a microbial ecosystem?
+
+Species richness is the number of different species in a sample.
+
+Practically, we count the number of distinguishable taxa:
+
+  → DADA2 (QIIME-2) amplicon sequence variant (ASV) count
+
+  → QIIME-1 sequence clusters, OTU count
+
+Species diversity   "How are the microbes balanced to each other?"
+Do we have species evenness (equal abundance) or do some species dominate others?
+
+Species diversity tells us how evenly the microbes are distributed in a sample.
+
+Shannon diversity index combines richness and diversity. It measures both the number of species and the inequality between species abundances. A large value is given by the presence of many species with well balanced abundances. Values can range from one (in case of a single dominant species) to the total number of all species (in case of all species having equal abundance).
+
+  → QIIME-1 alpha diversity
+
+
+
+Shannon evenness index (Shannon's equitability index) is a pure diversity index, independent of species richness. It measures how evenly the microbes are distributed in a sample without considering the number of species. Values can range from zero to one: from high dominance of a single species to perfectly equal abundances across all species.
+
+Beta diversity
+Variation of microbial communities between samples
+
+
+
+How different is the microbial composition in one environment compared to another?
+
+Beta diversity shows the different between microbial communities from different environments. Main focus is on the difference in taxonomic abundance profiles from different samples.
+
+
+
+Bray–Curtis dissimilarity
+
+- based on abundance or read count data
+
+- differences in microbial abundances between two samples (e.g., at species level)
+
+    values are from 0 to 1
+
+    0 means both samples share the same species at exact the same abundances
+
+    1 means both samples have complete different species abundances
+
+
+
+Jaccard distance
+
+- based on presence or absence of species (does not include abundance information)
+
+- different in microbial composition between two samples
+
+    0 means both samples share exact the same species
+
+    1 means both samples have no species in common
+
+
+
+UniFrac
+
+- sequence distances (phylogenetic tree)
+
+- based on the fraction of branch length that is shared between two samples or unique to one or the other sample
+
+unweighted UniFrac: purely based on sequence distances (does not include abundance information)
+
+weighted UniFrac: branch lengths are weighted by relative abundances (includes both sequence and abundance information)
+
+# Rarefaction 
+
+a method that adjusts for differences in library sizes across samples to aid comparisons of alpha diversity.

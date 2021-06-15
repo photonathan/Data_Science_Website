@@ -1,0 +1,89 @@
+---
+title: "DADA2 Nephele Pipeline"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = FALSE)
+```
+# Pipeline steps
+
+Plot quality profiles of forward and reverse reads. These graphs are saved as qualityProfile_R1.pdf and qualityProfile_R2.pdf.
+
+```{r}
+pqp1 <- plotQualityProfile(file.path(datadir, r1))
+pqp2 <- plotQualityProfile(file.path(datadir, r2))
+```
+
+Preprocess sequence data with filterAndTrim. The maxEE, trimLeft, truncQ, and truncLen parameters can be set by the user (defaults used below as example). The filtered sequence files, *_trim.fastq.gz, are output to the filtered_data directory.
+
+```{r}
+filterAndTrim(fwd = file.path(datadir, readslist$R1), filt = file.path(filt.dir, trimlist$R1), 
+    rev = file.path(datadir, readslist$R2), filt.rev = file.path(filt.dir, trimlist$R2), 
+    maxEE = 5, trimLeft = 20, truncQ = 4, truncLen = 0, rm.phix = TRUE, compress = TRUE, 
+    verbose = TRUE, multithread = nthread, minLen = 50)
+```
+
+Learn the error rates with learnErrors. The nbases parameter is set to 1e+08. The error rate graphs made with plotErrors are saved as errorRate_R1.pdf, errorRate_R2.pdf. The error profiles, err, are also saved as a list R binary object in the intermediate_files directory.
+
+```{r}
+errR1 <- learnErrors(r1, multithread = nthread, nbases = nbases, randomize = TRUE)
+pe1 <- plotErrors(errR1, nominalQ = TRUE)
+```
+
+Dereplicate reads with derepFastq and run the dada sequence-variant inference algorithm.
+
+```{r}
+derepR1 <- derepFastq(r1[sample], verbose = TRUE)
+ddR1 <- dada(derepR1, err = errR1, multithread = nthread, verbose = 1)
+```
+
+For paired-end data, merge the overlapping denoised reads with mergePairs. The minOverlap parameter is set to 12. trimOverhang, justConcatenate, and maxMismatch are set by the user. The sequence table, seqtab, containing the final amplicon sequence variants (ASVs), is saved as an R binary object to the intermediate_files directory.
+
+```{r}
+mergePairs(dd$R1, derep$R1, dd$R2, derep$R2, verbose = TRUE, minOverlap = 12, trimOverhang = FALSE, 
+    justConcatenate = FALSE, maxMismatch = 0)
+seqtab <- makeSequenceTable(mergedReads)
+```
+
+Filter out ASVs of length less than 75 bp. The sequence table is saved as seqtab_min75.rds. Also, filter out chimeras with removeBimeraDenovo, if the option is chosen.
+
+```{r}
+seqtab <- seqtab[, which(seqlengths >= 75)]
+seqtabnochimera <- removeBimeraDenovo(seqtab, verbose = TRUE, multithread = nthread)
+```
+
+Classify the remaining ASVs taxonomically with
+
+rdp using assignTaxonomy (default). The minBoot parameter for minimum bootstrap confidence is set to 80 and tryRC is set to TRUE. Add species annotation to the taxonomic identification using addSpecies. This final result is saved as a biom file taxa.biom.
+
+```{r}
+taxa <- assignTaxonomy(seqtab, refdb, multithread = nthread, minBoot = 80, tryRC = TRUE, 
+    verbose = TRUE)
+taxa.species <- addSpecies(taxa, refdb_species, verbose = TRUE, tryRC = TRUE)
+```
+
+For PE data, if the mergePairs justConcatenate option is checked, species annotation will only be done using the forward reads (R1).
+
+IDTAXA using IdTaxa from the DECIPHER R package. The final result will be saved as taxa.biom
+
+```{r}
+dna <- DNAStringSet(getSequences(seqtab))
+ids <- IdTaxa(dna, trainingSet, strand = "both", processors = nthread, verbose = T)
+```
+
+The final results are also saved as a tab-separated text file OTU_table.txt. The final sequence variants used for taxonomic classification are output as seq.fasta. A summary of the counts in the OTU table is saved to otu_summary_table.txt.
+
+Output Files
+Complete descriptions of the intermediate and final output files can be found in the Pipeline Steps above.
+
+OTU_table.txt: tab-separated text file of ASV counts and taxonomic assignment
+seq.fasta: FASTA file of amplicon sequence variants
+taxa.biom: taxonomic assignment at the genus or species level depending on choice of database or method of assignment BIOM V1 format
+otu_summary_table.txt: summary of the sequence variant counts by sample
+taxonomy_table.txt: tab-separated taxonomy file suitable for importing into QIIME2
+errorRate_R1/2.pdf: error profile plots
+qualityProfile_R1/2.pdf: quality profile plots
+filtered_data: trimmed sequence files
+intermediate_files: intermediate files produced by the pipeline; useful for debugging
+graphs: output of the visualization pipeline

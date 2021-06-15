@@ -1,0 +1,110 @@
+---
+title: "General Pipeline Overview"
+output: html_document
+---
+
+Run paired-end data through this pre-process pipeline, choosing to merge the reads, and then submit the resulting FASTQ files to the DADA2 or QIIME1 Single End pipelines. Examine the average per-base quality scores from the FastQC results of the pipeline, and use that information to set the Truncation length parameter in DADA2 or the Minimum Phred quality score parameter in QIIME1.
+
+https://benjjneb.github.io/dada2/tutorial.html
+
+# Quality check
+
+Nephele provides a pre-processing quality check pipeline for demultiplexed paired-end and single-end FASTQ files. The Nephele QC pipeline can run a quality control check (FastQC), Trim primers and/or adapters, Trim and/or Filter reads based on quality scores, Merge read pairs, and provides summary graphs of the QC steps
+
+Nephele assumes a few things about your sample:
+
+Non-biological nucleotides have been removed, e.g. primers, adapters, linkers, etc. 
+
+If paired-end sequencing data, the forward and reverse fastq files contain reads in matched order.
+
+### Demultiplex
+
+Samples have been demultiplexed, i.e. split into individual per-sample fastq files. Can do this with Bioconductor's **basecallQC**
+
+#### 1. FastQC
+
+**FastQC** is always run first in the pipeline with default parameters. **FastQC** analyzes the input FASTQ files and reports summary statistics about each file in both tabular and graphical format, including number of reads, average per base quality score, etc. Nephele uses FastQC v0.11.7.
+
+#### 2. Adapter/Primer trimming
+
+Adapter and/or primer trimming is optional. Nephele uses the **cutadapt** plugin from QIIME 2 version 2018.6 for primer and adapter trimming. cutadapt trims the sequences specified by the user from either the 5' or 3' ends of reads. To trim primers for amplicon sequence data, the primer sequence should be specified as the Forward and/or Reverse front 5' adapter.
+
+### 3. Quality trimming
+
+Quality trimming is optional. **Trimmomatic** v0.38 is used for quality trimming. Trimmomatic uses a sliding window from the 5' to the 3' end of the read. When the average quality in the window drops below the required quality score, the read is trimmed to remove the 3' low quality end of the read. We are trimming the low quality bases away without throwing the entire read out.
+Poor quality sequence can also be trimmed at the start of a read using the Leading quality trim option. We want to make a optimal trim so that we still overlap by at least 10bp.
+
+Options include changing the Window size, required quality, Minimum length (removes them if below), Average quality level.
+
+#### 4. Paired-end read merging
+
+Read merging is only for paired-end data sets and is optional. For merging read pairs, Nephele uses **FLASH2** v2.2.00. FLASH is designed to merge pairs of reads when the original fragment length is shorter than twice the length of reads. It merges read pairs if the rate of mismatches in the overlapping region is less than the user-specified Maximum mismatch density. 
+
+Can set options for the Minimum and Maximum overlap between two reads to provide a confident overlap. Can also set maximum mismatch density (Maximum allowed ratio between number of mismatched base pairs and the overlap length (default:0.25)
+
+# Inspect read quality profiles
+
+The forward reads are good quality. We generally advise trimming the last few nucleotides to avoid less well-controlled errors that can arise there. These quality profiles do not suggest that any additional trimming is needed. We will truncate the forward reads at position 240 (trimming the last 10 nucleotides).
+
+The reverse reads are of significantly worse quality, especially at the end, which is common in Illumina sequencing. This isn’t too worrisome, as DADA2 incorporates quality information into its error model which makes the algorithm robust to lower quality sequence, but trimming as the average qualities crash will improve the algorithm’s sensitivity to rare sequence variants. Based on these profiles, we will truncate the reverse reads at position 160 where the quality distribution crashes.
+
+# Filter and trim
+
+We’ll use standard filtering parameters: maxN=0 (DADA2 requires no Ns), truncQ=2, rm.phix=TRUE and maxEE=2. The maxEE parameter sets the maximum number of “expected errors” allowed in a read, which is a better filter than simply averaging quality scores.
+
+Considerations for your own data: The standard filtering parameters are starting points, not set in stone. If you want to speed up downstream computation, consider tightening maxEE. If too few reads are passing the filter, consider relaxing maxEE, perhaps especially on the reverse reads (eg. maxEE=c(2,5)), and reducing the truncLen to remove low quality tails. Remember though, when choosing truncLen for paired-end reads you must maintain overlap after truncation in order to merge them later.
+
+Alternatives: Zymo Research has recently developed a tool called Figaro that can help you choose DADA2 truncation length parameters: https://github.com/Zymo-Research/figaro#figaro
+
+# Learn the Error Rates
+
+The DADA2 algorithm makes use of a parametric error model (err) and every amplicon dataset has a different set of error rates. The learnErrors method learns this error model from the data, by alternating estimation of the error rates and inference of sample composition until they converge on a jointly consistent solution. As in many machine-learning problems, the algorithm must begin with an initial guess, for which the maximum possible error rates in this data are used (the error rates if only the most abundant sequence is correct and all the rest are errors).
+
+# Sample Inference
+
+We present the open-source software package DADA2 for modeling and correcting Illumina-sequenced amplicon errors (https://github.com/benjjneb/dada2). DADA2 infers sample sequences exactly and resolves differences of as little as 1 nucleotide. In several mock communities, DADA2 identified more real variants and output fewer spurious sequences than other methods.
+
+The DADA2 algorithm inferred 128 true sequence variants from the 1979 unique sequences in the first sample. 
+
+# Merge paired reads
+
+We now merge the forward and reverse reads together to obtain the full denoised sequences. Merging is performed by aligning the denoised forward reads with the reverse-complement of the corresponding denoised reverse reads, and then constructing the merged “contig” sequences. By default, merged sequences are only output if the forward and reverse reads overlap by at least 12 bases, and are identical to each other in the overlap region (but these conditions can be changed via function arguments).
+
+# Construct sequence table
+
+We can now construct an amplicon sequence variant table (ASV) table, a higher-resolution version of the OTU table produced by traditional methods.
+
+# Remove chimeras
+
+The core dada method corrects substitution and indel errors, but chimeras remain. Fortunately, the accuracy of sequence variants after denoising makes identifying chimeric ASVs simpler than when dealing with fuzzy OTUs. Chimeric sequences are identified if they can be exactly reconstructed by combining a left-segment and a right-segment from two more abundant “parent” sequences.
+
+The frequency of chimeric sequences varies substantially from dataset to dataset, and depends on on factors including experimental procedures and sample complexity. Here chimeras make up about 21% of the merged sequence variants, but when we account for the abundances of those variants we see they account for only about 4% of the merged sequence reads.
+
+Considerations for your own data: Most of your reads should remain after chimera removal (it is not uncommon for a majority of sequence variants to be removed though). If most of your reads were removed as chimeric, upstream processing may need to be revisited. In almost all cases this is caused by primer sequences with ambiguous nucleotides that were not removed prior to beginning the DADA2 pipeline.
+
+# Assign taxonomy
+
+Extensions: The dada2 package also implements a method to make species level assignments based on exact matching between ASVs and sequenced reference strains. Recent analysis suggests that exact matching (or 100% identity) is the only appropriate way to assign species to 16S gene fragments.
+
+# Bonus: Handoff to phyloseq
+
+The phyloseq R package is a powerful framework for further analysis of microbiome data. We now demonstrate how to straightforwardly import the tables produced by the DADA2 pipeline into phyloseq. We’ll also add the small amount of metadata we have – the samples are named by the gender (G), mouse subject number (X) and the day post-weaning (Y) it was sampled (eg. GXDY).
+
+# Visualize alpha-diversity
+
+![](https://benjjneb.github.io/dada2/tutorial_files/figure-html/richness-1.png)
+
+No obvious systematic difference in alpha-diversity between early and late samples.
+
+# Ordinate
+
+![](https://benjjneb.github.io/dada2/tutorial_files/figure-html/ordinate-1.png)
+
+Ordination picks out a clear separation between the early and late samples.
+
+# Bar Plot
+
+![](https://benjjneb.github.io/dada2/tutorial_files/figure-html/bar-plot-1.png)
+
+Nothing glaringly obvious jumps out from the taxonomic distribution of the top 20 sequences to explain the early-late differentiation.
+

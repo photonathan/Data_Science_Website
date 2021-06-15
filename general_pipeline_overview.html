@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>General Pipeline Overview</title>
+
+<script src="site_libs/header-attrs-2.8/header-attrs.js"></script>
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.tab('show');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Nathan's Projects</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Visualizing Arlington Bikeometers
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="part_1_the_plan.html">Part 1: The Plan</a>
+    </li>
+    <li>
+      <a href="part_2_query_the_api.html">Part 2: Query the API</a>
+    </li>
+    <li>
+      <a href="part_3_setup_your_database.html">Part 3: Setup and Connect Your Database</a>
+    </li>
+    <li>
+      <a href="part_4_save_the_data_in_a_mysql_database.html">Part 4: Save the Data in Your Local MySQL Database</a>
+    </li>
+    <li>
+      <a href="part_5_picking_bikeometers_to_graph.html">Part 5: Picking Which Bikeometers to Graph</a>
+    </li>
+    <li>
+      <a href="part_6_creating_initial_visualizations.html">Part 6: Creating the Visualizations</a>
+    </li>
+    <li>
+      <a href="part_7_investigating_bikometer_gps_locations.html">Part 7: Investigating Bikeometer GPS Locations</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Bioinformatics Notes
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="Running-BLAST-over-the-internet.html">Running BLAST Over the Internet</a>
+    </li>
+    <li>
+      <a href="communicating_with-the_outside.html">Communicating with the Outside</a>
+    </li>
+    <li>
+      <a href="creating_a_16S_pipeline.html">Creating a 16S pipeline</a>
+    </li>
+    <li>
+      <a href="dada2_nephele_pipeline.html">DADA2 Nephele Pipeline</a>
+    </li>
+    <li>
+      <a href="general_pipeline_overview.html">General Pipeline Overview</a>
+    </li>
+    <li>
+      <a href="ez_bio_mtp_guide.html">EZ Bio MTP Guide</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Notes
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="note_fixing_pyrtools_error.html">Fixing rpytools error</a>
+    </li>
+    <li>
+      <a href="note_knit_rmarkdown_db.html">Publish Rmarkdown Documents With Database Connections Without Exposing Credentials</a>
+    </li>
+  </ul>
+</li>
+<li>
+  <a href="photography.html">Photography</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/photonathan">Github</a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">General Pipeline Overview</h1>
+
+</div>
+
+
+<p>Run paired-end data through this pre-process pipeline, choosing to merge the reads, and then submit the resulting FASTQ files to the DADA2 or QIIME1 Single End pipelines. Examine the average per-base quality scores from the FastQC results of the pipeline, and use that information to set the Truncation length parameter in DADA2 or the Minimum Phred quality score parameter in QIIME1.</p>
+<p><a href="https://benjjneb.github.io/dada2/tutorial.html" class="uri">https://benjjneb.github.io/dada2/tutorial.html</a></p>
+<div id="quality-check" class="section level1">
+<h1>Quality check</h1>
+<p>Nephele provides a pre-processing quality check pipeline for demultiplexed paired-end and single-end FASTQ files. The Nephele QC pipeline can run a quality control check (FastQC), Trim primers and/or adapters, Trim and/or Filter reads based on quality scores, Merge read pairs, and provides summary graphs of the QC steps</p>
+<p>Nephele assumes a few things about your sample:</p>
+<p>Non-biological nucleotides have been removed, e.g. primers, adapters, linkers, etc.</p>
+<p>If paired-end sequencing data, the forward and reverse fastq files contain reads in matched order.</p>
+<div id="demultiplex" class="section level3">
+<h3>Demultiplex</h3>
+<p>Samples have been demultiplexed, i.e. split into individual per-sample fastq files. Can do this with Bioconductor’s <strong>basecallQC</strong></p>
+<div id="fastqc" class="section level4">
+<h4>1. FastQC</h4>
+<p><strong>FastQC</strong> is always run first in the pipeline with default parameters. <strong>FastQC</strong> analyzes the input FASTQ files and reports summary statistics about each file in both tabular and graphical format, including number of reads, average per base quality score, etc. Nephele uses FastQC v0.11.7.</p>
+</div>
+<div id="adapterprimer-trimming" class="section level4">
+<h4>2. Adapter/Primer trimming</h4>
+<p>Adapter and/or primer trimming is optional. Nephele uses the <strong>cutadapt</strong> plugin from QIIME 2 version 2018.6 for primer and adapter trimming. cutadapt trims the sequences specified by the user from either the 5’ or 3’ ends of reads. To trim primers for amplicon sequence data, the primer sequence should be specified as the Forward and/or Reverse front 5’ adapter.</p>
+</div>
+</div>
+<div id="quality-trimming" class="section level3">
+<h3>3. Quality trimming</h3>
+<p>Quality trimming is optional. <strong>Trimmomatic</strong> v0.38 is used for quality trimming. Trimmomatic uses a sliding window from the 5’ to the 3’ end of the read. When the average quality in the window drops below the required quality score, the read is trimmed to remove the 3’ low quality end of the read. We are trimming the low quality bases away without throwing the entire read out. Poor quality sequence can also be trimmed at the start of a read using the Leading quality trim option. We want to make a optimal trim so that we still overlap by at least 10bp.</p>
+<p>Options include changing the Window size, required quality, Minimum length (removes them if below), Average quality level.</p>
+<div id="paired-end-read-merging" class="section level4">
+<h4>4. Paired-end read merging</h4>
+<p>Read merging is only for paired-end data sets and is optional. For merging read pairs, Nephele uses <strong>FLASH2</strong> v2.2.00. FLASH is designed to merge pairs of reads when the original fragment length is shorter than twice the length of reads. It merges read pairs if the rate of mismatches in the overlapping region is less than the user-specified Maximum mismatch density.</p>
+<p>Can set options for the Minimum and Maximum overlap between two reads to provide a confident overlap. Can also set maximum mismatch density (Maximum allowed ratio between number of mismatched base pairs and the overlap length (default:0.25)</p>
+</div>
+</div>
+</div>
+<div id="inspect-read-quality-profiles" class="section level1">
+<h1>Inspect read quality profiles</h1>
+<p>The forward reads are good quality. We generally advise trimming the last few nucleotides to avoid less well-controlled errors that can arise there. These quality profiles do not suggest that any additional trimming is needed. We will truncate the forward reads at position 240 (trimming the last 10 nucleotides).</p>
+<p>The reverse reads are of significantly worse quality, especially at the end, which is common in Illumina sequencing. This isn’t too worrisome, as DADA2 incorporates quality information into its error model which makes the algorithm robust to lower quality sequence, but trimming as the average qualities crash will improve the algorithm’s sensitivity to rare sequence variants. Based on these profiles, we will truncate the reverse reads at position 160 where the quality distribution crashes.</p>
+</div>
+<div id="filter-and-trim" class="section level1">
+<h1>Filter and trim</h1>
+<p>We’ll use standard filtering parameters: maxN=0 (DADA2 requires no Ns), truncQ=2, rm.phix=TRUE and maxEE=2. The maxEE parameter sets the maximum number of “expected errors” allowed in a read, which is a better filter than simply averaging quality scores.</p>
+<p>Considerations for your own data: The standard filtering parameters are starting points, not set in stone. If you want to speed up downstream computation, consider tightening maxEE. If too few reads are passing the filter, consider relaxing maxEE, perhaps especially on the reverse reads (eg. maxEE=c(2,5)), and reducing the truncLen to remove low quality tails. Remember though, when choosing truncLen for paired-end reads you must maintain overlap after truncation in order to merge them later.</p>
+<p>Alternatives: Zymo Research has recently developed a tool called Figaro that can help you choose DADA2 truncation length parameters: <a href="https://github.com/Zymo-Research/figaro#figaro" class="uri">https://github.com/Zymo-Research/figaro#figaro</a></p>
+</div>
+<div id="learn-the-error-rates" class="section level1">
+<h1>Learn the Error Rates</h1>
+<p>The DADA2 algorithm makes use of a parametric error model (err) and every amplicon dataset has a different set of error rates. The learnErrors method learns this error model from the data, by alternating estimation of the error rates and inference of sample composition until they converge on a jointly consistent solution. As in many machine-learning problems, the algorithm must begin with an initial guess, for which the maximum possible error rates in this data are used (the error rates if only the most abundant sequence is correct and all the rest are errors).</p>
+</div>
+<div id="sample-inference" class="section level1">
+<h1>Sample Inference</h1>
+<p>We present the open-source software package DADA2 for modeling and correcting Illumina-sequenced amplicon errors (<a href="https://github.com/benjjneb/dada2" class="uri">https://github.com/benjjneb/dada2</a>). DADA2 infers sample sequences exactly and resolves differences of as little as 1 nucleotide. In several mock communities, DADA2 identified more real variants and output fewer spurious sequences than other methods.</p>
+<p>The DADA2 algorithm inferred 128 true sequence variants from the 1979 unique sequences in the first sample.</p>
+</div>
+<div id="merge-paired-reads" class="section level1">
+<h1>Merge paired reads</h1>
+<p>We now merge the forward and reverse reads together to obtain the full denoised sequences. Merging is performed by aligning the denoised forward reads with the reverse-complement of the corresponding denoised reverse reads, and then constructing the merged “contig” sequences. By default, merged sequences are only output if the forward and reverse reads overlap by at least 12 bases, and are identical to each other in the overlap region (but these conditions can be changed via function arguments).</p>
+</div>
+<div id="construct-sequence-table" class="section level1">
+<h1>Construct sequence table</h1>
+<p>We can now construct an amplicon sequence variant table (ASV) table, a higher-resolution version of the OTU table produced by traditional methods.</p>
+</div>
+<div id="remove-chimeras" class="section level1">
+<h1>Remove chimeras</h1>
+<p>The core dada method corrects substitution and indel errors, but chimeras remain. Fortunately, the accuracy of sequence variants after denoising makes identifying chimeric ASVs simpler than when dealing with fuzzy OTUs. Chimeric sequences are identified if they can be exactly reconstructed by combining a left-segment and a right-segment from two more abundant “parent” sequences.</p>
+<p>The frequency of chimeric sequences varies substantially from dataset to dataset, and depends on on factors including experimental procedures and sample complexity. Here chimeras make up about 21% of the merged sequence variants, but when we account for the abundances of those variants we see they account for only about 4% of the merged sequence reads.</p>
+<p>Considerations for your own data: Most of your reads should remain after chimera removal (it is not uncommon for a majority of sequence variants to be removed though). If most of your reads were removed as chimeric, upstream processing may need to be revisited. In almost all cases this is caused by primer sequences with ambiguous nucleotides that were not removed prior to beginning the DADA2 pipeline.</p>
+</div>
+<div id="assign-taxonomy" class="section level1">
+<h1>Assign taxonomy</h1>
+<p>Extensions: The dada2 package also implements a method to make species level assignments based on exact matching between ASVs and sequenced reference strains. Recent analysis suggests that exact matching (or 100% identity) is the only appropriate way to assign species to 16S gene fragments.</p>
+</div>
+<div id="bonus-handoff-to-phyloseq" class="section level1">
+<h1>Bonus: Handoff to phyloseq</h1>
+<p>The phyloseq R package is a powerful framework for further analysis of microbiome data. We now demonstrate how to straightforwardly import the tables produced by the DADA2 pipeline into phyloseq. We’ll also add the small amount of metadata we have – the samples are named by the gender (G), mouse subject number (X) and the day post-weaning (Y) it was sampled (eg. GXDY).</p>
+</div>
+<div id="visualize-alpha-diversity" class="section level1">
+<h1>Visualize alpha-diversity</h1>
+<p><img src="https://benjjneb.github.io/dada2/tutorial_files/figure-html/richness-1.png" /></p>
+<p>No obvious systematic difference in alpha-diversity between early and late samples.</p>
+</div>
+<div id="ordinate" class="section level1">
+<h1>Ordinate</h1>
+<p><img src="https://benjjneb.github.io/dada2/tutorial_files/figure-html/ordinate-1.png" /></p>
+<p>Ordination picks out a clear separation between the early and late samples.</p>
+</div>
+<div id="bar-plot" class="section level1">
+<h1>Bar Plot</h1>
+<p><img src="https://benjjneb.github.io/dada2/tutorial_files/figure-html/bar-plot-1.png" /></p>
+<p>Nothing glaringly obvious jumps out from the taxonomic distribution of the top 20 sequences to explain the early-late differentiation.</p>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
