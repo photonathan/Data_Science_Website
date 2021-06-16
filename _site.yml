@@ -36,6 +36,8 @@ navbar:
           href: note_knit_rmarkdown_db.html
         - text: "General R Notes"
           href: note_general_r_notes.html
+        - text: "Create and Activate Virtual Enviornmnet using Spyder/Conda"
+          href: note_conda_virutal_env.html
     - text: "Photography"
       href: photography.html
     - text: "About"
