@@ -16,7 +16,12 @@ output:
 In 2020, Minnesota's Department of Transportaion put out a [great visualization](https://storymaps.arcgis.com/stories/70a3a57003b541ed8e911cd11103dc6a) of Minneapolis' surge in bicycle and pedestrian usage soon after Minneapolis governor Tim Walz declared a 'Peacetime Emergency' on March 13, 2020 and a 'Stay at Home' order twelve days later on March 
 
 # Goal
-Similarly explore Arlington, Virginia's bicycle ridership numbers around Virginia Governor Northram's [State of Emergency](https://www.governor.virginia.gov/newsroom/all-releases/2020/march/headline-853537-en.html) Declaration on March 12, 2020 and [Stay at Home order](https://www.governor.virginia.gov/newsroom/all-releases/2020/march/headline-855702-en.html) on March 30, 2020.
+
+We will similarly explore Arlington, Virginia's bicycle ridership numbers around Virginia Governor Northram's [State of Emergency](https://www.governor.virginia.gov/newsroom/all-releases/2020/march/headline-853537-en.html) Declaration on March 12, 2020 and [Stay at Home order](https://www.governor.virginia.gov/newsroom/all-releases/2020/march/headline-855702-en.html) on March 30, 2020.
+
+Below is the plot you will create using Arlington's bike data.
+
+![](images/newplot.png)
 
 ## Follow along or explore on your own
 Subsequent posts for this project will outline step by step how I went about creating similar visualizations to the Minnesota DOT. I believe this is a great project for those new to Python, R, or databases. Each *Part* of this project will have a **Goal** section. You have the option to give the goals a shot on your own before looking at how I accomplished them. If you have any questions, comments, or are working on your own analysis, [send me an email](mailto:mail.nathansprojects@gmail.com)!
@@ -30,7 +35,14 @@ Before you start the project, the requirements are listed below. I'll document a
 Note: To make my life easier, I installed the [full Anaconda suite](https://www.anaconda.com/products/individual) and use the Spyder IDE when working in Python. I played around with installing [Miniconda](https://docs.conda.io/en/latest/miniconda.html) but when it comes to managing the conda environments in R using the [Reticulate library](https://rstudio.github.io/reticulate/), it gave me a headache. 
 
 # The Datasets
-One of the best parts of living in Arlington, Virginia is its beautiful paved bike paths, particularly the [Arlington Loop](https://www.bikearlington.com/wp-content/uploads/2017/04/Self-Guided-Route-Map_Arlington-Loop-min.pdf). Riders of the loop probably have noticed the [Bikeometer](https://www.bikearlington.com/wp-content/uploads/2017/03/bikeometer-min.jpg) near the Francis Scott Key Memorial Bridge displaying the daily, monthly, and yearly bicycle counts. To my delight, these numbers are not only [publicly available](http://counters.bikearlington.com/), but also easily requested using an API and [detailed documentation](http://counters.bikearlington.com/bike/assets/File/Regional_bikearlington_webservices.pdf). Additionally, Covid-19 case/vaccine data from the [Virginia Health Department](https://www.vdh.virginia.gov/coronavirus/) will be used to visualize how trail usage is affected by major events like a global pandemic.
+
+One of the best parts of living in Arlington, Virginia is its beautiful paved bike paths, particularly the [Arlington Loop](https://www.bikearlington.com/wp-content/uploads/2017/04/Self-Guided-Route-Map_Arlington-Loop-min.pdf). Riders of the loop probably have noticed the [Bikeometer](https://www.bikearlington.com/wp-content/uploads/2017/03/bikeometer-min.jpg) near the Francis Scott Key Memorial Bridge displaying the daily, monthly, and yearly bicycle counts. 
+
+![](images/bikeometer.jpg)
+
+To my delight, these numbers are not only [publicly available](http://counters.bikearlington.com/), but also easily requested using an API and [detailed documentation](http://counters.bikearlington.com/bike/assets/File/Regional_bikearlington_webservices.pdf). Additionally, Covid-19 case/vaccine data from the [Virginia Health Department](https://www.vdh.virginia.gov/coronavirus/) will be used to visualize how trail usage is affected by major events like a global pandemic.
+
+
 
 # Python
 Python will be used to automate a number of actions:
