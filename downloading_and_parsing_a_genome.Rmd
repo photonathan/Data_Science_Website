@@ -3,16 +3,132 @@ title: "Downloading and Parsing a Genome"
 output: html_document
 ---
 
+Read the genome into memory.
+
 ```{python}
 def readGenome(filename):
   genome = ''
   with open(filename, 'r') as f:
-    for line in file:
-      if not line[0] == '>':
+    for line in f:
+      if line[0] != '>':
         # rstrip method removes white spaces and new line at end of line
         genome += line.rstrip()
-      return genome
+  return genome
 
-genome = readGenome(')
+genome = readGenome('data/lambda_virus.fa')
+genome[:100]
+```
+
+Count the frequency of each base using a dictionary.
+
+```{python}
+counts = {'A': 0, 'C': 0, 'G': 0, 'T': 0}
+for base in genome:
+  counts[base] += 1
+print(counts)
+
+```
+
+Use the *collections* module to count the bases.
+
+```{python}
+import collections
+collections.Counter(genome)
+```
+
+
+To read a FASTQ file and pull out the sequences and quality scores, use the below function:
+
+```{python}
+def readFastq(filename):
+  sequences = []
+  qualities = []
+  with open(filename) as fh:
+    while True:
+      # Read this line but dont save it
+      fh.readline()
+      # Read this line and save
+      seq = fh.readline().rstrip()
+      fh.readline()
+      qual = fh.readline().rstrip()
+      # If you are at the end of the file, break
+      if len(seq) == 0:
+        break
+      sequences.append(seq)
+      qualities.append(qual)
+  return sequences, qualities
+```
+
+```{python}
+seqs, quals = readFastq('data/ERR037900_1.first1000.fastq')
+```
+
+```{python}
+print(seqs[:5])
+print('')
+print(quals[:5])
+```
+In a FASTQ file, you can convert a character to an integer by using the following code:
+
+```{python}
+def QtoPhred33(Q):
+  ''' Turn Q into Phred+33 ASCII-encoded quality '''
+  return chr(Q + 33)
+
+def phred33ToQ(qual):
+  ''' Turn Phred+33 ASCII-encoded quality into Q '''
+  # ord() takes a string and converts it to and integer equivalent
+  return ord(qual)-33
+```
+
+```{python}
+phred33ToQ('#')
+```
+'2' is a low quality score and means that the program has low confidence that this is the correct base.
+
+Next, we will create a histogram of the quality scores.
+
+```{python}
+def createHist(qualities):
+  hist = [0] * 50
+  for qual in qualities:
+    for phred in qual:
+      q = phred33ToQ(phred)
+      hist[q] += 1
+  return hist
+
+```
+
+```{python}
+h = createHist(quals)
+```
+```{python}
+h
+type(h)
+```
+```{r}
+library(reticulate)
+py$h
+```
+
+
+
+```{r message=FALSE}
+library(ggplot2)
+library(dplyr)
+```
+
+```{r}
+df <- data.frame('quality score' = c(1:50), 'quantity' = py$h)
+```
+
+```{r}
+df
+```
+
+Don't use geom_bar(), use geom_col(). The function geom_bar() makes the height of the bar proportinal to the number of cases in each group, or if the weight asthetic is supplied, the sum of the weights. If you want hights of the bars to represent values in the data, use geom_col().
+```{r}
+p <- df %>% ggplot(aes(x = quality.score, y = quantity)) + geom_col()
+p
 ```
 

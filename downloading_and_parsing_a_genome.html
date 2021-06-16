@@ -11,7 +11,7 @@
 
 
 
-<title>Nathan’s Projects</title>
+<title>Downloading and Parsing a Genome</title>
 
 <script src="site_libs/header-attrs-2.8/header-attrs.js"></script>
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
@@ -32,15 +32,6 @@
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
-<link rel="apple-touch-icon" sizes="180x180" href="~/assets/favicon/apple-touch-icon.png">
-<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon/favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon/favicon-16x16.png">
-<link rel="manifest" href="/assets/favicon/site.webmanifest">
-<link rel="mask-icon" href="/assets/favicon/safari-pinned-tab.svg" color="#5bbad5">
-<link rel="shortcut icon" href="/assets/favicon/favicon.ico">
-<meta name="msapplication-TileColor" content="#da532c">
-<meta name="msapplication-config" content="/assets/favicon/browserconfig.xml">
-<meta name="theme-color" content="#ffffff">
 
 <style type="text/css">
   code{white-space: pre-wrap;}
@@ -291,9 +282,6 @@ $(document).ready(function () {
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="downloading_and_parsing_a_genome.html">Downloading and Parsing a Genome</a>
-    </li>
-    <li>
       <a href="Running-BLAST-over-the-internet.html">Running BLAST Over the Internet</a>
     </li>
     <li>
@@ -339,31 +327,149 @@ $(document).ready(function () {
 
 
 
-<h1 class="title toc-ignore">Nathan’s Projects</h1>
+<h1 class="title toc-ignore">Downloading and Parsing a Genome</h1>
 
 </div>
 
 
-<style type="text/css">
-.title {
-  display: none;
-}
+<p>Read the genome into memory.</p>
+<pre class="python"><code>def readGenome(filename):
+  genome = &#39;&#39;
+  with open(filename, &#39;r&#39;) as f:
+    for line in f:
+      if line[0] != &#39;&gt;&#39;:
+        # rstrip method removes white spaces and new line at end of line
+        genome += line.rstrip()
+  return genome
 
-#getting-started img {
-  margin-right: 10px;
-}
+genome = readGenome(&#39;data/lambda_virus.fa&#39;)
+genome[:100]</code></pre>
+<pre><code>## &#39;GGGCGGCGACCTCGCGGGTTTTCGCTATTTATGAAAATTTTCCGGTTTAAGGCGTTTCCGTTCTTCTTCGTCATAACTTAATGTTTTTATTTAAAATACC&#39;</code></pre>
+<p>Count the frequency of each base using a dictionary.</p>
+<pre class="python"><code>counts = {&#39;A&#39;: 0, &#39;C&#39;: 0, &#39;G&#39;: 0, &#39;T&#39;: 0}
+for base in genome:
+  counts[base] += 1
+print(counts)</code></pre>
+<pre><code>## {&#39;A&#39;: 12334, &#39;C&#39;: 11362, &#39;G&#39;: 12820, &#39;T&#39;: 11986}</code></pre>
+<p>Use the <em>collections</em> module to count the bases.</p>
+<pre class="python"><code>import collections
+collections.Counter(genome)</code></pre>
+<pre><code>## Counter({&#39;G&#39;: 12820, &#39;A&#39;: 12334, &#39;T&#39;: 11986, &#39;C&#39;: 11362})</code></pre>
+<p>To read a FASTQ file and pull out the sequences and quality scores, use the below function:</p>
+<pre class="python"><code>def readFastq(filename):
+  sequences = []
+  qualities = []
+  with open(filename) as fh:
+    while True:
+      # Read this line but dont save it
+      fh.readline()
+      # Read this line and save
+      seq = fh.readline().rstrip()
+      fh.readline()
+      qual = fh.readline().rstrip()
+      # If you are at the end of the file, break
+      if len(seq) == 0:
+        break
+      sequences.append(seq)
+      qualities.append(qual)
+  return sequences, qualities</code></pre>
+<pre class="python"><code>seqs, quals = readFastq(&#39;data/ERR037900_1.first1000.fastq&#39;)</code></pre>
+<pre class="python"><code>print(seqs[:5])</code></pre>
+<pre><code>## [&#39;TAACCCTAACCCTAACCCTAACCCTAACCCTAACCCTAACCCTAACCCTAACCCTAACCCTAACCCNAACCCTAACCCTAACCCTAACCCTAACCCTAAC&#39;, &#39;TAACCCTAACCCTAACCCTAACCCTAACCCTAACCCTAACCCTAACCCTAACCCTAACCCTAACCCNAACCCTAACCCTAACCCTAACCCTNACCCTAAC&#39;, &#39;TAACCCTAACCCTAACCCTAACCCTAACCCTAACCCTAACCCTAACCCTAACCCTAACCCTAACCCNAACCCTAACCCTAACCCTAACCCTAACCCTAAC&#39;, &#39;TAACCCTAACCCTAACCCTAACCCTAACCCTAACCCTAACCCTAACCCTAACCCTAACCCTAACCCNAACCCTAACCCTAACCCTAACCCTAACCCTACC&#39;, &#39;AACCCTAACCCTAACCCTAACCCTAACCCTAACCCTAACCCTAACCCTAACCCTAACCCTAACCCTNACCCTAACCCTAACCCTAACCCTAAACCTAACC&#39;]</code></pre>
+<pre class="python"><code>print(&#39;&#39;)</code></pre>
+<pre class="python"><code>print(quals[:5])</code></pre>
+<pre><code>## [&#39;HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHGFHHHFHFFHHHHHGHHFHEH@4#55554455HGFBF&lt;@C&gt;7EEF@FBEDDD&lt;=C&lt;E&#39;, &#39;HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHCHHHHEHHBA#C&gt;@54455C/7=CGHEGEB;C############&#39;, &#39;HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHGHHHHHHHHHHHHHDHHHDEHHHHFGIHEHEGGGF4#45655366GIGEHAGBG################&#39;, &#39;HHHHHHHHHHHHHHHHHHHHHHHHHIHHHHHHHHHHHHHHHHHHHHHHIHHHHHIHFHHHIHHHHD#ECA54655GGIBH?BD@+BCBF?5A=::&gt;8?##&#39;, &#39;HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHIHIHEHHIGHIFFHIIGF6#555:2=7=CB;?3CAACBAC2B###########&#39;]</code></pre>
+<p>In a FASTQ file, you can convert a character to an integer by using the following code:</p>
+<pre class="python"><code>def QtoPhred33(Q):
+  &#39;&#39;&#39; Turn Q into Phred+33 ASCII-encoded quality &#39;&#39;&#39;
+  return chr(Q + 33)
 
-</style>
-<div class="row">
-<div class="col-sm-6">
-<p><img src="images/Logo.jpg" width="100%" id=logo style="display: block; margin: auto;" /></p>
-</div>
-<div id="welcome" class="section level3 col-sm-6" style="padding-top: 50px;">
-<h3>Welcome</h3>
-<p>Data can be complicated, my homepage is not.</p>
-<p>Check out my <a href="https://nathansprojects.com/part_1_the_plan.html">Visualization of Arlington, Virginia’s bike usage during Covid-19</a>.</p>
-</div>
-</div>
+def phred33ToQ(qual):
+  &#39;&#39;&#39; Turn Phred+33 ASCII-encoded quality into Q &#39;&#39;&#39;
+  # ord() takes a string and converts it to and integer equivalent
+  return ord(qual)-33</code></pre>
+<pre class="python"><code>phred33ToQ(&#39;#&#39;)</code></pre>
+<pre><code>## 2</code></pre>
+<p>‘2’ is a low quality score and means that the program has low confidence that this is the correct base.</p>
+<p>Next, we will create a histogram of the quality scores.</p>
+<pre class="python"><code>def createHist(qualities):
+  hist = [0] * 50
+  for qual in qualities:
+    for phred in qual:
+      q = phred33ToQ(phred)
+      hist[q] += 1
+  return hist</code></pre>
+<pre class="python"><code>h = createHist(quals)</code></pre>
+<pre class="python"><code>h</code></pre>
+<pre><code>## [0, 0, 17723, 0, 2, 11, 11, 28, 23, 55, 100, 111, 86, 174, 185, 272, 317, 259, 390, 1523, 2782, 762, 286, 413, 403, 538, 351, 694, 971, 777, 1024, 1449, 1341, 1312, 1916, 2233, 3025, 4043, 6640, 45696, 2074, 0, 0, 0, 0, 0, 0, 0, 0, 0]</code></pre>
+<pre class="python"><code>type(h)</code></pre>
+<pre><code>## &lt;class &#39;list&#39;&gt;</code></pre>
+<pre class="r"><code>library(reticulate)
+py$h</code></pre>
+<pre><code>##  [1]     0     0 17723     0     2    11    11    28    23    55   100   111
+## [13]    86   174   185   272   317   259   390  1523  2782   762   286   413
+## [25]   403   538   351   694   971   777  1024  1449  1341  1312  1916  2233
+## [37]  3025  4043  6640 45696  2074     0     0     0     0     0     0     0
+## [49]     0     0</code></pre>
+<pre class="r"><code>library(ggplot2)
+library(dplyr)</code></pre>
+<pre class="r"><code>df &lt;- data.frame(&#39;quality score&#39; = c(1:50), &#39;quantity&#39; = py$h)</code></pre>
+<pre class="r"><code>df</code></pre>
+<pre><code>##    quality.score quantity
+## 1              1        0
+## 2              2        0
+## 3              3    17723
+## 4              4        0
+## 5              5        2
+## 6              6       11
+## 7              7       11
+## 8              8       28
+## 9              9       23
+## 10            10       55
+## 11            11      100
+## 12            12      111
+## 13            13       86
+## 14            14      174
+## 15            15      185
+## 16            16      272
+## 17            17      317
+## 18            18      259
+## 19            19      390
+## 20            20     1523
+## 21            21     2782
+## 22            22      762
+## 23            23      286
+## 24            24      413
+## 25            25      403
+## 26            26      538
+## 27            27      351
+## 28            28      694
+## 29            29      971
+## 30            30      777
+## 31            31     1024
+## 32            32     1449
+## 33            33     1341
+## 34            34     1312
+## 35            35     1916
+## 36            36     2233
+## 37            37     3025
+## 38            38     4043
+## 39            39     6640
+## 40            40    45696
+## 41            41     2074
+## 42            42        0
+## 43            43        0
+## 44            44        0
+## 45            45        0
+## 46            46        0
+## 47            47        0
+## 48            48        0
+## 49            49        0
+## 50            50        0</code></pre>
+<p>Don’t use geom_bar(), use geom_col(). The function geom_bar() makes the height of the bar proportinal to the number of cases in each group, or if the weight asthetic is supplied, the sum of the weights. If you want hights of the bars to represent values in the data, use geom_col().</p>
+<pre class="r"><code>p &lt;- df %&gt;% ggplot(aes(x = quality.score, y = quantity)) + geom_col()
+p</code></pre>
+<p><img src="downloading_and_parsing_a_genome_files/figure-html/unnamed-chunk-16-1.png" width="672" /></p>
 
 
 

@@ -22,6 +22,8 @@ navbar:
           href: part_7_investigating_bikometer_gps_locations.html
     - text: "Bioinformatics Notes"
       menu:
+        - text: "Downloading and Parsing a Genome"
+          href: downloading_and_parsing_a_genome.html
         - text: "Running BLAST Over the Internet"
           href: Running-BLAST-over-the-internet.html
         - text: "Communicating with the Outside"
