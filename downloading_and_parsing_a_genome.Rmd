@@ -1,0 +1,18 @@
+---
+title: "Downloading and Parsing a Genome"
+output: html_document
+---
+
+```{python}
+def readGenome(filename):
+  genome = ''
+  with open(filename, 'r') as f:
+    for line in file:
+      if not line[0] == '>':
+        # rstrip method removes white spaces and new line at end of line
+        genome += line.rstrip()
+      return genome
+
+genome = readGenome(')
+```
+

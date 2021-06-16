@@ -32,6 +32,8 @@ navbar:
           href: note_fixing_pyrtools_error.html
         - text: "Publish Rmarkdown Documents With Database Connections Without Exposing Credentials"
           href: note_knit_rmarkdown_db.html
+        - text: "General R Notes"
+          href: note_general_r_notes.html
     - text: "Photography"
       href: photography.html
     - text: "About"

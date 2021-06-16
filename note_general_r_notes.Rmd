@@ -1,0 +1,19 @@
+---
+title: "General R Notes"
+output: html_document
+---
+
+**Get** current working directory
+
+```{r}
+getwd()
+```
+
+**Set** current working directory
+
+```{r eval=FALSE}
+setwd(dir)
+```
+
+
+
