@@ -38,6 +38,8 @@ navbar:
           href: note_general_r_notes.html
         - text: "Create and Activate Virtual Enviornmnet using Spyder/Conda"
           href: note_conda_virutal_env.html
+        - text: "General Python Notes"
+          href: note_general_python_notes.html
     - text: "Photography"
       href: photography.html
     - text: "About"

@@ -1,0 +1,20 @@
+---
+title: "General Python Notes"
+output: html_document
+---
+
+Get current working directory
+```{python}
+import os
+os.getcwd()
+```
+Using a relative path with no forward slash in the start of the path
+```{python eval=FALSE}
+os.chdir('images/bioinformatics') 
+```
+
+Using an absolute path, using a backslash and 'r' prefix
+```{python eval=FALSE}
+os.chdir(r'D:\R\Scripts')
+```
+
