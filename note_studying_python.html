@@ -623,6 +623,146 @@ print(a, b)</code></pre>
 print(a, b)</code></pre>
 <pre><code>## 7 1</code></pre>
 </div>
+<div id="separating-digits-of-numbers" class="section level1">
+<h1>Separating Digits Of Numbers</h1>
+<p>If you have a long digits number, you can separate the group of digits as you like for better understanding.</p>
+<p><code>million = 1_000_000</code></p>
+</div>
+<div id="list-comprehension" class="section level1">
+<h1>List comprehension</h1>
+<pre class="python"><code>lst = [1,2,-5,4]
+
+def square(x):
+  return x*x</code></pre>
+<p>Instead of doing the following:</p>
+<pre class="python"><code>list(map(square, lst))</code></pre>
+<pre><code>## [1, 4, 25, 16]</code></pre>
+<p>You can use list comprehension:</p>
+<pre class="python"><code>[square(num) for num in lst]</code></pre>
+<pre><code>## [1, 4, 25, 16]</code></pre>
+<pre class="python"><code>def is_odd(x):
+  return x % 2 == 1</code></pre>
+<p>We can use the <code>filter()</code> function to filter out elements of our list according to if they meet certain criteria.</p>
+<pre class="python"><code>list(filter(is_odd, lst))</code></pre>
+<pre><code>## [1, -5]</code></pre>
+<pre class="python"><code>[x for x in lst if is_odd(x)]</code></pre>
+<pre><code>## [1, -5]</code></pre>
+<p>Let’s create a 2x3 matrix filled with zeros and define it using lists.</p>
+<pre class="python"><code>grid = [[0,0,0,
+       0,0,0]]</code></pre>
+<p>Using <code>for</code> loop</p>
+<pre class="python"><code>num_rows = 2
+num_columns = 3
+grid = []
+
+for _ in range(num_rows):
+  curr_row = []
+  for _ in range(num_columns):
+    curr_row.append(0)
+  grid.append(curr_row)
+
+grid</code></pre>
+<pre><code>## [[0, 0, 0], [0, 0, 0]]</code></pre>
+<p>Using <em>list comprehension</em></p>
+<pre class="python"><code>num_rows = 2
+num_columns = 3
+grid = []</code></pre>
+<pre class="python"><code>grid = [[0 for _ in range(num_columns)] for _ in range(num_rows)]
+grid</code></pre>
+<pre><code>## [[0, 0, 0], [0, 0, 0]]</code></pre>
+<p>Compare the above to this where the brackets are in different places.</p>
+<pre class="python"><code>num_rows = 2
+num_columns = 3
+grid = []
+
+grid = [[0 for _ in range(num_columns) for _ in range(num_rows)]]
+grid</code></pre>
+<pre><code>## [[0, 0, 0, 0, 0, 0]]</code></pre>
+<pre><code>[] = list
+() = tuple
+{} = dictionary/set</code></pre>
+<p>The function <code>max()</code> takes in some numbers and returns the max number</p>
+<pre class="python"><code>L = [1,2,3, -4]
+t = (1,2,3, -4)
+s = {1,2,3, -4}</code></pre>
+<pre class="python"><code>max(L)</code></pre>
+<pre><code>## 3</code></pre>
+<pre class="python"><code>max(t)</code></pre>
+<pre><code>## 3</code></pre>
+<pre class="python"><code>max(s)</code></pre>
+<pre><code>## 3</code></pre>
+<pre class="python"><code>max(1,2,3)</code></pre>
+<pre><code>## 3</code></pre>
+<pre class="python"><code>max(L, key=lambda x: x*x)</code></pre>
+<pre><code>## -4</code></pre>
+<p><code>min()</code> is the same as max but returns the min</p>
+<p><code>any()</code> takes in an iterable and returns <code>True</code> if any of the values in the iterable are <code>True</code> and returns <code>False</code> if none of the values are <code>True</code></p>
+<pre class="python"><code>any(L)</code></pre>
+<pre><code>## True</code></pre>
+<pre class="python"><code>any([False, False])</code></pre>
+<pre><code>## False</code></pre>
+<p>We can’t use <code>any()</code> to see if any in our list is odd because it does not take arguments to <code>key</code></p>
+<pre class="python"><code>any(L, key=lambda x: x % 2 == 1)</code></pre>
+<p>Instead, we have to use list comprehension. You can pass in an argument (num) by adding it after the lambda function.</p>
+<pre class="python"><code>[(lambda x:x % 2 == 1)(num) for num in L]</code></pre>
+<pre><code>## [True, False, True, False]</code></pre>
+<pre class="python"><code>any([(lambda x:x % 2 == 1)(num) for num in L])</code></pre>
+<pre><code>## True</code></pre>
+<p><code>all()</code> is the same as <code>any()</code> but only returns <code>True</code> if **all* of the items are <code>True</code></p>
+<pre class="python"><code>all([(lambda x:x % 2 == 1)(num) for num in L])</code></pre>
+<pre><code>## False</code></pre>
+</div>
+<div id="f-strings-when-creating-a-new-class" class="section level1">
+<h1>F-strings when creating a new <em>class</em></h1>
+<pre class="python"><code>class A(object):
+  def __init__(self,name,age):
+    self.name = name
+    self.age = age
+  def __repr__(self):
+    return f&quot;&quot;&quot;
+      My name is {self.name}.
+      I am {self.age + 5} years old
+      &quot;&quot;&quot;</code></pre>
+<pre class="python"><code>name = &#39;Bob&#39;
+age = 15
+print(A(name,age))</code></pre>
+<pre><code>## 
+##       My name is Bob.
+##       I am 20 years old
+## </code></pre>
+<pre class="python"><code>A(&#39;Nathan&#39;, 31)</code></pre>
+<pre><code>## 
+##       My name is Nathan.
+##       I am 36 years old
+## </code></pre>
+</div>
+<div id="sorting" class="section level1">
+<h1>Sorting</h1>
+<p>Can sort a list alphabetically.</p>
+<pre class="python"><code>animals = [&quot;cat&quot;, &quot;dog&quot;, &quot;cheetah&quot;, &quot;rhino&quot;]
+
+sorted(animals)</code></pre>
+<pre><code>## [&#39;cat&#39;, &#39;cheetah&#39;, &#39;dog&#39;, &#39;rhino&#39;]</code></pre>
+<pre class="python"><code>sorted(animals, reverse=True)</code></pre>
+<pre><code>## [&#39;rhino&#39;, &#39;dog&#39;, &#39;cheetah&#39;, &#39;cat&#39;]</code></pre>
+<p>Here, we have a list of animals defined by a dictionary.</p>
+<pre class="python"><code>animals = [
+  {&#39;type&#39;: &#39;cat&#39;, &#39;name&#39;: &#39;Stephanie&#39;, &#39;age&#39;: 8},
+  {&#39;type&#39;: &#39;dog&#39;, &#39;name&#39;: &#39;Devon&#39;, &#39;age&#39;: 3},
+  {&#39;type&#39;: &#39;rhino&#39;, &#39;name&#39;: &#39;Moe&#39;, &#39;age&#39;: 5},
+]</code></pre>
+<p>You can’t sort a dictionary but you can define a <code>lambda</code> to sort by.</p>
+<pre class="python"><code>sorted(animals, key = lambda animal: animal[&#39;age&#39;])</code></pre>
+<pre><code>## [{&#39;type&#39;: &#39;dog&#39;, &#39;name&#39;: &#39;Devon&#39;, &#39;age&#39;: 3}, {&#39;type&#39;: &#39;rhino&#39;, &#39;name&#39;: &#39;Moe&#39;, &#39;age&#39;: 5}, {&#39;type&#39;: &#39;cat&#39;, &#39;name&#39;: &#39;Stephanie&#39;, &#39;age&#39;: 8}]</code></pre>
+<p>If you wanted to return the oldest animal, pass in the <code>reverse=True</code> parameter and slice into the first item in the dictionary.</p>
+<pre class="python"><code>
+sorted(animals, key = lambda animal: animal[&#39;age&#39;], reverse=True)[0]</code></pre>
+<pre><code>## {&#39;type&#39;: &#39;cat&#39;, &#39;name&#39;: &#39;Stephanie&#39;, &#39;age&#39;: 8}</code></pre>
+<p>You can also use the <code>.sort()</code> method, you can do the same thing but mutating the dictionary</p>
+<pre class="python"><code>animals.sort(key = lambda animal: animal[&#39;age&#39;], reverse=True)
+animals</code></pre>
+<pre><code>## [{&#39;type&#39;: &#39;cat&#39;, &#39;name&#39;: &#39;Stephanie&#39;, &#39;age&#39;: 8}, {&#39;type&#39;: &#39;rhino&#39;, &#39;name&#39;: &#39;Moe&#39;, &#39;age&#39;: 5}, {&#39;type&#39;: &#39;dog&#39;, &#39;name&#39;: &#39;Devon&#39;, &#39;age&#39;: 3}]</code></pre>
+</div>
 
 
 

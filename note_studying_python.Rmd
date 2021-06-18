@@ -106,7 +106,7 @@ Doctest is a module that scans the Docstrings of functions looking for lines tha
 
 ## Adding to the script
 
-```{python eval=FALSE}
+```{python eval=FALSE }
 if __name__ == "__main__":
     import doctest
     doctest.testmod()
@@ -233,5 +233,207 @@ a, *_, b = (7, 6, 5, 4, 3, 2, 1)
 print(a, b)
 ```
 
+# Separating Digits Of Numbers
+If you have a long digits number, you can separate the group of digits as you like for better understanding.
 
+`million = 1_000_000`
+
+# List comprehension
+
+```{python}
+lst = [1,2,-5,4]
+
+def square(x):
+  return x*x
+
+```
+
+Instead of doing the following:
+
+```{python}
+list(map(square, lst))
+```
+
+You can use list comprehension:
+```{python}
+[square(num) for num in lst]
+```
+
+```{python}
+def is_odd(x):
+  return x % 2 == 1
+```
+
+We can use the `filter()` function to filter out elements of our list according to if they meet certain criteria.
+
+```{python}
+list(filter(is_odd, lst))
+```
+
+```{python}
+[x for x in lst if is_odd(x)]
+```
+Let's create a 2x3 matrix filled with zeros and define it using lists.
+
+```{python}
+grid = [[0,0,0,
+       0,0,0]]
+```
+Using `for` loop
+
+```{python}
+num_rows = 2
+num_columns = 3
+grid = []
+
+for _ in range(num_rows):
+  curr_row = []
+  for _ in range(num_columns):
+    curr_row.append(0)
+  grid.append(curr_row)
+
+grid
+```
+
+Using *list comprehension*
+
+```{python}
+num_rows = 2
+num_columns = 3
+grid = []
+
+```
+
+```{python}
+grid = [[0 for _ in range(num_columns)] for _ in range(num_rows)]
+grid
+```
+Compare the above to this where the brackets are in different places.
+
+```{python}
+num_rows = 2
+num_columns = 3
+grid = []
+
+grid = [[0 for _ in range(num_columns) for _ in range(num_rows)]]
+grid
+```
+
+```
+[] = list
+() = tuple
+{} = dictionary/set
+```
+The function `max()` takes in some numbers and returns the max number
+
+```{python}
+L = [1,2,3, -4]
+t = (1,2,3, -4)
+s = {1,2,3, -4}
+```
+```{python}
+max(L)
+max(t)
+max(s)
+max(1,2,3)
+max(L, key=lambda x: x*x)
+
+```
+
+`min()` is the same as max but returns the min
+
+`any()` takes in an iterable and returns `True` if any of the values in the iterable are `True` and returns `False` if none of the values are `True`
+
+```{python}
+any(L)
+```
+
+```{python}
+any([False, False])
+```
+
+We can't use `any()` to see if any in our list is odd because it does not take arguments to `key`
+
+```{python eval=FALSE}
+any(L, key=lambda x: x % 2 == 1)
+```
+
+Instead, we have to use list comprehension. You can pass in an argument (num) by adding it after the lambda function.
+
+```{python}
+[(lambda x:x % 2 == 1)(num) for num in L]
+```
+
+```{python}
+any([(lambda x:x % 2 == 1)(num) for num in L])
+```
+`all()` is the same as `any()` but only returns `True` if **all* of the items are `True`
+
+```{python}
+all([(lambda x:x % 2 == 1)(num) for num in L])
+```
+
+# F-strings when creating a new *class*
+
+```{python}
+class A(object):
+  def __init__(self,name,age):
+    self.name = name
+    self.age = age
+  def __repr__(self):
+    return f"""
+      My name is {self.name}.
+      I am {self.age + 5} years old
+      """
+
+```
+
+```{python}
+name = 'Bob'
+age = 15
+print(A(name,age))
+```
+```{python}
+A('Nathan', 31)
+```
+
+# Sorting
+
+Can sort a list alphabetically.
+
+```{python}
+animals = ["cat", "dog", "cheetah", "rhino"]
+
+sorted(animals)
+sorted(animals, reverse=True)
+```
+
+Here, we have a list of animals defined by a dictionary.
+
+```{python}
+animals = [
+  {'type': 'cat', 'name': 'Stephanie', 'age': 8},
+  {'type': 'dog', 'name': 'Devon', 'age': 3},
+  {'type': 'rhino', 'name': 'Moe', 'age': 5},
+]
+```
+You can't sort a dictionary but you can define a `lambda` to sort by.
+
+```{python}
+sorted(animals, key = lambda animal: animal['age'])
+```
+
+If you wanted to return the oldest animal, pass in the `reverse=True` parameter and slice into the first item in the dictionary.
+
+```{python}
+
+sorted(animals, key = lambda animal: animal['age'], reverse=True)[0]
+```
+
+You can also use the `.sort()` method, you can do the same thing but mutating the dictionary
+
+```{python}
+animals.sort(key = lambda animal: animal['age'], reverse=True)
+animals
+```
 
