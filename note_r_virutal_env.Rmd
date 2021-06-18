@@ -1,0 +1,29 @@
+---
+title: "Create and Activate Virtual Enviornmnet using R/Reticulate"
+output: html_document
+---
+
+`conda_list()` List all available conda environments
+
+`conda_create()` Create a new conda environment
+
+`conda_install()`	Install a package within a conda environment
+
+`conda_remove()` Remove individual packages or an entire conda environment
+
+```{r eval=FALSE}
+
+library(reticulate)
+
+# create a new environment 
+conda_create("r-reticulate")
+
+# install SciPy
+conda_install("r-reticulate", "scipy")
+# can also use py_install('<package>') to install to the current conda env
+
+# indicate that we want to use a specific condaenv
+use_condaenv("r-reticulate")
+
+```
+

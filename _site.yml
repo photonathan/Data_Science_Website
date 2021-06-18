@@ -40,6 +40,10 @@ navbar:
           href: note_conda_virutal_env.html
         - text: "General Python Notes"
           href: note_general_python_notes.html
+        - text: "Create and Activate Virtual Enviornmnet using R/Reticulate"
+          href: note_r_virutal_env.html
+        - text: "Studying Python"
+          href: note_studying_python.html
     - text: "Photography"
       href: photography.html
     - text: "About"

@@ -18,3 +18,18 @@ Using an absolute path, using a backslash and 'r' prefix
 os.chdir(r'D:\R\Scripts')
 ```
 
+Make new directory
+
+```{python}
+os.mkdir(path)
+```
+
+In Spyder, you can just use the 'Files' panel to navigate to the folder you want to use and that will become your current working directory.
+
+# And vs &
+
+If you are not dealing with arrays and are not performing math manipulations of integers, you probably want and.
+
+If you have vectors of truth values that you wish to combine, use numpy with &.
+
+

@@ -1,0 +1,237 @@
+---
+title: "Studying Python"
+output: html_document
+---
+
+`enumerate()` is a generator that returns a running index as well as the actual element or item in the container. Optinal argument includes the start parameter (number the index should start at)
+
+```{python}
+list(enumerate([1,2,3]))
+```
+
+```{python}
+list(enumerate(range(3), start=10))
+```
+
+**Fizz Buzz**
+
+Write a program that prints the numbers from 1 to 100 and for multiples of '3' print “Fizz” instead of the number and for the multiples of '5' print “Buzz”.
+
+```{python}
+for i in range(1,101):
+  if i % 3 == 0:
+    if i % 5 == 0:
+      print('Fizz Buzz')
+      continue
+    print('Fizz')
+    continue
+  if i % 5 == 0:
+    if i % 3 == 0:
+      print('Fizz Buzz')
+      continue
+    print('Buzz')
+    continue
+  else:
+    print(i)
+
+```
+
+Write a program with the same requirements as above but mutates a list, not prints it. 
+Use if and elif to not mutate the list so many times. 
+
+```{python}
+def fizz_buzz(numbers):
+  '''
+  Given a list of integers:
+  1. replace all integers that are evenly divisible by 3 with 'fizz'
+  2. replace all integers divisible by 5 with 'buzz'
+  3. replace all integers divisible by both 3 and 5 with 'fizzbuzz'
+  
+  >>> numbers = [45, 22, 14, 65, 97, 72]
+  >>> fizz_buzz(numbers)
+  >>> numbers
+  ['fizzbuzz', 22, 14, 'buzz', 97, 'fizz']
+  '''
+  for i in range(len(numbers)):
+    num = numbers[i]
+    if num % 3 == 0 and num % 5 == 0:
+      numbers[i] = 'fizzbuzz'
+    elif num % 3 == 0:
+      numbers[i] = 'fizz'
+    elif num % 5 == 0:
+      numbers[i] = 'buzz'
+
+```
+
+```{python}
+numbers = [1,2,3,4,5,6,7,8,9,10,15,45, 22, 14, 65, 97, 72]
+fizz_buzz(numbers)
+numbers
+```
+Can also use `enumerate()` instead of range(len()). Difference is that `eumerate()` takes an iterable while range(len()) takes a number.
+
+```{python}
+def fizz_buzz(numbers):
+  '''
+  Given a list of integers:
+  1. replace all integers that are evenly divisible by 3 with 'fizz'
+  2. replace all integers divisible by 5 with 'buzz'
+  3. replace all integers divisible by both 3 and 5 with 'fizzbuzz'
+  
+  >>> numbers = [45, 22, 14, 65, 97, 72]
+  >>> fizz_buzz(numbers)
+  >>> numbers
+  ['fizzbuzz', 22, 14, 'buzz', 97, 'fizz']
+  '''
+  for i, num in enumerate(numbers):
+    num = numbers[i]
+    if num % 3 == 0 and num % 5 == 0:
+      numbers[i] = 'fizzbuzz'
+    elif num % 3 == 0:
+      numbers[i] = 'fizz'
+    elif num % 5 == 0:
+      numbers[i] = 'buzz'
+
+```
+
+```{python}
+numbers_1 = list(range(1,101))
+fizz_buzz(numbers_1)
+numbers_1
+```
+
+# Doctest
+
+Doctest is a module that scans the Docstrings of functions looking for lines that look like input and output and uses them to test your function. The Doctest module can be either added into the script or run in concert with the script using command line arguments.
+
+## Adding to the script
+
+```{python eval=FALSE}
+if __name__ == "__main__":
+    import doctest
+    doctest.testmod()
+```
+
+## Running from the command line
+
+`python -m doctest -v temp.py`
+
+The `-v` switch will print the tests and results that *Doctest* is running. Without the switch, it will run but not print anything to the console unless there is an error found.
+
+## Examples
+
+```{python eval=FALSE}
+def factorial(n):
+    """Return the factorial of n, an exact integer >= 0.
+
+    >>> [factorial(n) for n in range(6)]
+    [1, 1, 2, 6, 24, 120]
+    >>> factorial(30)
+    265252859812191058636308480000000
+    >>> factorial(-1)
+    Traceback (most recent call last):
+        ...
+    ValueError: n must be >= 0
+
+    Factorials of floats are OK, but the float must be an exact integer:
+    >>> factorial(30.1)
+    Traceback (most recent call last):
+        ...
+    ValueError: n must be exact integer
+    >>> factorial(30.0)
+    265252859812191058636308480000000
+
+    It must also not be ridiculously large:
+    >>> factorial(1e100)
+    Traceback (most recent call last):
+        ...
+    OverflowError: n too large
+    """
+
+    import math
+    if not n >= 0:
+        raise ValueError("n must be >= 0")
+    if math.floor(n) != n:
+        raise ValueError("n must be exact integer")
+    if n+1 == n:  # catch a value like 1e300
+        raise OverflowError("n too large")
+    result = 1
+    factor = 2
+    while factor <= n:
+        result *= factor
+        factor += 1
+    return result
+
+
+if __name__ == "__main__":
+    import doctest
+    doctest.testmod()
+
+```
+
+
+
+# Differences between two lists
+
+When comparing two `lists`, you can convert them into `sets` to eliminate any duplicate numbers. Also, lists can not be operated on using '-' but `sets` can. Lists can however use the '+' which just combines the two `lists` together.
+
+```{python}
+list1 = [1,2,3,4]
+list2 = [3,3,4,5,6,7,7]
+set(list1) - set(list2)
+```
+
+```{python}
+list1 = [1,2,3,4]
+list2 = [3,3,4,5,6,7,7]
+set(list2) - set(list1)
+```
+
+```{python}
+def diff(list1, list2):
+  return list(set(list1) - set(list2)) + list(set(list2) - set(list1))
+```
+
+```{python}
+list1 = [1,2,3,4]
+list2 = [3,3,4,5,6,7,7]
+diff(list1, list2)
+```
+
+Without using `set()` we can use list comprehension
+
+```{python}
+
+def diff2(list1, list2):
+	list_dif = [i for i in list1 + list2 if i not in list1 or i not in list2]
+	return list_dif
+```
+
+```{python}
+list1 = [1,2,3,4]
+list2 = [3,3,4,5,6,7,7]
+list3 = diff2(list1, list2)
+print(list3)
+```
+
+The difference between `diff()` and `diff2()` is that if you don't convert the `lists` to `sets` then you keep both `7's` in `list2`. 
+
+# Underscore '_'
+
+The underscore can be used to ignore a single value
+
+```{python}
+
+a, _, b = (1, 2, 3) # a = 1, b = 3
+print(a, b)
+```
+
+It can also be used to ignore multiple values using the *(variable) used to assign multiple value to a variable as list while unpacking it's called "Extended Unpacking", only available in Python 3.x
+
+```{python}
+a, *_, b = (7, 6, 5, 4, 3, 2, 1)
+print(a, b)
+```
+
+
+

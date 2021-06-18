@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Studying Python</title>
+
+<script src="site_libs/header-attrs-2.8/header-attrs.js"></script>
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.tab('show');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Nathan's Projects</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Visualizing Arlington Bikeometers
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="part_1_the_plan.html">Part 1: The Plan</a>
+    </li>
+    <li>
+      <a href="part_2_query_the_api.html">Part 2: Query the API</a>
+    </li>
+    <li>
+      <a href="part_3_setup_your_database.html">Part 3: Setup and Connect Your Database</a>
+    </li>
+    <li>
+      <a href="part_4_save_the_data_in_a_mysql_database.html">Part 4: Save the Data in Your Local MySQL Database</a>
+    </li>
+    <li>
+      <a href="part_5_picking_bikeometers_to_graph.html">Part 5: Picking Which Bikeometers to Graph</a>
+    </li>
+    <li>
+      <a href="part_6_creating_initial_visualizations.html">Part 6: Creating the Visualizations</a>
+    </li>
+    <li>
+      <a href="part_7_investigating_bikometer_gps_locations.html">Part 7: Investigating Bikeometer GPS Locations</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Bioinformatics Notes
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="downloading_and_parsing_a_genome.html">Downloading and Parsing a Genome</a>
+    </li>
+    <li>
+      <a href="Running-BLAST-over-the-internet.html">Running BLAST Over the Internet</a>
+    </li>
+    <li>
+      <a href="communicating_with-the_outside.html">Communicating with the Outside</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Notes
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="note_fixing_pyrtools_error.html">Fixing rpytools error</a>
+    </li>
+    <li>
+      <a href="note_knit_rmarkdown_db.html">Publish Rmarkdown Documents With Database Connections Without Exposing Credentials</a>
+    </li>
+    <li>
+      <a href="note_general_r_notes.html">General R Notes</a>
+    </li>
+    <li>
+      <a href="note_conda_virutal_env.html">Create and Activate Virtual Enviornmnet using Spyder/Conda</a>
+    </li>
+    <li>
+      <a href="note_general_python_notes.html">General Python Notes</a>
+    </li>
+    <li>
+      <a href="note_r_virutal_env.html">Create and Activate Virtual Enviornmnet using R/Reticulate</a>
+    </li>
+    <li>
+      <a href="note_studying_python.html">Studying Python</a>
+    </li>
+  </ul>
+</li>
+<li>
+  <a href="photography.html">Photography</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/photonathan">Github</a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Studying Python</h1>
+
+</div>
+
+
+<p><code>enumerate()</code> is a generator that returns a running index as well as the actual element or item in the container. Optinal argument includes the start parameter (number the index should start at)</p>
+<pre class="python"><code>list(enumerate([1,2,3]))</code></pre>
+<pre><code>## [(0, 1), (1, 2), (2, 3)]</code></pre>
+<pre class="python"><code>list(enumerate(range(3), start=10))</code></pre>
+<pre><code>## [(10, 0), (11, 1), (12, 2)]</code></pre>
+<p><strong>Fizz Buzz</strong></p>
+<p>Write a program that prints the numbers from 1 to 100 and for multiples of ‘3’ print “Fizz” instead of the number and for the multiples of ‘5’ print “Buzz”.</p>
+<pre class="python"><code>for i in range(1,101):
+  if i % 3 == 0:
+    if i % 5 == 0:
+      print(&#39;Fizz Buzz&#39;)
+      continue
+    print(&#39;Fizz&#39;)
+    continue
+  if i % 5 == 0:
+    if i % 3 == 0:
+      print(&#39;Fizz Buzz&#39;)
+      continue
+    print(&#39;Buzz&#39;)
+    continue
+  else:
+    print(i)</code></pre>
+<pre><code>## 1
+## 2
+## Fizz
+## 4
+## Buzz
+## Fizz
+## 7
+## 8
+## Fizz
+## Buzz
+## 11
+## Fizz
+## 13
+## 14
+## Fizz Buzz
+## 16
+## 17
+## Fizz
+## 19
+## Buzz
+## Fizz
+## 22
+## 23
+## Fizz
+## Buzz
+## 26
+## Fizz
+## 28
+## 29
+## Fizz Buzz
+## 31
+## 32
+## Fizz
+## 34
+## Buzz
+## Fizz
+## 37
+## 38
+## Fizz
+## Buzz
+## 41
+## Fizz
+## 43
+## 44
+## Fizz Buzz
+## 46
+## 47
+## Fizz
+## 49
+## Buzz
+## Fizz
+## 52
+## 53
+## Fizz
+## Buzz
+## 56
+## Fizz
+## 58
+## 59
+## Fizz Buzz
+## 61
+## 62
+## Fizz
+## 64
+## Buzz
+## Fizz
+## 67
+## 68
+## Fizz
+## Buzz
+## 71
+## Fizz
+## 73
+## 74
+## Fizz Buzz
+## 76
+## 77
+## Fizz
+## 79
+## Buzz
+## Fizz
+## 82
+## 83
+## Fizz
+## Buzz
+## 86
+## Fizz
+## 88
+## 89
+## Fizz Buzz
+## 91
+## 92
+## Fizz
+## 94
+## Buzz
+## Fizz
+## 97
+## 98
+## Fizz
+## Buzz</code></pre>
+<p>Write a program with the same requirements as above but mutates a list, not prints it. Use if and elif to not mutate the list so many times.</p>
+<pre class="python"><code>def fizz_buzz(numbers):
+  &#39;&#39;&#39;
+  Given a list of integers:
+  1. replace all integers that are evenly divisible by 3 with &#39;fizz&#39;
+  2. replace all integers divisible by 5 with &#39;buzz&#39;
+  3. replace all integers divisible by both 3 and 5 with &#39;fizzbuzz&#39;
+  
+  &gt;&gt;&gt; numbers = [45, 22, 14, 65, 97, 72]
+  &gt;&gt;&gt; fizz_buzz(numbers)
+  &gt;&gt;&gt; numbers
+  [&#39;fizzbuzz&#39;, 22, 14, &#39;buzz&#39;, 97, &#39;fizz&#39;]
+  &#39;&#39;&#39;
+  for i in range(len(numbers)):
+    num = numbers[i]
+    if num % 3 == 0 and num % 5 == 0:
+      numbers[i] = &#39;fizzbuzz&#39;
+    elif num % 3 == 0:
+      numbers[i] = &#39;fizz&#39;
+    elif num % 5 == 0:
+      numbers[i] = &#39;buzz&#39;</code></pre>
+<pre class="python"><code>numbers = [1,2,3,4,5,6,7,8,9,10,15,45, 22, 14, 65, 97, 72]
+fizz_buzz(numbers)
+numbers</code></pre>
+<pre><code>## [1, 2, &#39;fizz&#39;, 4, &#39;buzz&#39;, &#39;fizz&#39;, 7, 8, &#39;fizz&#39;, &#39;buzz&#39;, &#39;fizzbuzz&#39;, &#39;fizzbuzz&#39;, 22, 14, &#39;buzz&#39;, 97, &#39;fizz&#39;]</code></pre>
+<p>Can also use <code>enumerate()</code> instead of range(len()). Difference is that <code>eumerate()</code> takes an iterable while range(len()) takes a number.</p>
+<pre class="python"><code>def fizz_buzz(numbers):
+  &#39;&#39;&#39;
+  Given a list of integers:
+  1. replace all integers that are evenly divisible by 3 with &#39;fizz&#39;
+  2. replace all integers divisible by 5 with &#39;buzz&#39;
+  3. replace all integers divisible by both 3 and 5 with &#39;fizzbuzz&#39;
+  
+  &gt;&gt;&gt; numbers = [45, 22, 14, 65, 97, 72]
+  &gt;&gt;&gt; fizz_buzz(numbers)
+  &gt;&gt;&gt; numbers
+  [&#39;fizzbuzz&#39;, 22, 14, &#39;buzz&#39;, 97, &#39;fizz&#39;]
+  &#39;&#39;&#39;
+  for i, num in enumerate(numbers):
+    num = numbers[i]
+    if num % 3 == 0 and num % 5 == 0:
+      numbers[i] = &#39;fizzbuzz&#39;
+    elif num % 3 == 0:
+      numbers[i] = &#39;fizz&#39;
+    elif num % 5 == 0:
+      numbers[i] = &#39;buzz&#39;</code></pre>
+<pre class="python"><code>numbers_1 = list(range(1,101))
+fizz_buzz(numbers_1)
+numbers_1</code></pre>
+<pre><code>## [1, 2, &#39;fizz&#39;, 4, &#39;buzz&#39;, &#39;fizz&#39;, 7, 8, &#39;fizz&#39;, &#39;buzz&#39;, 11, &#39;fizz&#39;, 13, 14, &#39;fizzbuzz&#39;, 16, 17, &#39;fizz&#39;, 19, &#39;buzz&#39;, &#39;fizz&#39;, 22, 23, &#39;fizz&#39;, &#39;buzz&#39;, 26, &#39;fizz&#39;, 28, 29, &#39;fizzbuzz&#39;, 31, 32, &#39;fizz&#39;, 34, &#39;buzz&#39;, &#39;fizz&#39;, 37, 38, &#39;fizz&#39;, &#39;buzz&#39;, 41, &#39;fizz&#39;, 43, 44, &#39;fizzbuzz&#39;, 46, 47, &#39;fizz&#39;, 49, &#39;buzz&#39;, &#39;fizz&#39;, 52, 53, &#39;fizz&#39;, &#39;buzz&#39;, 56, &#39;fizz&#39;, 58, 59, &#39;fizzbuzz&#39;, 61, 62, &#39;fizz&#39;, 64, &#39;buzz&#39;, &#39;fizz&#39;, 67, 68, &#39;fizz&#39;, &#39;buzz&#39;, 71, &#39;fizz&#39;, 73, 74, &#39;fizzbuzz&#39;, 76, 77, &#39;fizz&#39;, 79, &#39;buzz&#39;, &#39;fizz&#39;, 82, 83, &#39;fizz&#39;, &#39;buzz&#39;, 86, &#39;fizz&#39;, 88, 89, &#39;fizzbuzz&#39;, 91, 92, &#39;fizz&#39;, 94, &#39;buzz&#39;, &#39;fizz&#39;, 97, 98, &#39;fizz&#39;, &#39;buzz&#39;]</code></pre>
+<div id="doctest" class="section level1">
+<h1>Doctest</h1>
+<p>Doctest is a module that scans the Docstrings of functions looking for lines that look like input and output and uses them to test your function. The Doctest module can be either added into the script or run in concert with the script using command line arguments.</p>
+<div id="adding-to-the-script" class="section level2">
+<h2>Adding to the script</h2>
+<pre class="python"><code>if __name__ == &quot;__main__&quot;:
+    import doctest
+    doctest.testmod()</code></pre>
+</div>
+<div id="running-from-the-command-line" class="section level2">
+<h2>Running from the command line</h2>
+<p><code>python -m doctest -v temp.py</code></p>
+<p>The <code>-v</code> switch will print the tests and results that <em>Doctest</em> is running. Without the switch, it will run but not print anything to the console unless there is an error found.</p>
+</div>
+<div id="examples" class="section level2">
+<h2>Examples</h2>
+<pre class="python"><code>def factorial(n):
+    &quot;&quot;&quot;Return the factorial of n, an exact integer &gt;= 0.
+
+    &gt;&gt;&gt; [factorial(n) for n in range(6)]
+    [1, 1, 2, 6, 24, 120]
+    &gt;&gt;&gt; factorial(30)
+    265252859812191058636308480000000
+    &gt;&gt;&gt; factorial(-1)
+    Traceback (most recent call last):
+        ...
+    ValueError: n must be &gt;= 0
+
+    Factorials of floats are OK, but the float must be an exact integer:
+    &gt;&gt;&gt; factorial(30.1)
+    Traceback (most recent call last):
+        ...
+    ValueError: n must be exact integer
+    &gt;&gt;&gt; factorial(30.0)
+    265252859812191058636308480000000
+
+    It must also not be ridiculously large:
+    &gt;&gt;&gt; factorial(1e100)
+    Traceback (most recent call last):
+        ...
+    OverflowError: n too large
+    &quot;&quot;&quot;
+
+    import math
+    if not n &gt;= 0:
+        raise ValueError(&quot;n must be &gt;= 0&quot;)
+    if math.floor(n) != n:
+        raise ValueError(&quot;n must be exact integer&quot;)
+    if n+1 == n:  # catch a value like 1e300
+        raise OverflowError(&quot;n too large&quot;)
+    result = 1
+    factor = 2
+    while factor &lt;= n:
+        result *= factor
+        factor += 1
+    return result
+
+
+if __name__ == &quot;__main__&quot;:
+    import doctest
+    doctest.testmod()</code></pre>
+</div>
+</div>
+<div id="differences-between-two-lists" class="section level1">
+<h1>Differences between two lists</h1>
+<p>When comparing two <code>lists</code>, you can convert them into <code>sets</code> to eliminate any duplicate numbers. Also, lists can not be operated on using ‘-’ but <code>sets</code> can. Lists can however use the ‘+’ which just combines the two <code>lists</code> together.</p>
+<pre class="python"><code>list1 = [1,2,3,4]
+list2 = [3,3,4,5,6,7,7]
+set(list1) - set(list2)</code></pre>
+<pre><code>## {1, 2}</code></pre>
+<pre class="python"><code>list1 = [1,2,3,4]
+list2 = [3,3,4,5,6,7,7]
+set(list2) - set(list1)</code></pre>
+<pre><code>## {5, 6, 7}</code></pre>
+<pre class="python"><code>def diff(list1, list2):
+  return list(set(list1) - set(list2)) + list(set(list2) - set(list1))</code></pre>
+<pre class="python"><code>list1 = [1,2,3,4]
+list2 = [3,3,4,5,6,7,7]
+diff(list1, list2)</code></pre>
+<pre><code>## [1, 2, 5, 6, 7]</code></pre>
+<p>Without using <code>set()</code> we can use list comprehension</p>
+<pre class="python"><code>
+def diff2(list1, list2):
+    list_dif = [i for i in list1 + list2 if i not in list1 or i not in list2]
+    return list_dif</code></pre>
+<pre class="python"><code>list1 = [1,2,3,4]
+list2 = [3,3,4,5,6,7,7]
+list3 = diff2(list1, list2)
+print(list3)</code></pre>
+<pre><code>## [1, 2, 5, 6, 7, 7]</code></pre>
+<p>The difference between <code>diff()</code> and <code>diff2()</code> is that if you don’t convert the <code>lists</code> to <code>sets</code> then you keep both <code>7's</code> in <code>list2</code>.</p>
+</div>
+<div id="underscore-_" class="section level1">
+<h1>Underscore ’_’</h1>
+<p>The underscore can be used to ignore a single value</p>
+<pre class="python"><code>
+a, _, b = (1, 2, 3) # a = 1, b = 3
+print(a, b)</code></pre>
+<pre><code>## 1 3</code></pre>
+<p>It can also be used to ignore multiple values using the *(variable) used to assign multiple value to a variable as list while unpacking it’s called “Extended Unpacking”, only available in Python 3.x</p>
+<pre class="python"><code>a, *_, b = (7, 6, 5, 4, 3, 2, 1)
+print(a, b)</code></pre>
+<pre><code>## 7 1</code></pre>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
