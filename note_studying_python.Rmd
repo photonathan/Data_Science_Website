@@ -1,6 +1,6 @@
 ---
 title: "Studying Python"
-output: html_document
+output:
   html_document: 
     toc: yes
     toc_depth: 2
@@ -577,7 +577,7 @@ Introduced with PEP 255, generator functions are a special kind of function that
 
 This is a reasonable explanation, but would this design still work if the file is very large? What if the file is larger than the memory you have available? To answer this question, let’s assume that csv_reader() just opens the file and reads it into an array:
 
-```{python}
+```{python eval=FALSE}
 def csv_reader(file_name):
     file = open(file_name)
     result = file.read().split("\n")
@@ -591,7 +591,7 @@ In this case, open() returns a generator object that you can lazily iterate thro
 
 However you can turn *csv_reader()* into a generator function:
 
-```{python}
+```{python eval=FALSE}
 def csv_reader(file_name):
     for row in open(file_name, "r"):
         yield row
@@ -602,7 +602,7 @@ This version opens a file, loops through each line, and yields each row instead 
 
 You can also define a generator expression (also called a generator comprehension), which has a very similar syntax to list comprehensions. In this way, you can use the generator without calling a function:
 
-```{python}
+```{python eval=FALSE}
 csv_gen = (row for row in open(file_name))
 ```
 
@@ -660,8 +660,198 @@ for i in infinite_sequence():
         print(pal)
 ```
 
-# Understanding Generators
+## Understanding Generators
 
 *yield* indicates where a value is sent back to the caller, but unlike return, you don’t exit the function afterward.
 
 Instead, the state of the function is remembered. That way, when next() is called on a generator object (either explicitly or implicitly within a for loop), the previously yielded variable num is incremented, and then yielded again.
+
+You can create Generator Expressions without building and holding the entire object in memory before iteration. In other words, you’ll have no memory penalty when you use generator expressions. Take this example of squaring some numbers.
+
+```{python}
+nums_squared_lc = [num**2 for num in range(5)]
+nums_squared_lc
+nums_squared_gc = (num**2 for num in range(5))
+nums_squared_gc
+```
+
+## Profiling Generator Performance
+
+You learned earlier that generators are a great way to optimize memory. While an infinite sequence generator is an extreme example of this optimization, let’s amp up the number squaring examples you just saw and inspect the size of the resulting objects. You can do this with a call to sys.getsizeof():
+
+```{python}
+import sys
+nums_squared_lc = [i * 2 for i in range(10000)]
+sys.getsizeof(nums_squared_lc)
+
+nums_squared_gc = (i ** 2 for i in range(10000))
+print(sys.getsizeof(nums_squared_gc))
+```
+
+There is one thing to keep in mind, though. If the list is smaller than the running machine’s available memory, then list comprehensions can be faster to evaluate than the equivalent generator expression. To explore this, let’s sum across the results from the two comprehensions above. You can generate a readout with *cProfile.run():*
+
+```{python}
+import cProfile
+
+cProfile.run('sum([i * 2 for i in range(10000)])')
+
+cProfile.run('sum((i * 2 for i in range(10000)))')
+
+```
+
+If I wasn't running this in R, you could see that summing across all values in the list comprehension took about a third of the time as summing across the generator. If speed is an issue and memory isn’t, then a list comprehension is likely a better tool for the job.
+
+## Understanding the Python Yield Statement
+
+When you call a generator function or use a generator expression, you return a special iterator called a generator. You can assign this generator to a variable in order to use it. When you call special methods on the generator, such as next(), the code within the function is executed up to yield.
+
+When the Python yield statement is hit, the program suspends function execution and returns the yielded value to the caller. (In contrast, return stops function execution completely.) When a function is suspended, the state of that function is saved. This includes any variable bindings local to the generator, the instruction pointer, the internal stack, and any exception handling.
+
+This allows you to resume function execution whenever you call one of the generator’s methods. In this way, all function evaluation picks back up right after yield. You can see this in action by using multiple Python yield statements:
+
+```{python eval=FALSE}
+def multi_yield():
+    yield_str = "This will print the first string"
+    yield yield_str
+    yield_str = "This will print the second string"
+    yield yield_str
+
+multi_obj = multi_yield()
+print(next(multi_obj))
+
+print(next(multi_obj))
+
+print(next(multi_obj))
+
+```
+The following is the output, which returns a *traceback* in the end.
+
+```{python eval=FALSE}
+'This will print the first string'
+'This will print the second string'
+*StopIteration:* 
+```
+
+Take a closer look at that last call to next(). You can see that execution has blown up with a traceback. This is because generators, like all iterators, can be exhausted. Unless your generator is infinite, you can iterate through it one time only. Once all values have been evaluated, iteration will stop and the for loop will exit. If you used next(), then instead you’ll get an explicit StopIteration exception.
+
+## Using Advanced Generator Methods
+
+* .send()
+* .throw()
+* .close()
+
+## Creating Data Pipelines With Generators
+
+Data pipelines allow you to string together code to process large datasets or streams of data without maxing out your machine’s memory. Imagine that you have a large CSV file:
+
+Let’s think of a strategy:
+
+1. Read every line of the file.
+2. Split each line into a list of values.
+3. Extract the column names.
+4. Use the column names and lists to create a dictionary.
+5. Filter out the rounds you aren’t interested in.
+6. Calculate the total and average values for the rounds you are interested in.
+
+Normally, you can do this with a package like pandas, but you can also achieve this functionality with just a few generators. You’ll start by reading each line from the file with a generator expression:
+
+```{python}
+file_name = "data/TechCrunchcontinentalUSA.csv"
+lines = (line for line in open(file_name))
+# Then, you’ll use another generator expression in concert with the previous one to split each line into a list:
+list_line = (s.rstrip().split(",") for s in lines)
+```
+Here, you created the generator list_line, which iterates through the first generator lines. This is a common pattern to use when designing generator pipelines. Next, you’ll pull the column names out of techcrunch.csv. Since the column names tend to make up the first line in a CSV file, you can grab that with a short next() call:
+
+```{python}
+cols = next(list_line)
+```
+
+To sum this up, you first create a generator expression lines to yield each line in a file. Next, you iterate through that generator within the definition of another generator expression called list_line, which turns each line into a list of values. Then, you advance the iteration of list_line just once with next() to get a list of the column names from your CSV file.
+
+To help you filter and perform operations on the data, you’ll create dictionaries where the keys are the column names from the CSV:
+
+```{python}
+company_dicts = (dict(zip(cols, data)) for data in list_line)
+```
+
+This generator expression iterates through the lists produced by list_line. Then, it uses zip() and dict() to create the dictionary as specified above. Now, you’ll use a fourth generator to filter the funding round you want and pull raisedAmt as well:
+
+```{python}
+funding = (
+    int(company_dict["raisedAmt"])
+    for company_dict in company_dicts
+    if company_dict["round"] == "a"
+)
+```
+In this code snippet, your generator expression iterates through the results of company_dicts and takes the raisedAmt for any company_dict where the round key is "a".
+
+Remember, you aren’t iterating through all these at once in the generator expression. In fact, you aren’t iterating through anything until you actually use a for loop or a function that works on iterables, like sum(). In fact, call sum() now to iterate through the generators:
+
+```{python}
+total_series_a = sum(funding)
+print(f"Total series A fundraising: ${total_series_a}")
+```
+
+```{python eval=FALSE}
+file_name = "techcrunch.csv"
+lines = (line for line in open(file_name))
+list_line = (s.rstrip()split(",") for s in lines)
+cols = next(list_line)
+company_dicts = (dict(zip(cols, data)) for data in list_line)
+funding = (
+    int(company_dict["raisedAmt"])
+    for company_dict in company_dicts
+    if company_dict["round"] == "a"
+)
+total_series_a = sum(funding)
+print(f"Total series A fundraising: ${total_series_a}")
+```
+
+Putting this all together, you’ll produce the following script:
+
+This script pulls together every generator you’ve built, and they all function as one big data pipeline. Here’s a line by line breakdown:
+
+* Line 2 reads in each line of the file.
+* Line 3 splits each line into values and puts the values into a list.
+* Line 4 uses next() to store the column names in a list.
+* Line 5 creates dictionaries and unites them with a zip() call:
+* The keys are the column names cols from line 4.
+* The values are the rows in list form, created in line 3.
+* Line 6 gets each company’s series A funding amounts. It also filters out any other raised amount.
+* Line 11 begins the iteration process by calling sum() to get the total amount of series A funding found in the CSV.
+
+When you run this code on techcrunch.csv, you should find a total of $4,376,015,000 raised in series A funding rounds.
+
+Note: The methods for handling CSV files developed in this tutorial are important for understanding how to use generators and the Python yield statement. However, when you work with CSV files in Python, you should instead use the csv module included in Python’s standard library. This module has optimized methods for handling CSV files efficiently.
+
+## Using zip() in Python
+Python’s zip() function is defined as zip(*iterables). The function takes in iterables as arguments and returns an iterator. This iterator generates a series of tuples containing elements from each iterable. zip() can accept any type of iterable, such as files, lists, tuples, dictionaries, sets, and so on.
+
+### Passing n Arguments
+
+If you use zip() with n arguments, then the function will return an iterator that generates tuples of length n. To see this in action, take a look at the following code block:
+
+```{python}
+numbers = [1, 2, 3]
+letters = ['a', 'b', 'c']
+zipped = zip(numbers, letters)
+zipped  # Holds an iterator object
+
+type(zipped)
+
+list(zipped)
+```
+
+
+Here, you use zip(numbers, letters) to create an iterator that produces tuples of the form (x, y). In this case, the x values are taken from numbers and the y values are taken from letters. Notice how the Python zip() function returns an iterator. To retrieve the final list object, you need to use list() to consume the iterator.
+
+If you’re working with sequences like lists, tuples, or strings, then your iterables are guaranteed to be evaluated from left to right. This means that the resulting list of tuples will take the form [(numbers[0], letters[0]), (numbers[1], letters[1]),..., (numbers[n], letters[n])]. However, for other types of iterables (like sets), you might see some weird results:
+
+```{python}
+s1 = {2, 3, 1}
+s2 = {'b', 'a', 'c'}
+list(zip(s1, s2))
+```
+
+
