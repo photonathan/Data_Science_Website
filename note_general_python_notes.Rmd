@@ -3,6 +3,7 @@ title: "General Python Notes"
 output: html_document
 ---
 
+
 Get current working directory
 ```{python}
 import os

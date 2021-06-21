@@ -1,6 +1,14 @@
 ---
 title: "Studying Python"
 output: html_document
+  html_document: 
+    toc: yes
+    toc_depth: 2
+    toc_float: yes
+    highlight: zenburn
+    code_download: true
+    includes:
+      in_header: header.html
 ---
 
 `enumerate()` is a generator that returns a running index as well as the actual element or item in the container. Optinal argument includes the start parameter (number the index should start at)
@@ -437,3 +445,223 @@ animals.sort(key = lambda animal: animal['age'], reverse=True)
 animals
 ```
 
+# Set()
+
+* Sets are unordered
+* Set elements are unique (no duplicates)
+* A set may be modified but the elements contained in the set must be of an immutable type
+
+```{python}
+s = 'quux'
+list(s)
+set(s)
+```
+
+```{python}
+x = {'foo', 'bar', 'baz', 'foo', 'qux'}
+x
+```
+
+```{python}
+set('foo')
+```
+
+```{python}
+x = {}
+type(x)
+
+x = set()
+type(x)
+```
+Don’t forget that set elements must be immutable. For example, a tuple may be included in a set:
+
+```{python}
+x = {42, 'foo', (1, 2, 3), 3.14159}
+x
+
+```
+
+But lists and dictionaries are mutable, so they can’t be set elements:
+
+```{python eval=FALSE}
+a = [1, 2, 3]
+{a}
+
+d = {'a': 1, 'b': 2}
+{d}
+
+```
+
+```{python}
+x = {'foo', 'bar', 'baz'}
+
+len(x)
+
+'bar' in x
+
+'qux' in x
+```
+
+In Python, set union can be performed with the | operator:
+
+```{python}
+x1 = {'foo', 'bar', 'baz'}
+x2 = {'baz', 'qux', 'quux'}
+x1 | x2
+```
+
+Set union can also be obtained with the .union() method. The method is invoked on one of the sets, and the other is passed as an argument
+
+```{python}
+x1.union(x2)
+```
+
+When you use the | operator, both **operands must be sets**. The .union() method, on the other hand, will take any iterable as an argument, convert it to a set, and then perform the union.
+
+
+```{python}
+x1.union(('baz', 'qux', 'quux'))
+```
+
+More than two sets may be specified with either the operator or the method:
+
+```{python}
+a = {1, 2, 3, 4}
+b = {2, 3, 4, 5}
+c = {3, 4, 5, 6}
+d = {4, 5, 6, 7}
+
+a.union(b, c, d)
+
+
+a | b | c | d
+```
+The resulting set contains only elements that are present in all of the specified sets.
+
+```{python}
+a = {1, 2, 3, 4}
+b = {2, 3, 4, 5}
+c = {3, 4, 5, 6}
+d = {4, 5, 6, 7}
+
+a.intersection(b, c, d)
+
+
+a & b & c & d
+```
+
+x1.difference(x2) and x1 - x2 return the set of all elements that are in x1 but not in x2:
+
+```{python}
+
+x1 = {'foo', 'bar', 'baz'}
+x2 = {'baz', 'qux', 'quux'}
+
+x1.difference(x2)
+
+
+x1 - x2
+```
+
+# Frozen Sets
+
+Srozenset, which is in all respects exactly like a set, except that a frozenset is immutable. You can perform non-modifying operations on a frozenset but methods that attempt to modify a frozenset fail
+
+# How to Use Generators and yield in Python
+
+Have you ever had to work with a dataset so large that it overwhelmed your machine’s memory? Or maybe you have a complex function that needs to maintain an internal state every time it’s called, but the function is too small to justify creating its own class. In these cases and more, generators and the Python yield statement are here to help.
+
+## Using Generators
+
+Introduced with PEP 255, generator functions are a special kind of function that return a lazy iterator. These are objects that you can loop over like a list. However, unlike lists, lazy iterators do not store their contents in memory. 
+
+This is a reasonable explanation, but would this design still work if the file is very large? What if the file is larger than the memory you have available? To answer this question, let’s assume that csv_reader() just opens the file and reads it into an array:
+
+```{python}
+def csv_reader(file_name):
+    file = open(file_name)
+    result = file.read().split("\n")
+    return result
+```
+
+
+This function opens a given file and uses file.read() along with .split() to add each line as a separate element to a list. If you were to use this version of csv_reader() in the row counting code block you saw further up, then you’d get the following output: *MemoryError*
+
+In this case, open() returns a generator object that you can lazily iterate through line by line. However, file.read().split() loads everything into memory at once, causing the *MemoryError*.
+
+However you can turn *csv_reader()* into a generator function:
+
+```{python}
+def csv_reader(file_name):
+    for row in open(file_name, "r"):
+        yield row
+
+```
+
+This version opens a file, loops through each line, and yields each row instead of returning it.
+
+You can also define a generator expression (also called a generator comprehension), which has a very similar syntax to list comprehensions. In this way, you can use the generator without calling a function:
+
+```{python}
+csv_gen = (row for row in open(file_name))
+```
+
+* Using **yield** will result in a generator object.
+* Using **return** will result in the first line of the file only.
+
+## Generating an Infinite Sequence
+
+In Python, to get a finite sequence, you call range() and evaluate it in a list context:
+
+```{python}
+a = range(5)
+list(a)
+```
+
+Generating an infinite sequence, however, will require the use of a generator, since your computer memory is finite:
+
+```{python}
+def infinite_sequence():
+    num = 0
+    while True:
+        yield num
+        num += 1
+
+```
+
+## Detecting Palindromes
+
+
+```{python}
+def is_palindrome(num):
+    # Skip single-digit inputs
+    # Floor division returns not the remainder like % but the whole number.
+    if num // 10 == 0:
+        return False
+    temp = num
+    reversed_num = 0
+
+    while temp != 0:
+        reversed_num = (reversed_num * 10) + (temp % 10)
+        temp = temp // 10
+
+    if num == reversed_num:
+        return num
+    else:
+        return False
+```
+
+Don’t worry too much about understanding the underlying math in this code. Just note that the function takes an input number, reverses it, and checks to see if the reversed number is the same as the original. Now you can use your infinite sequence generator to get a running list of all numeric palindromes:
+
+```{python eval=FALSE}
+for i in infinite_sequence():
+    pal = is_palindrome(i)
+    if pal:
+        print(pal)
+```
+
+# Understanding Generators
+
+*yield* indicates where a value is sent back to the caller, but unlike return, you don’t exit the function afterward.
+
+Instead, the state of the function is remembered. That way, when next() is called on a generator object (either explicitly or implicitly within a for loop), the previously yielded variable num is incremented, and then yielded again.
