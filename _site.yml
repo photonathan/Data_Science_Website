@@ -44,6 +44,8 @@ navbar:
           href: note_r_virutal_env.html
         - text: "Studying Python"
           href: note_studying_python.html
+        - text: "Studying Python 2"
+          href: note_studying_python_2.html
     - text: "Photography"
       href: photography.html
     - text: "About"
