@@ -345,4 +345,53 @@ dd
 
 ```
 
+You can use defaultdict along with list to group the items in a sequence or a collection. Suppose that you’ve retrieved the following data from your company’s database:
+
+```{python}
+
+import pandas as pd
+
+d = {'Department': ['Sales', 'Sales', 'Accounting', 'Marketing', 'Marketing'], 'Employee Name': ['John Doe', 'Martin Smith', 'Jane Doe', 'Elizabeth Smith', 'Adam Doe']}
+
+df = pd.DataFrame(data=d)
+
+df
+```
+
+With this data, you create an initial list of tuple objects like the following:
+
+```{python}
+dep = [('Sales', 'John Doe'),
+       ('Sales', 'Martin Smith'),
+       ('Accounting', 'Jane Doe'),
+       ('Marketing', 'Elizabeth Smith'),
+       ('Marketing', 'Adam Doe')]
+```
+
+Now, you need to create a dictionary that groups the employees by department. To do this, you can use a defaultdict as follows:
+
+```{python}
+from collections import defaultdict
+
+dep_dd = defaultdict(list)
+for department, employee in dep:
+    dep_dd[department].append(employee)
+
+dep_dd
+```
+Here, you create a defaultdict called dep_dd and use a for loop to iterate through your dep list. The statement dep_dd[department].append(employee) creates the keys for the departments, initializes them to an empty list, and then appends the employees to each department. Once you run this code, your dep_dd will look something like this:
+
+In this example, you group the employees by their department using a defaultdict with .default_factory set to list. To do this with a regular dictionary, you can use dict.setdefault() as follows:
+
+```{python}
+dep_d = dict()
+for department, employee in dep:
+    dep_d.setdefault(department, []).append(employee)
+
+```
+
+This code is straightforward, and you’ll find similar code quite often in your work as a Python coder. However, the defaultdict version is arguably more readable, and for large datasets, it can also be a lot faster and more efficient. So, if speed is a concern for you, then you should consider using a defaultdict instead of a standard dict.
+
+More info on defaultdict can be found [here](https://realpython.com/python-defaultdict/#grouping-unique-items)
+
 

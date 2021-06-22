@@ -27,3 +27,11 @@ use_condaenv("r-reticulate")
 
 ```
 
+# Configuration Info
+
+You can use the `py_config()` function to query for information about the specific version of Python in use as well as a list of other Python versions discovered on the system
+
+You can also use the `py_discover_config()` function to see what version of Python will be used without actually loading Python
+
+
+

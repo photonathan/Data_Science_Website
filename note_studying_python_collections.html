@@ -11,7 +11,7 @@
 
 
 
-<title>Create and Activate Virtual Enviornmnet using R/Reticulate</title>
+<title>Studying Python collections</title>
 
 <script src="site_libs/header-attrs-2.8/header-attrs.js"></script>
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
@@ -323,6 +323,9 @@ $(document).ready(function () {
     <li>
       <a href="note_studying_python_2.html">Studying Python 2</a>
     </li>
+    <li>
+      <a href="note_studying_python_collections.html">Studying Python collections</a>
+    </li>
   </ul>
 </li>
 <li>
@@ -345,30 +348,78 @@ $(document).ready(function () {
 
 
 
-<h1 class="title toc-ignore">Create and Activate Virtual Enviornmnet using R/Reticulate</h1>
+<h1 class="title toc-ignore">Studying Python collections</h1>
 
 </div>
 
 
-<p><code>conda_list()</code> List all available conda environments</p>
-<p><code>conda_create()</code> Create a new conda environment</p>
-<p><code>conda_install()</code> Install a package within a conda environment</p>
-<p><code>conda_remove()</code> Remove individual packages or an entire conda environment</p>
-<pre class="r"><code>library(reticulate)
-
-# create a new environment 
-conda_create(&quot;r-reticulate&quot;)
-
-# install SciPy
-conda_install(&quot;r-reticulate&quot;, &quot;scipy&quot;)
-# can also use py_install(&#39;&lt;package&gt;&#39;) to install to the current conda env
-
-# indicate that we want to use a specific condaenv
-use_condaenv(&quot;r-reticulate&quot;)</code></pre>
-<div id="configuration-info" class="section level1">
-<h1>Configuration Info</h1>
-<p>You can use the <code>py_config()</code> function to query for information about the specific version of Python in use as well as a list of other Python versions discovered on the system</p>
-<p>You can also use the <code>py_discover_config()</code> function to see what version of Python will be used without actually loading Python</p>
+<div id="counter" class="section level1">
+<h1>Counter</h1>
+<p>class collections.Counter([iterable-or-mapping])</p>
+<p>A Counter is a dict subclass for counting hashable objects. It is a collection where elements are stored as dictionary keys and their counts are stored as dictionary values. Counts are allowed to be any integer value including zero or negative counts</p>
+<pre class="python"><code>from collections import Counter
+c = Counter()                           # a new, empty counter
+c</code></pre>
+<pre><code>## Counter()</code></pre>
+<pre class="python"><code>c = Counter(&#39;gallahad&#39;)                 # a new counter from an iterable
+c</code></pre>
+<pre><code>## Counter({&#39;a&#39;: 3, &#39;l&#39;: 2, &#39;g&#39;: 1, &#39;h&#39;: 1, &#39;d&#39;: 1})</code></pre>
+<pre class="python"><code>c = Counter({&#39;red&#39;: 4, &#39;blue&#39;: 2})      # a new counter from a mapping
+c</code></pre>
+<pre><code>## Counter({&#39;red&#39;: 4, &#39;blue&#39;: 2})</code></pre>
+<pre class="python"><code>c = Counter(cats=4, dogs=8)             # a new counter from keyword 
+c</code></pre>
+<pre><code>## Counter({&#39;dogs&#39;: 8, &#39;cats&#39;: 4})</code></pre>
+<p>Counter objects have a dictionary interface except that they return a zero count for missing items instead of raising a KeyError</p>
+<pre class="python"><code>c = Counter([&#39;eggs&#39;, &#39;ham&#39;])
+c[&#39;bacon&#39;]                              # count of a missing element is zero</code></pre>
+<pre><code>## 0</code></pre>
+<p>Setting a count to zero does not remove an element from a counter. Use del to remove it entirely:</p>
+<pre class="python"><code>c[&#39;sausage&#39;] = 0                        # counter entry with a zero count
+del c[&#39;sausage&#39;]                        # del actually removes the entry</code></pre>
+<p>Counter objects support three methods beyond those available for all dictionaries:</p>
+<div id="elements" class="section level2">
+<h2>elements()</h2>
+<pre class="python"><code>c = Counter(a=4, b=2, c=0, d=-2)
+sorted(c.elements())</code></pre>
+<pre><code>## [&#39;a&#39;, &#39;a&#39;, &#39;a&#39;, &#39;a&#39;, &#39;b&#39;, &#39;b&#39;]</code></pre>
+</div>
+<div id="most_common" class="section level2">
+<h2>most_common()</h2>
+<p>Return a list of the n most common elements and their counts from the most common to the least. If n is omitted or None, most_common() returns all elements in the counter. Elements with equal counts are ordered in the order first encountered:</p>
+<pre class="python"><code>Counter(&#39;abracadabra&#39;).most_common(3)</code></pre>
+<pre><code>## [(&#39;a&#39;, 5), (&#39;b&#39;, 2), (&#39;r&#39;, 2)]</code></pre>
+</div>
+<div id="subtractiterable-or-mapping" class="section level2">
+<h2>subtract([iterable-or-mapping])</h2>
+<p>Elements are subtracted from an iterable or from another mapping (or counter). Like dict.update() but subtracts counts instead of replacing them. Both inputs and outputs may be zero or negative.</p>
+<pre class="python"><code>c = Counter(a=4, b=2, c=0, d=-2)
+d = Counter(a=1, b=2, c=3, d=4)
+c.subtract(d)
+c</code></pre>
+<pre><code>## Counter({&#39;a&#39;: 3, &#39;b&#39;: 0, &#39;c&#39;: -3, &#39;d&#39;: -6})</code></pre>
+<p>Common patterns for working with Counter objects:</p>
+<pre class="python"><code>sum(c.values())                 # total of all counts
+c.clear()                       # reset all counts
+list(c)                         # list unique elements
+set(c)                          # convert to a set
+dict(c)                         # convert to a regular dictionary
+c.items()                       # convert to a list of (elem, cnt) pairs
+Counter(dict(list_of_pairs))    # convert from a list of (elem, cnt) pairs
+c.most_common()[:-n-1:-1]       # n least common elements
++c                              # remove zero and negative counts</code></pre>
+<p>Several mathematical operations are provided for combining Counter objects to produce multisets (counters that have counts greater than zero). Addition and subtraction combine counters by adding or subtracting the counts of corresponding elements. Intersection and union return the minimum and maximum of corresponding counts. Each operation can accept inputs with signed counts, but the output will exclude results with counts of zero or less.</p>
+<pre class="python"><code>c = Counter(a=3, b=1)
+d = Counter(a=1, b=2)
+c + d                       # add two counters together:  c[x] + d[x]</code></pre>
+<pre><code>## Counter({&#39;a&#39;: 4, &#39;b&#39;: 3})</code></pre>
+<pre class="python"><code>c - d                       # subtract (keeping only positive counts)</code></pre>
+<pre><code>## Counter({&#39;a&#39;: 2})</code></pre>
+<pre class="python"><code>c &amp; d                       # intersection:  min(c[x], d[x]) </code></pre>
+<pre><code>## Counter({&#39;a&#39;: 1, &#39;b&#39;: 1})</code></pre>
+<pre class="python"><code>c | d                       # union:  max(c[x], d[x])</code></pre>
+<pre><code>## Counter({&#39;a&#39;: 3, &#39;b&#39;: 2})</code></pre>
+</div>
 </div>
 
 

@@ -46,6 +46,8 @@ navbar:
           href: note_studying_python.html
         - text: "Studying Python 2"
           href: note_studying_python_2.html
+        - text: "Studying Python collections"
+          href: note_studying_python_collections.html
     - text: "Photography"
       href: photography.html
     - text: "About"

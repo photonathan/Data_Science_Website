@@ -1,0 +1,92 @@
+---
+title: "Studying Python collections"
+output: html_document
+---
+
+# Counter
+
+class collections.Counter([iterable-or-mapping])
+
+A Counter is a dict subclass for counting hashable objects. It is a collection where elements are stored as dictionary keys and their counts are stored as dictionary values. Counts are allowed to be any integer value including zero or negative counts
+
+```{python}
+from collections import Counter
+c = Counter()                           # a new, empty counter
+c
+c = Counter('gallahad')                 # a new counter from an iterable
+c
+c = Counter({'red': 4, 'blue': 2})      # a new counter from a mapping
+c
+c = Counter(cats=4, dogs=8)             # a new counter from keyword 
+c
+```
+
+Counter objects have a dictionary interface except that they return a zero count for missing items instead of raising a KeyError 
+
+```{python}
+c = Counter(['eggs', 'ham'])
+c['bacon']                              # count of a missing element is zero
+```
+Setting a count to zero does not remove an element from a counter. Use del to remove it entirely:
+
+```{python}
+c['sausage'] = 0                        # counter entry with a zero count
+del c['sausage']                        # del actually removes the entry
+
+```
+
+Counter objects support three methods beyond those available for all dictionaries:
+
+## elements()
+
+```{python}
+c = Counter(a=4, b=2, c=0, d=-2)
+sorted(c.elements())
+```
+
+## most_common()
+
+Return a list of the n most common elements and their counts from the most common to the least. If n is omitted or None, most_common() returns all elements in the counter. Elements with equal counts are ordered in the order first encountered:
+
+```{python}
+Counter('abracadabra').most_common(3)
+```
+
+## subtract([iterable-or-mapping])
+
+Elements are subtracted from an iterable or from another mapping (or counter). Like dict.update() but subtracts counts instead of replacing them. Both inputs and outputs may be zero or negative.
+
+```{python}
+c = Counter(a=4, b=2, c=0, d=-2)
+d = Counter(a=1, b=2, c=3, d=4)
+c.subtract(d)
+c
+```
+
+Common patterns for working with Counter objects:
+
+```{python eval=FALSE}
+sum(c.values())                 # total of all counts
+c.clear()                       # reset all counts
+list(c)                         # list unique elements
+set(c)                          # convert to a set
+dict(c)                         # convert to a regular dictionary
+c.items()                       # convert to a list of (elem, cnt) pairs
+Counter(dict(list_of_pairs))    # convert from a list of (elem, cnt) pairs
+c.most_common()[:-n-1:-1]       # n least common elements
++c                              # remove zero and negative counts
+```
+
+Several mathematical operations are provided for combining Counter objects to produce multisets (counters that have counts greater than zero). Addition and subtraction combine counters by adding or subtracting the counts of corresponding elements. Intersection and union return the minimum and maximum of corresponding counts. Each operation can accept inputs with signed counts, but the output will exclude results with counts of zero or less.
+
+```{python}
+c = Counter(a=3, b=1)
+d = Counter(a=1, b=2)
+c + d                       # add two counters together:  c[x] + d[x]
+
+c - d                       # subtract (keeping only positive counts)
+
+c & d                       # intersection:  min(c[x], d[x]) 
+
+c | d                       # union:  max(c[x], d[x])
+```
