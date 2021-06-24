@@ -48,6 +48,10 @@ navbar:
           href: note_studying_python_2.html
         - text: "Studying Python collections"
           href: note_studying_python_collections.html
+        - text: "Studying Python string module"
+          href: note_studying_python_string_module.html
+        - text: "Studying Python itertools"
+          href: note_studying_python_itertools.html
     - text: "Photography"
       href: photography.html
     - text: "About"

@@ -1,0 +1,24 @@
+---
+title: "Python itertools"
+output: html_document
+---
+
+The functions in itertools “operate” on iterators to produce more complex iterators. Consider, for example, the built-in zip() function, which takes any number of iterables as arguments and returns an iterator over tuples of their corresponding elements:
+
+```{python}
+list(zip([1, 2, 3], ['a', 'b', 'c']))
+```
+
+The map() built-in function is another “iterator operator” that, in its simplest form, applies a single-parameter function to each element of an iterable one element at a time:
+
+```{python}
+list(map(len, ['abc', 'de', 'fghi']))
+```
+
+Since iterators are iterable, you can compose zip() and map() to produce an iterator over combinations of elements in more than one iterable. For example, the following sums corresponding elements of two lists:
+
+```{python}
+list(map(sum, zip([1, 2, 3], [4, 5, 6])))
+
+```
+

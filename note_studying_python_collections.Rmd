@@ -90,3 +90,110 @@ c & d                       # intersection:  min(c[x], d[x])
 
 c | d                       # union:  max(c[x], d[x])
 ```
+
+# collections.deque
+
+```{python}
+from collections import deque
+d = deque('ghi')
+for elem in d:
+  print(elem.upper())
+
+```
+
+```{python}
+d.append('j')
+d
+d.appendleft('f')
+d
+d.pop()
+d.popleft()
+list(d)
+```
+
+```{python}
+d[0]
+d[-1]
+list(reversed(d))
+'h' in d
+```
+
+```{python}
+d.extend('jkl')
+d
+d.rotate(1) # rotation to the right
+d
+d.rotate(-1) # rotation to the left
+d
+
+```
+```{python}
+d.clear()
+d
+d.extendleft('abc') # reverses the input order
+d
+```
+
+# collectsion.namedtuple
+
+Creates a *subclass* of tuple. The first argument to *namedtuple()* will be the name of the subclass. The new subclass is used to create tuple-like objects that have fields accessible by attribute lookup as well as being indexable and iterable.
+
+```{python}
+from collections import namedtuple
+Car = namedtuple("Car", ["color", "make", "model", "mileage"])
+my_car = Car(color="midnight silver", make="Tesla", model="Model Y", mileage=5)
+my_car.color
+```
+
+```{python}
+Point = namedtuple('Point', ['x','y'])
+p = Point(11, y=22)
+p
+p[0] + p[1]
+```
+Unpack like a regular tuple
+
+```{python}
+x, y = p 
+x,y
+p.x + p.y # fields also accessible by name
+```
+
+Named tuples are especially useful for assigning field names to result tuples returned by the csv or sqlite3 modules:
+
+```{python eval=FALSE}
+EmployeeRecord = namedtuple('EmployeeRecord', 'name, age, title, department, paygrade')
+
+import csv
+for emp in map(EmployeeRecord._make, csv.reader(open("employees.csv", "rb"))):
+    print(emp.name, emp.title)
+
+import sqlite3
+conn = sqlite3.connect('/companydata')
+cursor = conn.cursor()
+cursor.execute('SELECT name, age, title, department, paygrade FROM employees')
+for emp in map(EmployeeRecord._make, cursor.fetchall()):
+    print(emp.name, emp.title)
+```
+Class method that makes a new instance from an existing sequence or iterable.
+
+```{python}
+t = [11, 22]
+Point._make(t)
+```
+
+Return a new dict which maps field names to their corresponding values:
+
+```{python}
+p = Point(x=11, y=22)
+p._asdict()
+```
+
+Return a new instance of the named tuple replacing specified fields with new values
+
+```{python}
+p = Point(x=11, y=22)
+p._replace(x=33)
+```
+
+

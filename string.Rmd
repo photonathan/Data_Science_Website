@@ -1,0 +1,23 @@
+---
+title: "Pythons Standard Library"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{python}
+import string
+
+string.ascii_letters
+string.ascii_uppercase
+string.ascii_lowercase
+string.digits
+string.hexdigits
+string.octdigits
+string.punctuation
+string.printable
+string.whitespace
+```
+
