@@ -1,0 +1,51 @@
+---
+title: "NGS alignment and variant calling"
+output: html_document
+---
+
+# SNP
+
+A point mutation in which one base is swapped for another
+    
+    AATTAGCCATTA
+    AATTAGTCATTA
+
+## Some causes
+
+    Damination
+      cytosine -> uracil
+      5-methylcytosine -> thymine
+      guanine -> xanthine (mispairs to A-T bp)
+      adenine -> hypoxanthine (mispairs to G-C bp)
+
+# INDEL
+
+A mutation that results from the gain or loss of sequence
+
+    AATTAGCCATTA
+    AATTA--CATTA
+
+# Seqencing by synthesis (illumina)
+
+## Millions of reactions and the reversible terminators
+
+The Solexa/Illumina sequencing method is similar to Sanger sequencing, but it uses modified dNTPs containing a terminator which blocks further polymerization- so only a single base can be added by a polymerase enzyme to each growing DNA copy strand. The sequencing reaction is conducted simultaneously on a very large number (many millions in fact) of different template molecules spread out on a solid surface. The terminator also contains a fluorescent label, which can be detected by a camera. Only a single fluorescent color is used, so each of the four bases must be added in a separate cycle of DNA synthesis and imaging. Following the addition of the four dNTPs to the templates, the images are recorded and the terminators are removed. This chemistry is called “reversible terminators”. Finally, another four cycles of dNTP additions are initiated. Since single bases are added to all templates in a uniform fashion, the sequencing process produces a set of DNA sequence reads of uniform length.
+
+![](http://s3.amazonaws.com/bitesizebio/content/uploads/2012/08/figure1.png)
+
+Although the fluorescent imaging system used in Illumina sequencers is not sensitive enough to detect the signal from a single template molecule, the major innovation of the Illumina method is the amplification of template molecules on a solid surface. The DNA sample is prepared into a “sequencing library” by the fragmentation into pieces each around 200 bases long.  Custom adapters are added to each end and the library is flowed across a solid surface (the “flow cell”) and the template fragments bind to this surface. Following this, a solid phase “bridge amplification” PCR process (cluster generation) creates approximately one million copies of each template in tight physical clusters on the flowcell surface.
+
+## What can go wrong?
+
+1. Input artifacts, problems with library prep
+  + replication in PCR has no error-correction (→ SNPs)
+  + no quaternary structures (e.g. clamp) to prevent slippage (→ indels)
+  + chimeras…
+  +duplicates (worse if they are errors)
+2. Sequencing-by-synthesis
+  + phasing of step
+    ++ synthesis reaction efficiency is not 100%
+    ++ particularly bad in A/T homopolymers
+  + certain context specific errors
+    ++ vary by sequencing protocol, device
+    ++ often strand-specific

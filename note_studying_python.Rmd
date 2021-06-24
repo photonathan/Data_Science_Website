@@ -854,4 +854,22 @@ s2 = {'b', 'a', 'c'}
 list(zip(s1, s2))
 ```
 
+# When to use median
+
+But then, what are the advantages of the median?
+To illustrate this, we return to the five systolic blood pressure values used before:
+
+`142, 124, 121, 151, 132.`
+
+We assume that 151 is a correct value, but that a device failure leads to the false measurement of 171. Let’s see what happens to mean and median?
+
+The mean of the resulting five values now is 138 instead of 134, as calculated from the original data, thus showing a considerable effect of the incorrect measurement.
+
+To derive the median, we sort the data again by size:
+
+`121, 124, 132, 142, 171.`
+
+As before, the value 132 is in the center of the data row, so the median actually is unaltered by the false measurement.
+
+That is why the median is called “robust against outliers“, whereas the mean actually is “sensitive to outliers“.
 
