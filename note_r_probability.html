@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Probability</title>
+
+<script src="site_libs/header-attrs-2.8/header-attrs.js"></script>
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.tab('show');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Nathan's Projects</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Visualizing Arlington Bikeometers
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="part_1_the_plan.html">Part 1: The Plan</a>
+    </li>
+    <li>
+      <a href="part_2_query_the_api.html">Part 2: Query the API</a>
+    </li>
+    <li>
+      <a href="part_3_setup_your_database.html">Part 3: Setup and Connect Your Database</a>
+    </li>
+    <li>
+      <a href="part_4_save_the_data_in_a_mysql_database.html">Part 4: Save the Data in Your Local MySQL Database</a>
+    </li>
+    <li>
+      <a href="part_5_picking_bikeometers_to_graph.html">Part 5: Picking Which Bikeometers to Graph</a>
+    </li>
+    <li>
+      <a href="part_6_creating_initial_visualizations.html">Part 6: Creating the Visualizations</a>
+    </li>
+    <li>
+      <a href="part_7_investigating_bikometer_gps_locations.html">Part 7: Investigating Bikeometer GPS Locations</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Bioinformatics Notes
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="downloading_and_parsing_a_genome.html">Downloading and Parsing a Genome</a>
+    </li>
+    <li>
+      <a href="Running-BLAST-over-the-internet.html">Running BLAST Over the Internet</a>
+    </li>
+    <li>
+      <a href="communicating_with-the_outside.html">Communicating with the Outside</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Notes
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="note_fixing_pyrtools_error.html">Fixing rpytools error</a>
+    </li>
+    <li>
+      <a href="note_knit_rmarkdown_db.html">Publish Rmarkdown Documents With Database Connections Without Exposing Credentials</a>
+    </li>
+    <li>
+      <a href="note_general_r_notes.html">General R Notes</a>
+    </li>
+    <li>
+      <a href="note_conda_virutal_env.html">Create and Activate Virtual Enviornmnet using Spyder/Conda</a>
+    </li>
+    <li>
+      <a href="note_general_python_notes.html">General Python Notes</a>
+    </li>
+    <li>
+      <a href="note_r_virutal_env.html">Create and Activate Virtual Enviornmnet using R/Reticulate</a>
+    </li>
+    <li>
+      <a href="note_studying_python.html">Studying Python</a>
+    </li>
+    <li>
+      <a href="note_studying_python_2.html">Studying Python 2</a>
+    </li>
+    <li>
+      <a href="note_studying_python_collections.html">Studying Python collections</a>
+    </li>
+    <li>
+      <a href="note_studying_python_string_module.html">Studying Python string module</a>
+    </li>
+    <li>
+      <a href="note_studying_python_itertools.html">Studying Python itertools</a>
+    </li>
+  </ul>
+</li>
+<li>
+  <a href="photography.html">Photography</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/photonathan">Github</a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Probability</h1>
+
+</div>
+
+
+<div id="discrete-probability" class="section level1">
+<h1>Discrete Probability</h1>
+<pre class="r"><code>beads &lt;- rep( c(&#39;red&#39;, &#39;blue&#39;), times = c(2,3))
+beads</code></pre>
+<pre><code>## [1] &quot;red&quot;  &quot;red&quot;  &quot;blue&quot; &quot;blue&quot; &quot;blue&quot;</code></pre>
+<p>Produces a random outcome</p>
+<pre class="r"><code>sample( beads,1)</code></pre>
+<pre><code>## [1] &quot;blue&quot;</code></pre>
+<p>Goal is to repeat the experiment a large number of times to give an accurate probability if the experiment was repeated infinity.</p>
+<p>We can use a Monte Carlo simulation. To do this, we can use the <code>replicate()</code> function to repeat the same task any number of times we want.</p>
+<pre class="r"><code>B &lt;- 10000
+events &lt;- replicate(B, sample(beads,1))</code></pre>
+<p>We can create a table of our outcomes using the <code>table()</code> function as well as see the proportion by using <code>prop.table()</code>.</p>
+<pre class="r"><code>tab &lt;- table(events)
+tab</code></pre>
+<pre><code>## events
+## blue  red 
+## 5890 4110</code></pre>
+<pre class="r"><code>prop.table(tab)</code></pre>
+<pre><code>## events
+##  blue   red 
+## 0.589 0.411</code></pre>
+<p>We actually don’t have to use the <code>replicate()</code> function for this example because the <code>sample()</code> function actually has an argument that permits us to pick more than one element form the urn <strong>with replacement</strong>.</p>
+<pre class="r"><code>events &lt;- sample(beads, B, replace=TRUE)
+prop.table(table(events))</code></pre>
+<pre><code>## events
+##   blue    red 
+## 0.6085 0.3915</code></pre>
+<p>In R, applying the <code>mean()</code> function to a logical vector returns the proportion of elements that are <em>TRUE</em>. It is very common to use the <code>mean()</code> function in this way to calculate probabilities and we will do so throughout the course.</p>
+<p>Suppose you have the vector beads from a previous video:</p>
+<pre class="r"><code>beads &lt;- rep(c(&quot;red&quot;, &quot;blue&quot;), times = c(2,3))
+beads</code></pre>
+<pre><code>## [1] &quot;red&quot;  &quot;red&quot;  &quot;blue&quot; &quot;blue&quot; &quot;blue&quot;</code></pre>
+<p>To find the probability of drawing a blue bead at random, you can run:</p>
+<pre class="r"><code>mean(beads == &quot;blue&quot;)</code></pre>
+<pre><code>## [1] 0.6</code></pre>
+<p>This code is broken down into steps inside R. First, R evaluates the logical statement <code>beads == "blue"</code>, which generates the vector:</p>
+<p><code>FALSE FALSE TRUE TRUE TRUE</code></p>
+<p>When the mean function is applied, R coerces the logical values to numeric values, changing TRUE to 1 and FALSE to 0:</p>
+<p><code>0 0 1 1 1</code></p>
+<p>The mean of the zeros and ones thus gives the proportion of TRUE values. As we have learned and will continue to see, probabilities are directly related to the proportion of events that satisfy a requirement.</p>
+</div>
+<div id="probability-distributions" class="section level1">
+<h1>Probability distributions</h1>
+<p>Defining a distribution for categorical outcomes is straight forward. We assign a probability to each category.</p>
+<p>Two events are independent if the outcome of one does not affect the outcome of the other e.g. coin toss or picking beads with replacement.</p>
+<p>When events are not independent, conditional probabilities are useful and necessary to make correct calculations</p>
+<p>To calculate the probability that the second card dealt from a deck of cards is a king, given that the first card dealt was a king. The <code>|</code> pipe means <code>given that or conditional on</code></p>
+<p><code>Pr(Card 2 is a king) | Card 1 is a king) = 3/51</code></p>
+<p>If the probability of A and B are independent, you can express the probability of A like this:</p>
+<p><code>Pr(A|B)=Pr(A)</code></p>
+<p>It doesn’t matter what the probability of B is in this example because the probabilities are independent.</p>
+<p>If we want to know the probability of A and B occurring, we can use the <strong>multiplication rule</strong>. The probability of A and and B is equal to the probability of A multiplied by the probability of B given that A already happened.</p>
+<p><code>Pr(A and B) = Pr(A)*Pr(B|A)</code></p>
+<p>In blackjack, you can calculate the probability of you first getting an <em>Ace</em> then having the next card be a <em>face</em> card or a <em>10</em> using the following:</p>
+<p><code>Pr(Ace and face) = Pr(Ace)*Pr(Face|Ace)</code></p>
+<pre class="r"><code>1/13 * 16/51</code></pre>
+<pre><code>## [1] 0.02413273</code></pre>
+<p>So, the probability of A and B and C is equal to the probability of A times the probability of B given that A happened times the probability of C given that A and B happened</p>
+<p><code>Pr(A and B and C) = Pr(A)*Pr(B|A)*Pr(C|A and B)</code></p>
+<p>One ball will be drawn at random from a box containing: 3 cyan balls, 5 magenta balls, and 7 yellow balls.</p>
+<pre class="r"><code>box &lt;- rep( c(&#39;cyan&#39;, &#39;magenta&#39;, &#39;yellow&#39;), times = c(3,5,7))
+box</code></pre>
+<pre><code>##  [1] &quot;cyan&quot;    &quot;cyan&quot;    &quot;cyan&quot;    &quot;magenta&quot; &quot;magenta&quot; &quot;magenta&quot; &quot;magenta&quot;
+##  [8] &quot;magenta&quot; &quot;yellow&quot;  &quot;yellow&quot;  &quot;yellow&quot;  &quot;yellow&quot;  &quot;yellow&quot;  &quot;yellow&quot; 
+## [15] &quot;yellow&quot;</code></pre>
+<p>Instead of taking just one draw, consider taking two draws. You take the second draw without returning the first draw to the box. We call this sampling without replacement.</p>
+<pre class="r"><code>3/15 * 12/14</code></pre>
+<pre><code>## [1] 0.1714286</code></pre>
+<p>Now repeat the experiment, but this time, after taking the first draw and recording the color, return it back to the box and shake the box. We call this sampling with replacement.</p>
+<p>What is the probability that the first draw is cyan and that the second draw is not cyan?</p>
+<pre class="r"><code>3/15 * 12/15</code></pre>
+<pre><code>## [1] 0.16</code></pre>
+</div>
+<div id="combinations-and-permutations" class="section level1">
+<h1>Combinations and Permutations</h1>
+<pre class="r"><code># joining strings with paste
+number &lt;- &quot;Three&quot;
+suit &lt;- &quot;Hearts&quot;
+paste(number, suit)</code></pre>
+<pre><code>## [1] &quot;Three Hearts&quot;</code></pre>
+<pre class="r"><code># joining vectors element-wise with paste
+paste(letters[1:5], as.character(1:5))</code></pre>
+<pre><code>## [1] &quot;a 1&quot; &quot;b 2&quot; &quot;c 3&quot; &quot;d 4&quot; &quot;e 5&quot;</code></pre>
+<p>The function <code>expland.grid()</code> gives us all combinations of 2 lists.</p>
+<pre class="r"><code>expand.grid(pants = c(&quot;blue&quot;, &quot;black&quot;), shirt = c(&quot;white&quot;, &quot;grey&quot;, &quot;plaid&quot;))</code></pre>
+<pre><code>##   pants shirt
+## 1  blue white
+## 2 black white
+## 3  blue  grey
+## 4 black  grey
+## 5  blue plaid
+## 6 black plaid</code></pre>
+<p>To generate a deck of cards:</p>
+<pre class="r"><code>suits &lt;- c(&quot;Diamonds&quot;, &quot;Clubs&quot;, &quot;Hearts&quot;, &quot;Spades&quot;)
+numbers &lt;- c(&quot;Ace&quot;, &quot;Deuce&quot;, &quot;Three&quot;, &quot;Four&quot;, &quot;Five&quot;, &quot;Six&quot;, &quot;Seven&quot;, &quot;Eight&quot;, &quot;Nine&quot;, &quot;Ten&quot;, &quot;Jack&quot;, &quot;Queen&quot;, &quot;King&quot;)
+deck &lt;- expand.grid(number = numbers, suit = suits)
+deck &lt;- paste(deck$number, deck$suit)</code></pre>
+<p>To find the probability of drawing a king:</p>
+<pre class="r"><code>kings &lt;- paste(&quot;King&quot;, suits)
+mean(deck %in% kings)</code></pre>
+<pre><code>## [1] 0.07692308</code></pre>
+<p>What is the conditional probability of the second card is a king?</p>
+<p>The <code>permutations()</code> function computes, for any list of size ‘n’ all the different ways we can select ‘r’ items.</p>
+<pre class="r"><code>library(gtools)
+# This will calculate all the ways you can choose 2 numbers from a list of 1-5.
+permutations(5,2)</code></pre>
+<pre><code>##       [,1] [,2]
+##  [1,]    1    2
+##  [2,]    1    3
+##  [3,]    1    4
+##  [4,]    1    5
+##  [5,]    2    1
+##  [6,]    2    3
+##  [7,]    2    4
+##  [8,]    2    5
+##  [9,]    3    1
+## [10,]    3    2
+## [11,]    3    4
+## [12,]    3    5
+## [13,]    4    1
+## [14,]    4    2
+## [15,]    4    3
+## [16,]    4    5
+## [17,]    5    1
+## [18,]    5    2
+## [19,]    5    3
+## [20,]    5    4</code></pre>
+<p>To compute all the possible ways that you can choose 2 cards <em>when the order matters</em> we can type:</p>
+<pre class="r"><code># We have 52 cards, we will choose 2, and we will select them from the vector of our card names
+hands &lt;- permutations(52,2, v = deck)
+
+first_card &lt;- hands[,1]
+
+second_card &lt;- hands[,2]
+# How many cases is the first card a king?
+sum(first_card %in% kings)</code></pre>
+<pre><code>## [1] 204</code></pre>
+<pre class="r"><code># We ask how what fraction of these 204 also have a king in the second card?
+sum(first_card %in% kings &amp; second_card %in% kings) / sum(first_card %in% kings)</code></pre>
+<pre><code>## [1] 0.05882353</code></pre>
+<p>What if the <strong>order does not matter</strong>? Use the <code>combinations()</code> function since the order doesn’t matter.</p>
+<p>Compare the two functions</p>
+<pre class="r"><code>permutations(3,2)</code></pre>
+<pre><code>##      [,1] [,2]
+## [1,]    1    2
+## [2,]    1    3
+## [3,]    2    1
+## [4,]    2    3
+## [5,]    3    1
+## [6,]    3    2</code></pre>
+<pre class="r"><code>combinations(3,2)</code></pre>
+<pre><code>##      [,1] [,2]
+## [1,]    1    2
+## [2,]    1    3
+## [3,]    2    3</code></pre>
+<p>Define a vector that includes all the aces, avector that includes all the face cards and 10’s, then generate all the combinations of picking 2 cards out of 52.</p>
+<pre class="r"><code>aces &lt;- paste(&quot;Ace&quot;, suits)
+facecard &lt;- c(&quot;King&quot;, &quot;Queen&quot;, &quot;Jack&quot;, &quot;Ten&quot;)
+facecard &lt;- expand.grid(number = facecard, suit = suits)
+facecard &lt;- paste(facecard$number, facecard$suit)
+
+hands &lt;- combinations(52, 2, v=deck) # all possible hands
+# probability of a natural 21 given that the ace is listed first in `combinations`
+mean(hands[,1] %in% aces &amp; hands[,2] %in% facecard)</code></pre>
+<pre><code>## [1] 0.04826546</code></pre>
+<p>You can also use a Monte Carlo simulation to calculate the probability of getting blackjack on the first 2 cards.</p>
+<p>Use the <code>sample()</code> function to draw cards without replacement</p>
+<pre class="r"><code>hand &lt;- sample(deck, 2)
+hand</code></pre>
+<pre><code>## [1] &quot;Jack Hearts&quot; &quot;Nine Hearts&quot;</code></pre>
+<pre class="r"><code># code for B=10,000 hands of blackjack
+B &lt;- 10000
+results &lt;- replicate(B, {
+    hand &lt;- sample(deck, 2)
+    (hand[1] %in% aces &amp; hand[2] %in% facecard) | (hand[2] %in% aces &amp; hand[1] %in% facecard)
+})
+mean(results)</code></pre>
+<pre><code>## [1] 0.0475</code></pre>
+<div id="the-birthday-problem" class="section level2">
+<h2>The birthday problem</h2>
+<p>If you are in a classroom with 50 people, assuming it is a randomly selected group, what is the chance that at least 2 people have the same birthday?</p>
+<p>We will calculate this later, but first we can use the Monte Carlo simulation.</p>
+<pre class="r"><code>n &lt;- 50
+calendar &lt;- 1:365
+bdays &lt;- sample(calendar, n, replace=TRUE)</code></pre>
+<p>To check to see if two people have the same birthday, use the function <code>duplicated()</code> which returns <em>TRUE</em> if any element of a vector has already appeared in that vector.</p>
+<pre class="r"><code>any(duplicated(bdays))</code></pre>
+<pre><code>## [1] TRUE</code></pre>
+<pre class="r"><code>b &lt;- 10000
+results &lt;- replicate(B,{
+  bdays &lt;- sample(calendar, n, replace=TRUE)
+  any(duplicated(bdays))
+})</code></pre>
+<p>Take the mean to determine how likely it is for two people to have the same birthday</p>
+<pre class="r"><code>mean(results)</code></pre>
+<pre><code>## [1] 0.9698</code></pre>
+</div>
+</div>
+<div id="sapply" class="section level1">
+<h1>sapply</h1>
+<p><code>sapply()</code> allows us to perform element-wise operations on any function.</p>
+<p>This will apply square root to each element of x. You actually don’t need to do this because <code>sqrt()</code> already operates on a vector element by element, but some functions do not.</p>
+<pre class="r"><code>x &lt;- 1:10
+sapply(x, sqrt)</code></pre>
+<pre><code>##  [1] 1.000000 1.414214 1.732051 2.000000 2.236068 2.449490 2.645751 2.828427
+##  [9] 3.000000 3.162278</code></pre>
+<p>If you wanted to bet on the chances that 2 people have the same birthday in a group of people, you can use a Monte Carlo simulation. We will define a function to cacluate the probability of shared bdays across n people.</p>
+<pre class="r"><code>compute_prob &lt;- function(n, B = 10000) {
+    same_day &lt;- replicate(B, {
+        bdays &lt;- sample(1:365, n, replace = TRUE)
+        any(duplicated(bdays))
+    })
+    mean(same_day)
+}
+
+n &lt;- seq(1, 60)
+prob &lt;- sapply(n, compute_prob)</code></pre>
+<pre class="r"><code>plot(n, prob)</code></pre>
+<p><img src="note_r_probability_files/figure-html/unnamed-chunk-28-1.png" width="672" /></p>
+<p>If we wanted to compute the exact value instead of using a Monte Carlo Simulation we can calculate the exact value. Instead of calculating the probability of it happening, it is faster to calculate the probability of it not happening then use the multiplication rule.</p>
+<p>Starting with person 1, the probability that they have a unique birthday is 1.</p>
+<p>We can compute the probability of shared birthdays mathematically:</p>
+<p><math xmlns="http://www.w3.org/1998/Math/MathML"> <maction id="MJX-Collapse-9" actiontype="toggle" selection="2" data-semantic-complexity="3"> <mtext data-semantic-complexity="3">◂…▸</mtext> <mrow data-semantic-complexity="20" data-semantic-collapsed="(47 (c 44 45 46) 0 40 4 43)" data-semantic-children="0,40,4,43" data-semantic-id="47" data-semantic-role="text" data-semantic-type="punctuated"> <mrow> <mstyle displaystyle="false" scriptlevel="0" data-semantic-complexity="3"> <maction id="MJX-Collapse-2" actiontype="toggle" selection="2" data-semantic-complexity="3"> <mtext data-semantic-complexity="3">◂…▸</mtext> <mtext data-semantic-type="text" data-semantic-role="unknown" data-semantic-font="normal" data-semantic-id="0" data-semantic-parent="47" data-semantic-complexity="10.5">Pr(shared birthdays)</mtext> </maction> </mstyle> <mrow data-semantic-type="relseq" data-semantic-role="equality" data-semantic-id="40" data-semantic-children="38,39" data-semantic-content="1" data-semantic-parent="47" data-semantic-complexity="8"> <mrow data-semantic-type="empty" data-semantic-role="unknown" data-semantic-id="38" data-semantic-parent="40" data-semantic-complexity="0" /> <mo data-semantic-type="relation" data-semantic-role="equality" data-semantic-id="1" data-semantic-parent="40" data-semantic-operator="relseq,=" data-semantic-complexity="1">=</mo> <mrow data-semantic-type="postfixop" data-semantic-role="subtraction" data-semantic-id="39" data-semantic-children="2" data-semantic-content="3" data-semantic-parent="40" data-semantic-complexity="4"> <mn data-semantic-type="number" data-semantic-role="integer" data-semantic-font="normal" data-semantic-id="2" data-semantic-parent="39" data-semantic-complexity="1">1</mn> <mo data-semantic-type="operator" data-semantic-role="subtraction" data-semantic-id="3" data-semantic-parent="39" data-semantic-operator="postfixop,&#x2212;" data-semantic-complexity="1">−</mo> </mrow> </mrow> <mstyle displaystyle="false" scriptlevel="0" data-semantic-complexity="3"> <maction id="MJX-Collapse-3" actiontype="toggle" selection="2" data-semantic-complexity="3"> <mtext data-semantic-complexity="3">◂…▸</mtext> <mtext data-semantic-type="text" data-semantic-role="unknown" data-semantic-font="normal" data-semantic-id="4" data-semantic-parent="47" data-semantic-complexity="12">Pr(no shared birthdays)</mtext> </maction> </mstyle> <maction id="MJX-Collapse-8" actiontype="toggle" selection="2" data-semantic-complexity="2"> <mtext data-semantic-complexity="2">◂=▸</mtext> <mrow data-semantic-type="relseq" data-semantic-role="equality" data-semantic-id="43" data-semantic-children="41,42" data-semantic-content="5" data-semantic-parent="47" data-semantic-complexity="16"> <mrow data-semantic-type="empty" data-semantic-role="unknown" data-semantic-id="41" data-semantic-parent="43" data-semantic-complexity="0" /> <mo data-semantic-type="relation" data-semantic-role="equality" data-semantic-id="5" data-semantic-parent="43" data-semantic-operator="relseq,=" data-semantic-complexity="1">=</mo> <mrow data-semantic-type="infixop" data-semantic-role="subtraction" data-semantic-id="42" data-semantic-children="6,37" data-semantic-content="7" data-semantic-parent="43" data-semantic-complexity="12"> <mn data-semantic-type="number" data-semantic-role="integer" data-semantic-font="normal" data-semantic-id="6" data-semantic-parent="42" data-semantic-complexity="1">1</mn> <mo data-semantic-type="operator" data-semantic-role="subtraction" data-semantic-id="7" data-semantic-parent="42" data-semantic-operator="infixop,&#x2212;" data-semantic-complexity="1">−</mo> <mrow data-semantic-type="fenced" data-semantic-role="leftright" data-semantic-id="37" data-semantic-children="36" data-semantic-content="8,32" data-semantic-parent="42" data-semantic-complexity="7"> <mo stretchy="false" data-semantic-type="fence" data-semantic-role="open" data-semantic-id="8" data-semantic-parent="37" data-semantic-operator="fenced" data-semantic-complexity="1">(</mo> <maction id="MJX-Collapse-7" actiontype="toggle" selection="2" data-semantic-complexity="2"> <mtext data-semantic-complexity="2">◂,▸</mtext> <mrow data-semantic-type="punctuated" data-semantic-role="sequence" data-semantic-id="36" data-semantic-children="33,19,20,21,35" data-semantic-content="19,20,21" data-semantic-parent="37" data-semantic-complexity="15"> <maction id="MJX-Collapse-4" actiontype="toggle" selection="2" data-semantic-complexity="2"> <mtext data-semantic-complexity="2">◂+▸</mtext> <mrow data-semantic-type="infixop" data-semantic-role="unknown" data-semantic-id="33" data-semantic-children="9,13,34" data-semantic-content="10,14" data-semantic-parent="36" data-semantic-complexity="24.6"> <mn data-semantic-type="number" data-semantic-role="integer" data-semantic-font="normal" data-semantic-id="9" data-semantic-parent="33" data-semantic-complexity="1">1</mn> <mo data-semantic-type="operator" data-semantic-role="unknown" data-semantic-id="10" data-semantic-parent="33" data-semantic-operator="infixop,&#xD7;" data-semantic-complexity="1">×</mo> <mfrac data-semantic-type="fraction" data-semantic-role="vulgar" data-semantic-id="13" data-semantic-children="11,12" data-semantic-parent="33" data-semantic-complexity="6.800000000000001"> <mn data-semantic-type="number" data-semantic-role="integer" data-semantic-font="normal" data-semantic-id="11" data-semantic-parent="13" data-semantic-complexity="2">364</mn> <mn data-semantic-type="number" data-semantic-role="integer" data-semantic-font="normal" data-semantic-id="12" data-semantic-parent="13" data-semantic-complexity="2">365</mn> </mfrac> <mo data-semantic-type="operator" data-semantic-role="unknown" data-semantic-id="14" data-semantic-parent="33" data-semantic-operator="infixop,&#xD7;" data-semantic-complexity="1">×</mo> <mrow data-semantic-type="postfixop" data-semantic-role="unknown" data-semantic-id="34" data-semantic-children="17" data-semantic-content="18" data-semantic-parent="33" data-semantic-complexity="9.8"> <mfrac data-semantic-type="fraction" data-semantic-role="vulgar" data-semantic-id="17" data-semantic-children="15,16" data-semantic-parent="34" data-semantic-complexity="6.800000000000001"> <mn data-semantic-type="number" data-semantic-role="integer" data-semantic-font="normal" data-semantic-id="15" data-semantic-parent="17" data-semantic-complexity="2">363</mn> <mn data-semantic-type="number" data-semantic-role="integer" data-semantic-font="normal" data-semantic-id="16" data-semantic-parent="17" data-semantic-complexity="2">365</mn> </mfrac> <mo data-semantic-type="operator" data-semantic-role="unknown" data-semantic-id="18" data-semantic-parent="34" data-semantic-operator="postfixop,&#xD7;" data-semantic-complexity="1">×</mo> </mrow> </mrow> </maction> <mo data-semantic-type="punctuation" data-semantic-role="fullstop" data-semantic-id="19" data-semantic-parent="36" data-semantic-operator="punctuated" data-semantic-complexity="1">.</mo> <mo data-semantic-type="punctuation" data-semantic-role="fullstop" data-semantic-id="20" data-semantic-parent="36" data-semantic-operator="punctuated" data-semantic-complexity="1">.</mo> <mo data-semantic-type="punctuation" data-semantic-role="fullstop" data-semantic-id="21" data-semantic-parent="36" data-semantic-operator="punctuated" data-semantic-complexity="1">.</mo> <mrow data-semantic-type="prefixop" data-semantic-role="unknown" data-semantic-id="35" data-semantic-children="31" data-semantic-content="22" data-semantic-parent="36" data-semantic-complexity="5"> <mo data-semantic-type="operator" data-semantic-role="unknown" data-semantic-id="22" data-semantic-parent="35" data-semantic-operator="prefixop,&#xD7;" data-semantic-complexity="1">×</mo> <maction id="MJX-Collapse-5" actiontype="toggle" selection="2" data-semantic-complexity="2"> <mtext data-semantic-complexity="2">◂/▸</mtext> <mfrac data-semantic-type="fraction" data-semantic-role="division" data-semantic-id="31" data-semantic-children="29,30" data-semantic-parent="35" data-semantic-complexity="14.8"> <mrow data-semantic-type="infixop" data-semantic-role="addition" data-semantic-id="29" data-semantic-children="28,27" data-semantic-content="26" data-semantic-parent="31" data-semantic-complexity="12"> <mrow data-semantic-type="infixop" data-semantic-role="subtraction" data-semantic-id="28" data-semantic-children="23,25" data-semantic-content="24" data-semantic-parent="29" data-semantic-complexity="7"> <mn data-semantic-type="number" data-semantic-role="integer" data-semantic-font="normal" data-semantic-id="23" data-semantic-parent="28" data-semantic-complexity="2">365</mn> <mo data-semantic-type="operator" data-semantic-role="subtraction" data-semantic-id="24" data-semantic-parent="28" data-semantic-operator="infixop,&#x2212;" data-semantic-complexity="1">−</mo> <mi data-semantic-type="identifier" data-semantic-role="latinletter" data-semantic-font="italic" data-semantic-id="25" data-semantic-parent="28" data-semantic-complexity="1">n</mi> </mrow> <mo data-semantic-type="operator" data-semantic-role="addition" data-semantic-id="26" data-semantic-parent="29" data-semantic-operator="infixop,+" data-semantic-complexity="1">+</mo> <mn data-semantic-type="number" data-semantic-role="integer" data-semantic-font="normal" data-semantic-id="27" data-semantic-parent="29" data-semantic-complexity="1">1</mn> </mrow> <mn data-semantic-type="number" data-semantic-role="integer" data-semantic-font="normal" data-semantic-id="30" data-semantic-parent="31" data-semantic-complexity="2">365</mn> </mfrac> </maction> </mrow> </mrow> </maction> <mo stretchy="false" data-semantic-type="fence" data-semantic-role="close" data-semantic-id="32" data-semantic-parent="37" data-semantic-operator="fenced" data-semantic-complexity="1">)</mo> </mrow> </mrow> </mrow> </maction> </mrow> </mrow> </maction> </math></p>
+<pre class="r"><code>exact_prob &lt;- function(n){
+  prob_unique &lt;- seq(365, 365-n+1)/365
+  # the probabilty of an event happening is 1 minus the probability of the event not happening
+  1 - prod( prob_unique)
+}
+eprob &lt;- sapply(n, exact_prob)
+# Compare monte carlo plot to exact probabilty plot
+plot(n, prob)
+lines(n, eprob, col = &#39;red&#39;)</code></pre>
+<p><img src="note_r_probability_files/figure-html/unnamed-chunk-29-1.png" width="672" /></p>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
