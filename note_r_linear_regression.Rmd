@@ -158,10 +158,63 @@ female_heights <- GaltonFamilies %>%
 female_heights
 ```
 ```{r}
-summary(female_heights)
-sd(female_heights$mother)
-sd(female_heights$daughter)
-cor(female_heights$mother, female_heights$daughter)
+r <- cor(female_heights$mother, female_heights$daughter)
+s_y <- sd(female_heights$daughter)
+s_x <- sd(female_heights$mother)
+r * s_y/s_x
+```
+
+Slope of regression line = (correlation coefficient of daughters' heights given mothers' heights) * (standard deviation of daughters' heights / standard deviation of mothers’ heights)
+
+```{r}
+0.285 * (2.3154/2.289292)
+```
+Compute a regression line to predict the daughter's height from the mother's height
+```{r}
+mu_x <- mean(female_heights$mother)
+mu_y <- mean(female_heights$daughter)
+s_x <- sd(female_heights$mother)
+s_y <- sd(female_heights$daughter)
+r <- cor(female_heights$mother, female_heights$daughter)
+m <- r * s_y / s_x
+b <- mu_y - m*mu_x
+```
+
+```{r}
+m_2 <- r * s_y / s_x
+b_2 <- mu_y - m_2*mu_x
+b_2
+```
+
+Stratify HR per game to nearest 10, filter out strata with few points
+
+```{r}
+# 
+dat <- Teams %>% filter(yearID %in% 1961:2001) %>%
+  mutate(HR_strata = round(HR/G, 1), 
+         BB_per_game = BB / G,
+         R_per_game = R / G) %>%
+  filter(HR_strata >= 0.4 & HR_strata <=1.2)
+
+```
+
+Create a scatterplot for each HR stratum
+
+```{r}
+dat %>% 
+  ggplot(aes(BB_per_game, R_per_game)) +  
+  geom_point(alpha = 0.5) +
+  geom_smooth(method = "lm") +
+  facet_wrap( ~ HR_strata)
+```
+
+
+
+Calculate the slope of regression line after stratifying by HR
+```{r}
+dat %>%  
+  group_by(HR_strata) %>%
+  summarize(slope = cor(BB_per_game, R_per_game)*sd(R_per_game)/sd(BB_per_game))
 ```
 
 
