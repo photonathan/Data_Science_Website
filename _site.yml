@@ -52,6 +52,9 @@ navbar:
           href: note_studying_python_string_module.html
         - text: "Studying Python itertools"
           href: note_studying_python_itertools.html
+        - text: "Studying R probability"
+          href: note_r_probability.html
+        
     - text: "Photography"
       href: photography.html
     - text: "About"
