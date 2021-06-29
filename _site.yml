@@ -54,6 +54,8 @@ navbar:
           href: note_studying_python_itertools.html
         - text: "Studying R probability"
           href: note_r_probability.html
+        - text: "Studying Statistical Tests"
+          href: note_statistical_tests.html
         
     - text: "Photography"
       href: photography.html

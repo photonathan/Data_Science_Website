@@ -11,7 +11,7 @@
 
 
 
-<title>Nathan’s Projects</title>
+<title>Statistical Tests</title>
 
 <script src="site_libs/header-attrs-2.8/header-attrs.js"></script>
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
@@ -29,9 +29,12 @@
        h6 {font-size: 12px;}
        code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
        pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
-<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
-<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<script src="site_libs/navigation-1.1/sourceembed.js"></script>
 <link rel="apple-touch-icon" sizes="180x180" href="~/assets/favicon/apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon/favicon-16x16.png">
@@ -51,19 +54,14 @@
   ul.task-list{list-style: none;}
     </style>
 
-<style type="text/css">code{white-space: pre;}</style>
-<script type="text/javascript">
-if (window.hljs) {
-  hljs.configure({languages: []});
-  hljs.initHighlightingOnLoad();
-  if (document.readyState && document.readyState === "complete") {
-    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
-  }
+
+
+
+<style type="text/css">
+#rmd-source-code {
+  display: none;
 }
-</script>
-
-
-
+</style>
 
 
 
@@ -224,7 +222,73 @@ $(document).ready(function () {
 </style>
 
 <!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
 
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
 
 
 
@@ -234,6 +298,16 @@ $(document).ready(function () {
 
 
 <div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
 
 
 
@@ -367,36 +441,55 @@ $(document).ready(function () {
 
 <div id="header">
 
-
-
-<h1 class="title toc-ignore">Nathan’s Projects</h1>
-
-</div>
-
-
-<style type="text/css">
-.title {
-  display: none;
-}
-
-#getting-started img {
-  margin-right: 10px;
-}
-
-</style>
-<div class="row">
-<div class="col-sm-6">
-<p><img src="images/Logo.jpg" width="100%" id=logo style="display: block; margin: auto;" /></p>
-</div>
-<div id="welcome" class="section level3 col-sm-6" style="padding-top: 50px;">
-<h3>Welcome</h3>
-<p>Data can be complicated, my homepage is not.</p>
-<p>Check out my <a href="https://nathansprojects.com/part_1_the_plan.html">Visualization of Arlington, Virginia’s bike usage during Covid-19</a>.</p>
-</div>
+<div class="btn-group pull-right float-right">
+<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
+<li><a id="rmd-download-source" href="#">Download Rmd</a></li>
+</ul>
 </div>
 
 
 
+<h1 class="title toc-ignore">Statistical Tests</h1>
+
+</div>
+
+
+<p>Depending on the types of variables you use (categorical or numeric) in your analysis will determine which statistical tests you use to determine if your data is statistically significant e.g one sample proportion test, chi-squared test, t-test, ANOVA, correlation test.</p>
+<p>One categorical variable: 1 sample proportion test</p>
+<p>Two categorical variables: Chi squared</p>
+<p>One numeric: t-test</p>
+<p>One numeric and one categorical: t-test or ANOVA (if there are more than 2 categories for that categorical variable)</p>
+<p>Two numeric: correlation test</p>
+<div id="one-categorical-variable" class="section level1">
+<h1>One categorical variable</h1>
+<p>Let’s say you have 1 categorical variable you are analyzing e.g. Is there a difference in the number of men and women in the population?</p>
+<p>In order to disprove the null hypothesis that there is no difference between males and females and that the differences we are seeing are not a result of our sample group randomly having a bias, you pick an alpha value (p &lt; 0.05) and if your one sample proportion test is less than p, your results are likely not a result of random chance and thus statistically significant.</p>
+</div>
+<div id="two-categorical-variables" class="section level1">
+<h1>Two categorical variables</h1>
+<p>Let’s say you have 2 categorical variables (Sex[Male or Female] and Age Group[Child or Adult or Elderly]). You could ask ‘Does the proportion of males and females differ across age groups?’</p>
+<p>The hypothesis is ‘The number of each sex that we observe is dependent on the Age group.’ You can test if any differences you see in you data are due to chance by testing if the proportion of males and females is independent of Age group. Use the chi-squared test to get a p value.</p>
+</div>
+<div id="one-numeric" class="section level1">
+<h1>One numeric</h1>
+<p>‘Is the average height different from a previously established height?’ Use a t-test.</p>
+</div>
+<div id="one-numeric-and-one-categorical" class="section level1">
+<h1>One numeric and one categorical</h1>
+<p>‘Is the a difference in height between men and women?’ This is one categorical with two categories and one numeric. Use a t-test</p>
+<p>‘Is there a difference in height between Age groups’ This is one categorical with three categories and one numeric. Use ANOVA.</p>
+</div>
+<div id="two-numeric-variables" class="section level1">
+<h1>Two numeric variables</h1>
+<p>‘Is there a relationship between height and weight?’ Use the correlation test. Unlike all the other tests, you get a correlation coefficient which tells you about the relationship as well as the p value. The correlation coefficient is a number between -1 and 1 and looks at the relationship between two numeric variables. If the while the x value gets larger and the y value gets smaller, that is -1. If when x gets larger and y gets larger too, the coefficient is 1.</p>
+</div>
+
+<div id="rmd-source-code">LS0tDQp0aXRsZTogIlN0YXRpc3RpY2FsIFRlc3RzIg0Kb3V0cHV0Og0KICBodG1sX2RvY3VtZW50OiANCiAgICB0b2M6IHllcw0KICAgIHRvY19kZXB0aDogMg0KICAgIHRvY19mbG9hdDogeWVzDQogICAgaGlnaGxpZ2h0OiB6ZW5idXJuDQogICAgY29kZV9kb3dubG9hZDogdHJ1ZQ0KICAgIGluY2x1ZGVzOg0KICAgICAgaW5faGVhZGVyOiBoZWFkZXIuaHRtbA0KLS0tDQoNCkRlcGVuZGluZyBvbiB0aGUgdHlwZXMgb2YgdmFyaWFibGVzIHlvdSB1c2UgKGNhdGVnb3JpY2FsIG9yIG51bWVyaWMpIGluIHlvdXIgYW5hbHlzaXMgd2lsbCBkZXRlcm1pbmUgd2hpY2ggc3RhdGlzdGljYWwgdGVzdHMgeW91IHVzZSB0byBkZXRlcm1pbmUgaWYgeW91ciBkYXRhIGlzIHN0YXRpc3RpY2FsbHkgc2lnbmlmaWNhbnQgZS5nIG9uZSBzYW1wbGUgcHJvcG9ydGlvbiB0ZXN0LCBjaGktc3F1YXJlZCB0ZXN0LCB0LXRlc3QsIEFOT1ZBLCBjb3JyZWxhdGlvbiB0ZXN0Lg0KDQpPbmUgY2F0ZWdvcmljYWwgdmFyaWFibGU6IDEgc2FtcGxlIHByb3BvcnRpb24gdGVzdA0KDQpUd28gY2F0ZWdvcmljYWwgdmFyaWFibGVzOiBDaGkgc3F1YXJlZA0KDQpPbmUgbnVtZXJpYzogdC10ZXN0DQoNCk9uZSBudW1lcmljIGFuZCBvbmUgY2F0ZWdvcmljYWw6IHQtdGVzdCBvciBBTk9WQSAoaWYgdGhlcmUgYXJlIG1vcmUgdGhhbiAyIGNhdGVnb3JpZXMgZm9yIHRoYXQgY2F0ZWdvcmljYWwgdmFyaWFibGUpDQoNClR3byBudW1lcmljOiBjb3JyZWxhdGlvbiB0ZXN0DQoNCiMgT25lIGNhdGVnb3JpY2FsIHZhcmlhYmxlDQoNCkxldCdzIHNheSB5b3UgaGF2ZSAxIGNhdGVnb3JpY2FsIHZhcmlhYmxlIHlvdSBhcmUgYW5hbHl6aW5nIGUuZy4gSXMgdGhlcmUgYSBkaWZmZXJlbmNlIGluIHRoZSBudW1iZXIgb2YgbWVuIGFuZCB3b21lbiBpbiB0aGUgcG9wdWxhdGlvbj8NCg0KSW4gb3JkZXIgdG8gZGlzcHJvdmUgdGhlIG51bGwgaHlwb3RoZXNpcyB0aGF0IHRoZXJlIGlzIG5vIGRpZmZlcmVuY2UgYmV0d2VlbiBtYWxlcyBhbmQgZmVtYWxlcyBhbmQgdGhhdCB0aGUgZGlmZmVyZW5jZXMgd2UgYXJlIHNlZWluZyBhcmUgbm90IGEgcmVzdWx0IG9mIG91ciBzYW1wbGUgZ3JvdXAgcmFuZG9tbHkgaGF2aW5nIGEgYmlhcywgeW91IHBpY2sgYW4gYWxwaGEgdmFsdWUgKHAgPCAwLjA1KSBhbmQgaWYgeW91ciAgb25lIHNhbXBsZSBwcm9wb3J0aW9uIHRlc3QgaXMgbGVzcyB0aGFuIHAsIHlvdXIgcmVzdWx0cyBhcmUgbGlrZWx5IG5vdCBhIHJlc3VsdCBvZiByYW5kb20gY2hhbmNlIGFuZCB0aHVzIHN0YXRpc3RpY2FsbHkgc2lnbmlmaWNhbnQuDQoNCiMgVHdvIGNhdGVnb3JpY2FsIHZhcmlhYmxlcw0KDQpMZXQncyBzYXkgeW91IGhhdmUgMiBjYXRlZ29yaWNhbCB2YXJpYWJsZXMgKFNleFtNYWxlIG9yIEZlbWFsZV0gYW5kIEFnZSBHcm91cFtDaGlsZCBvciBBZHVsdCBvciBFbGRlcmx5XSkuIFlvdSBjb3VsZCBhc2sgJ0RvZXMgdGhlIHByb3BvcnRpb24gb2YgbWFsZXMgYW5kIGZlbWFsZXMgZGlmZmVyIGFjcm9zcyBhZ2UgZ3JvdXBzPycNCg0KVGhlIGh5cG90aGVzaXMgaXMgJ1RoZSBudW1iZXIgb2YgZWFjaCBzZXggdGhhdCB3ZSBvYnNlcnZlIGlzIGRlcGVuZGVudCBvbiB0aGUgQWdlIGdyb3VwLicgWW91IGNhbiB0ZXN0IGlmIGFueSBkaWZmZXJlbmNlcyB5b3Ugc2VlIGluIHlvdSBkYXRhIGFyZSBkdWUgdG8gY2hhbmNlIGJ5IHRlc3RpbmcgaWYgdGhlIHByb3BvcnRpb24gb2YgbWFsZXMgYW5kIGZlbWFsZXMgaXMgaW5kZXBlbmRlbnQgb2YgQWdlIGdyb3VwLiBVc2UgdGhlIGNoaS1zcXVhcmVkIHRlc3QgdG8gZ2V0IGEgcCB2YWx1ZS4NCg0KIyBPbmUgbnVtZXJpYw0KDQonSXMgdGhlIGF2ZXJhZ2UgaGVpZ2h0IGRpZmZlcmVudCBmcm9tIGEgcHJldmlvdXNseSBlc3RhYmxpc2hlZCBoZWlnaHQ/JyBVc2UgYSB0LXRlc3QuDQoNCiMgT25lIG51bWVyaWMgYW5kIG9uZSBjYXRlZ29yaWNhbA0KDQonSXMgdGhlIGEgZGlmZmVyZW5jZSBpbiBoZWlnaHQgYmV0d2VlbiBtZW4gYW5kIHdvbWVuPycgVGhpcyBpcyBvbmUgY2F0ZWdvcmljYWwgd2l0aCB0d28gY2F0ZWdvcmllcyBhbmQgb25lIG51bWVyaWMuIFVzZSBhIHQtdGVzdA0KDQonSXMgdGhlcmUgYSBkaWZmZXJlbmNlIGluIGhlaWdodCBiZXR3ZWVuIEFnZSBncm91cHMnIFRoaXMgaXMgb25lIGNhdGVnb3JpY2FsIHdpdGggdGhyZWUgY2F0ZWdvcmllcyBhbmQgb25lIG51bWVyaWMuIFVzZSBBTk9WQS4NCg0KIyBUd28gbnVtZXJpYyB2YXJpYWJsZXMNCg0KJ0lzIHRoZXJlIGEgcmVsYXRpb25zaGlwIGJldHdlZW4gaGVpZ2h0IGFuZCB3ZWlnaHQ/JyBVc2UgdGhlIGNvcnJlbGF0aW9uIHRlc3QuIFVubGlrZSBhbGwgdGhlIG90aGVyIHRlc3RzLCB5b3UgZ2V0IGEgY29ycmVsYXRpb24gY29lZmZpY2llbnQgd2hpY2ggdGVsbHMgeW91IGFib3V0IHRoZSByZWxhdGlvbnNoaXAgYXMgd2VsbCBhcyB0aGUgcCB2YWx1ZS4gVGhlIGNvcnJlbGF0aW9uIGNvZWZmaWNpZW50IGlzIGEgbnVtYmVyIGJldHdlZW4gLTEgYW5kIDEgYW5kIGxvb2tzIGF0IHRoZSByZWxhdGlvbnNoaXAgYmV0d2VlbiB0d28gbnVtZXJpYyB2YXJpYWJsZXMuIElmIHRoZSB3aGlsZSB0aGUgeCB2YWx1ZSBnZXRzIGxhcmdlciBhbmQgdGhlIHkgdmFsdWUgZ2V0cyBzbWFsbGVyLCB0aGF0IGlzIC0xLiBJZiB3aGVuIHggZ2V0cyBsYXJnZXIgYW5kIHkgZ2V0cyBsYXJnZXIgdG9vLCB0aGUgY29lZmZpY2llbnQgaXMgMS4gDQoNCg0KDQoNCg0KDQoNCg0KDQo=</div>
+
+
+</div>
+</div>
 
 </div>
 
@@ -428,7 +521,38 @@ $(document).ready(function () {
 </script>
 
 <!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeSourceEmbed("note_statistical_tests.Rmd");
+});
+</script>
 
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
 <script>

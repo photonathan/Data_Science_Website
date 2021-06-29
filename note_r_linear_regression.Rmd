@@ -1,6 +1,14 @@
 ---
 title: "Linear Regression"
-output: html_document
+output:
+  html_document: 
+    toc: yes
+    toc_depth: 2
+    toc_float: yes
+    highlight: zenburn
+    code_download: true
+    includes:
+      in_header: header.html
 ---
 
 ```{r}

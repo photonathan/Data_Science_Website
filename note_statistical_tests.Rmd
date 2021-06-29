@@ -1,0 +1,59 @@
+---
+title: "Statistical Tests"
+output:
+  html_document: 
+    toc: yes
+    toc_depth: 2
+    toc_float: yes
+    highlight: zenburn
+    code_download: true
+    includes:
+      in_header: header.html
+---
+
+Depending on the types of variables you use (categorical or numeric) in your analysis will determine which statistical tests you use to determine if your data is statistically significant e.g one sample proportion test, chi-squared test, t-test, ANOVA, correlation test.
+
+One categorical variable: 1 sample proportion test
+
+Two categorical variables: Chi squared
+
+One numeric: t-test
+
+One numeric and one categorical: t-test or ANOVA (if there are more than 2 categories for that categorical variable)
+
+Two numeric: correlation test
+
+# One categorical variable
+
+Let's say you have 1 categorical variable you are analyzing e.g. Is there a difference in the number of men and women in the population?
+
+In order to disprove the null hypothesis that there is no difference between males and females and that the differences we are seeing are not a result of our sample group randomly having a bias, you pick an alpha value (p < 0.05) and if your  one sample proportion test is less than p, your results are likely not a result of random chance and thus statistically significant.
+
+# Two categorical variables
+
+Let's say you have 2 categorical variables (Sex[Male or Female] and Age Group[Child or Adult or Elderly]). You could ask 'Does the proportion of males and females differ across age groups?'
+
+The hypothesis is 'The number of each sex that we observe is dependent on the Age group.' You can test if any differences you see in you data are due to chance by testing if the proportion of males and females is independent of Age group. Use the chi-squared test to get a p value.
+
+# One numeric
+
+'Is the average height different from a previously established height?' Use a t-test.
+
+# One numeric and one categorical
+
+'Is the a difference in height between men and women?' This is one categorical with two categories and one numeric. Use a t-test
+
+'Is there a difference in height between Age groups' This is one categorical with three categories and one numeric. Use ANOVA.
+
+# Two numeric variables
+
+'Is there a relationship between height and weight?' Use the correlation test. Unlike all the other tests, you get a correlation coefficient which tells you about the relationship as well as the p value. The correlation coefficient is a number between -1 and 1 and looks at the relationship between two numeric variables. If the while the x value gets larger and the y value gets smaller, that is -1. If when x gets larger and y gets larger too, the coefficient is 1. 
+
+
+
+
+
+
+
+
+
