@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Linear Regression</title>
+
+<script src="site_libs/header-attrs-2.8/header-attrs.js"></script>
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.tab('show');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Nathan's Projects</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Visualizing Arlington Bikeometers
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="part_1_the_plan.html">Part 1: The Plan</a>
+    </li>
+    <li>
+      <a href="part_2_query_the_api.html">Part 2: Query the API</a>
+    </li>
+    <li>
+      <a href="part_3_setup_your_database.html">Part 3: Setup and Connect Your Database</a>
+    </li>
+    <li>
+      <a href="part_4_save_the_data_in_a_mysql_database.html">Part 4: Save the Data in Your Local MySQL Database</a>
+    </li>
+    <li>
+      <a href="part_5_picking_bikeometers_to_graph.html">Part 5: Picking Which Bikeometers to Graph</a>
+    </li>
+    <li>
+      <a href="part_6_creating_initial_visualizations.html">Part 6: Creating the Visualizations</a>
+    </li>
+    <li>
+      <a href="part_7_investigating_bikometer_gps_locations.html">Part 7: Investigating Bikeometer GPS Locations</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Bioinformatics Notes
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="downloading_and_parsing_a_genome.html">Downloading and Parsing a Genome</a>
+    </li>
+    <li>
+      <a href="Running-BLAST-over-the-internet.html">Running BLAST Over the Internet</a>
+    </li>
+    <li>
+      <a href="communicating_with-the_outside.html">Communicating with the Outside</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Notes
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="note_fixing_pyrtools_error.html">Fixing rpytools error</a>
+    </li>
+    <li>
+      <a href="note_knit_rmarkdown_db.html">Publish Rmarkdown Documents With Database Connections Without Exposing Credentials</a>
+    </li>
+    <li>
+      <a href="note_general_r_notes.html">General R Notes</a>
+    </li>
+    <li>
+      <a href="note_conda_virutal_env.html">Create and Activate Virtual Enviornmnet using Spyder/Conda</a>
+    </li>
+    <li>
+      <a href="note_general_python_notes.html">General Python Notes</a>
+    </li>
+    <li>
+      <a href="note_r_virutal_env.html">Create and Activate Virtual Enviornmnet using R/Reticulate</a>
+    </li>
+    <li>
+      <a href="note_studying_python.html">Studying Python</a>
+    </li>
+    <li>
+      <a href="note_studying_python_2.html">Studying Python 2</a>
+    </li>
+    <li>
+      <a href="note_studying_python_collections.html">Studying Python collections</a>
+    </li>
+    <li>
+      <a href="note_studying_python_string_module.html">Studying Python string module</a>
+    </li>
+    <li>
+      <a href="note_studying_python_itertools.html">Studying Python itertools</a>
+    </li>
+  </ul>
+</li>
+<li>
+  <a href="photography.html">Photography</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/photonathan">Github</a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Linear Regression</h1>
+
+</div>
+
+
+<pre class="r"><code>library(dplyr)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;dplyr&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:stats&#39;:
+## 
+##     filter, lag</code></pre>
+<pre><code>## The following objects are masked from &#39;package:base&#39;:
+## 
+##     intersect, setdiff, setequal, union</code></pre>
+<pre class="r"><code>library(ggplot2)
+library(Lahman)
+data(Teams)
+head(Teams)</code></pre>
+<pre><code>##   yearID lgID teamID franchID divID Rank  G Ghome  W  L DivWin WCWin LgWin
+## 1   1871   NA    BS1      BNA  &lt;NA&gt;    3 31    NA 20 10   &lt;NA&gt;  &lt;NA&gt;     N
+## 2   1871   NA    CH1      CNA  &lt;NA&gt;    2 28    NA 19  9   &lt;NA&gt;  &lt;NA&gt;     N
+## 3   1871   NA    CL1      CFC  &lt;NA&gt;    8 29    NA 10 19   &lt;NA&gt;  &lt;NA&gt;     N
+## 4   1871   NA    FW1      KEK  &lt;NA&gt;    7 19    NA  7 12   &lt;NA&gt;  &lt;NA&gt;     N
+## 5   1871   NA    NY2      NNA  &lt;NA&gt;    5 33    NA 16 17   &lt;NA&gt;  &lt;NA&gt;     N
+## 6   1871   NA    PH1      PNA  &lt;NA&gt;    1 28    NA 21  7   &lt;NA&gt;  &lt;NA&gt;     Y
+##   WSWin   R   AB   H X2B X3B HR BB SO SB CS HBP SF  RA  ER  ERA CG SHO SV
+## 1  &lt;NA&gt; 401 1372 426  70  37  3 60 19 73 16  NA NA 303 109 3.55 22   1  3
+## 2  &lt;NA&gt; 302 1196 323  52  21 10 60 22 69 21  NA NA 241  77 2.76 25   0  1
+## 3  &lt;NA&gt; 249 1186 328  35  40  7 26 25 18  8  NA NA 341 116 4.11 23   0  0
+## 4  &lt;NA&gt; 137  746 178  19   8  2 33  9 16  4  NA NA 243  97 5.17 19   1  0
+## 5  &lt;NA&gt; 302 1404 403  43  21  1 33 15 46 15  NA NA 313 121 3.72 32   1  0
+## 6  &lt;NA&gt; 376 1281 410  66  27  9 46 23 56 12  NA NA 266 137 4.95 27   0  0
+##   IPouts  HA HRA BBA SOA   E DP    FP                    name
+## 1    828 367   2  42  23 243 24 0.834    Boston Red Stockings
+## 2    753 308   6  28  22 229 16 0.829 Chicago White Stockings
+## 3    762 346  13  53  34 234 15 0.818  Cleveland Forest Citys
+## 4    507 261   5  21  17 163  8 0.803    Fort Wayne Kekiongas
+## 5    879 373   7  42  22 235 14 0.840        New York Mutuals
+## 6    747 329   3  53  16 194 13 0.845  Philadelphia Athletics
+##                           park attendance BPF PPF teamIDBR teamIDlahman45
+## 1          South End Grounds I         NA 103  98      BOS            BS1
+## 2      Union Base-Ball Grounds         NA 104 102      CHI            CH1
+## 3 National Association Grounds         NA  96 100      CLE            CL1
+## 4               Hamilton Field         NA 101 107      KEK            FW1
+## 5     Union Grounds (Brooklyn)         NA  90  88      NYU            NY2
+## 6     Jefferson Street Grounds         NA 102  98      ATH            PH1
+##   teamIDretro
+## 1         BS1
+## 2         CH1
+## 3         CL1
+## 4         FW1
+## 5         NY2
+## 6         PH1</code></pre>
+<p>Load the Lahman library. Filter the Teams data frame to include years from 1961 to 2001.</p>
+<p>What is the correlation coefficient between number of runs per game and number of at bats per game?</p>
+<pre class="r"><code>filtered_teams &lt;- Teams %&gt;% 
+  filter(yearID &gt;= 1961 &amp; yearID &lt;= 2001)
+head(filtered_teams)</code></pre>
+<pre><code>##   yearID lgID teamID franchID divID Rank   G Ghome  W  L DivWin WCWin LgWin
+## 1   1961   AL    BAL      BAL  &lt;NA&gt;    3 163    82 95 67   &lt;NA&gt;  &lt;NA&gt;     N
+## 2   1961   AL    BOS      BOS  &lt;NA&gt;    6 163    82 76 86   &lt;NA&gt;  &lt;NA&gt;     N
+## 3   1961   AL    CHA      CHW  &lt;NA&gt;    4 163    81 86 76   &lt;NA&gt;  &lt;NA&gt;     N
+## 4   1961   NL    CHN      CHC  &lt;NA&gt;    7 156    78 64 90   &lt;NA&gt;  &lt;NA&gt;     N
+## 5   1961   NL    CIN      CIN  &lt;NA&gt;    1 154    77 93 61   &lt;NA&gt;  &lt;NA&gt;     Y
+## 6   1961   AL    CLE      CLE  &lt;NA&gt;    5 161    81 78 83   &lt;NA&gt;  &lt;NA&gt;     N
+##   WSWin   R   AB    H X2B X3B  HR  BB   SO  SB CS HBP SF  RA  ER  ERA CG SHO SV
+## 1     N 691 5481 1393 227  36 149 581  902  39 30  NA NA 588 526 3.22 54  21 33
+## 2     N 729 5508 1401 251  37 112 647  847  56 36  NA NA 792 687 4.29 35   6 30
+## 3     N 765 5556 1475 216  46 138 550  612 100 40  NA NA 726 653 4.06 39   3 33
+## 4     N 689 5344 1364 238  51 176 539 1027  35 25  NA NA 800 689 4.48 34   6 25
+## 5     N 710 5243 1414 247  35 158 423  761  70 33  NA NA 653 575 3.78 46  12 40
+## 6     N 737 5609 1493 257  39 150 492  720  34 11  NA NA 752 665 4.15 35  12 23
+##   IPouts   HA HRA BBA SOA   E  DP    FP              name              park
+## 1   4413 1226 109 617 926 126 173 0.980 Baltimore Orioles  Memorial Stadium
+## 2   4326 1472 167 679 831 143 140 0.977    Boston Red Sox    Fenway Park II
+## 3   4344 1491 158 498 814 128 138 0.980 Chicago White Sox     Comiskey Park
+## 4   4155 1492 165 465 755 183 175 0.970      Chicago Cubs     Wrigley Field
+## 5   4110 1300 147 500 829 134 124 0.977   Cincinnati Reds     Crosley Field
+## 6   4329 1426 178 599 801 139 142 0.977 Cleveland Indians Cleveland Stadium
+##   attendance BPF PPF teamIDBR teamIDlahman45 teamIDretro
+## 1     951089  96  96      BAL            BAL         BAL
+## 2     850589 102 103      BOS            BOS         BOS
+## 3    1146019  99  97      CHW            CHA         CHA
+## 4     673057 101 104      CHC            CHN         CHN
+## 5    1117603 102 101      CIN            CIN         CIN
+## 6     725547  97  98      CLE            CLE         CLE</code></pre>
+<p>What is the correlation coefficient between number of runs per game and number of at bats per game?</p>
+<pre class="r"><code>Teams_small &lt;- Teams %&gt;% filter(yearID %in% 1961:2001)
+
+cor(Teams_small$AB/Teams_small$G, Teams_small$R/Teams_small$G)</code></pre>
+<pre><code>## [1] 0.6580976</code></pre>
+<p>What is the correlation coefficient between win rate (number of wins per game) and number of errors per game?</p>
+<pre class="r"><code>cor(Teams_small$W/Teams_small$G, Teams_small$E/Teams_small$G)</code></pre>
+<pre><code>## [1] -0.3396947</code></pre>
+<p>What is the correlation coefficient between win rate (number of wins per game) and number of errors per game?</p>
+<pre class="r"><code>cor(Teams_small$X2B/Teams_small$G, Teams_small$X3B/Teams_small$G)</code></pre>
+<pre><code>## [1] -0.01157404</code></pre>
+<pre class="r"><code>p &lt;- Teams %&gt;% filter(yearID %in% 1961:2001 ) %&gt;%
+  mutate(AB_per_game = AB/G, R_per_game = R/G) %&gt;%
+  ggplot(aes(AB_per_game, R_per_game)) + 
+  geom_point(alpha = 0.5)
+p</code></pre>
+<p><img src="note_r_linear_regression_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<p>The qq-plots confirm that the normal approximation is useful here:</p>
+<pre class="r"><code>Teams %&gt;% filter(yearID %in% 1961:2001 ) %&gt;%
+  mutate(z_HR = round((HR - mean(HR))/sd(HR)), 
+         R_per_game = R/G) %&gt;%
+  filter(z_HR %in% -2:3) %&gt;%
+  ggplot() +  
+  stat_qq(aes(sample=R_per_game)) +
+  facet_wrap(~z_HR) </code></pre>
+<p><img src="note_r_linear_regression_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<p>Given the figure below, explain how to describe the slope of the regression line:</p>
+<p><img src="https://courses.edx.org/assets/courseware/v1/cb1e8417b358f9ae4eeabb130e1d5f93/asset-v1:HarvardX+PH125.7x+1T2021+type@asset+block/7_8_1_assessment_IDS.png" /></p>
+<p>The slope is <math xmlns="http://www.w3.org/1998/Math/MathML" data-semantic-type="relseq" data-semantic-role="equality" data-semantic-id="12" data-semantic-children="0,11" data-semantic-content="1" data-semantic-complexity="12"> <mi data-semantic-type="identifier" data-semantic-role="latinletter" data-semantic-font="italic" data-semantic-id="0" data-semantic-parent="12" data-semantic-complexity="1">m</mi> <mo data-semantic-type="relation" data-semantic-role="equality" data-semantic-id="1" data-semantic-parent="12" data-semantic-operator="relseq,=" data-semantic-complexity="1">=</mo> <mrow data-semantic-type="infixop" data-semantic-role="implicit" data-semantic-id="11" data-semantic-children="2,9" data-semantic-content="10" data-semantic-parent="12" data-semantic-complexity="7"> <mi mathvariant="italic" data-semantic-type="identifier" data-semantic-role="greekletter" data-semantic-font="italic" data-semantic-id="2" data-semantic-parent="11" data-semantic-complexity="1">ρ</mi> <mo data-semantic-type="operator" data-semantic-role="multiplication" data-semantic-id="10" data-semantic-parent="11" data-semantic-added="true" data-semantic-operator="infixop,&#x2062;" data-semantic-complexity="1">⁢</mo> <maction id="MJX-Collapse-4" actiontype="toggle" selection="2" data-semantic-complexity="2"> <mtext data-semantic-complexity="2">◂/▸</mtext> <mfrac data-semantic-type="fraction" data-semantic-role="division" data-semantic-id="9" data-semantic-children="5,8" data-semantic-parent="11" data-semantic-complexity="14.16"> <msub data-semantic-type="subscript" data-semantic-role="greekletter" data-semantic-id="5" data-semantic-children="3,4" data-semantic-parent="9" data-semantic-complexity="6.6"> <mi mathvariant="italic" data-semantic-type="identifier" data-semantic-role="greekletter" data-semantic-font="italic" data-semantic-id="3" data-semantic-parent="5" data-semantic-complexity="1">σ</mi> <mi data-semantic-type="identifier" data-semantic-role="latinletter" data-semantic-font="italic" data-semantic-id="4" data-semantic-parent="5" data-semantic-complexity="1">y</mi> </msub> <msub data-semantic-type="subscript" data-semantic-role="greekletter" data-semantic-id="8" data-semantic-children="6,7" data-semantic-parent="9" data-semantic-complexity="6.6"> <mi mathvariant="italic" data-semantic-type="identifier" data-semantic-role="greekletter" data-semantic-font="italic" data-semantic-id="6" data-semantic-parent="8" data-semantic-complexity="1">σ</mi> <mi data-semantic-type="identifier" data-semantic-role="latinletter" data-semantic-font="italic" data-semantic-id="7" data-semantic-parent="8" data-semantic-complexity="1">x</mi> </msub> </mfrac> </maction> </mrow> </math> . Expressed in words, the slope is the correlation coefficient of the son and father heights times the standard deviation of the sons’ heights divided by the standard deviation of the fathers’ heights.</p>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

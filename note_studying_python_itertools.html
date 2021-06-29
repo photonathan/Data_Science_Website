@@ -11,7 +11,7 @@
 
 
 
-<title>Pythons Standard Library</title>
+<title>Python itertools</title>
 
 <script src="site_libs/header-attrs-2.8/header-attrs.js"></script>
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
@@ -354,31 +354,20 @@ $(document).ready(function () {
 
 
 
-<h1 class="title toc-ignore">Pythons Standard Library</h1>
+<h1 class="title toc-ignore">Python itertools</h1>
 
 </div>
 
 
-<pre class="python"><code>import string
-
-string.ascii_letters</code></pre>
-<pre><code>## &#39;abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ&#39;</code></pre>
-<pre class="python"><code>string.ascii_uppercase</code></pre>
-<pre><code>## &#39;ABCDEFGHIJKLMNOPQRSTUVWXYZ&#39;</code></pre>
-<pre class="python"><code>string.ascii_lowercase</code></pre>
-<pre><code>## &#39;abcdefghijklmnopqrstuvwxyz&#39;</code></pre>
-<pre class="python"><code>string.digits</code></pre>
-<pre><code>## &#39;0123456789&#39;</code></pre>
-<pre class="python"><code>string.hexdigits</code></pre>
-<pre><code>## &#39;0123456789abcdefABCDEF&#39;</code></pre>
-<pre class="python"><code>string.octdigits</code></pre>
-<pre><code>## &#39;01234567&#39;</code></pre>
-<pre class="python"><code>string.punctuation</code></pre>
-<pre><code>## &#39;!&quot;#$%&amp;\&#39;()*+,-./:;&lt;=&gt;?@[\\]^_`{|}~&#39;</code></pre>
-<pre class="python"><code>string.printable</code></pre>
-<pre><code>## &#39;0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!&quot;#$%&amp;\&#39;()*+,-./:;&lt;=&gt;?@[\\]^_`{|}~ \t\n\r\x0b\x0c&#39;</code></pre>
-<pre class="python"><code>string.whitespace</code></pre>
-<pre><code>## &#39; \t\n\r\x0b\x0c&#39;</code></pre>
+<p>The functions in itertools “operate” on iterators to produce more complex iterators. Consider, for example, the built-in zip() function, which takes any number of iterables as arguments and returns an iterator over tuples of their corresponding elements:</p>
+<pre class="python"><code>list(zip([1, 2, 3], [&#39;a&#39;, &#39;b&#39;, &#39;c&#39;]))</code></pre>
+<pre><code>## [(1, &#39;a&#39;), (2, &#39;b&#39;), (3, &#39;c&#39;)]</code></pre>
+<p>The map() built-in function is another “iterator operator” that, in its simplest form, applies a single-parameter function to each element of an iterable one element at a time:</p>
+<pre class="python"><code>list(map(len, [&#39;abc&#39;, &#39;de&#39;, &#39;fghi&#39;]))</code></pre>
+<pre><code>## [3, 2, 4]</code></pre>
+<p>Since iterators are iterable, you can compose zip() and map() to produce an iterator over combinations of elements in more than one iterable. For example, the following sums corresponding elements of two lists:</p>
+<pre class="python"><code>list(map(sum, zip([1, 2, 3], [4, 5, 6])))</code></pre>
+<pre><code>## [5, 7, 9]</code></pre>
 
 
 

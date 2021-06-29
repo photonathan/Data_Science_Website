@@ -1,0 +1,167 @@
+---
+title: "Linear Regression"
+output: html_document
+---
+
+```{r}
+library(dplyr)
+library(ggplot2)
+library(Lahman)
+data(Teams)
+head(Teams)
+```
+
+Load the Lahman library. Filter the Teams data frame to include years from 1961 to 2001.
+
+What is the correlation coefficient between number of runs per game and number of at bats per game?
+```{r}
+filtered_teams <- Teams %>% 
+  filter(yearID >= 1961 & yearID <= 2001)
+head(filtered_teams)
+```
+
+What is the correlation coefficient between number of runs per game and number of at bats per game?
+
+```{r}
+Teams_small <- Teams %>% filter(yearID %in% 1961:2001)
+
+cor(Teams_small$AB/Teams_small$G, Teams_small$R/Teams_small$G)
+```
+
+What is the correlation coefficient between win rate (number of wins per game) and number of errors per game?
+
+```{r}
+cor(Teams_small$W/Teams_small$G, Teams_small$E/Teams_small$G)
+```
+
+What is the correlation coefficient between win rate (number of wins per game) and number of errors per game?
+
+```{r}
+cor(Teams_small$X2B/Teams_small$G, Teams_small$X3B/Teams_small$G)
+```
+
+```{r}
+p <- Teams %>% filter(yearID %in% 1961:2001 ) %>%
+  mutate(AB_per_game = AB/G, R_per_game = R/G) %>%
+  ggplot(aes(AB_per_game, R_per_game)) + 
+  geom_point(alpha = 0.5)
+p
+```
+
+The qq-plots confirm that the normal approximation is useful here:
+
+```{r}
+Teams %>% filter(yearID %in% 1961:2001 ) %>%
+  mutate(z_HR = round((HR - mean(HR))/sd(HR)), 
+         R_per_game = R/G) %>%
+  filter(z_HR %in% -2:3) %>%
+  ggplot() +  
+  stat_qq(aes(sample=R_per_game)) +
+  facet_wrap(~z_HR) 
+```
+
+Given the figure below, explain how to describe the slope of the regression line:
+
+![](https://courses.edx.org/assets/courseware/v1/cb1e8417b358f9ae4eeabb130e1d5f93/asset-v1:HarvardX+PH125.7x+1T2021+type@asset+block/7_8_1_assessment_IDS.png)
+
+
+The slope is <math xmlns="http://www.w3.org/1998/Math/MathML" data-semantic-type="relseq" data-semantic-role="equality" data-semantic-id="12" data-semantic-children="0,11" data-semantic-content="1" data-semantic-complexity="12">
+  <mi data-semantic-type="identifier" data-semantic-role="latinletter" data-semantic-font="italic" data-semantic-id="0" data-semantic-parent="12" data-semantic-complexity="1">m</mi>
+  <mo data-semantic-type="relation" data-semantic-role="equality" data-semantic-id="1" data-semantic-parent="12" data-semantic-operator="relseq,=" data-semantic-complexity="1">=</mo>
+  <mrow data-semantic-type="infixop" data-semantic-role="implicit" data-semantic-id="11" data-semantic-children="2,9" data-semantic-content="10" data-semantic-parent="12" data-semantic-complexity="7">
+    <mi mathvariant="italic" data-semantic-type="identifier" data-semantic-role="greekletter" data-semantic-font="italic" data-semantic-id="2" data-semantic-parent="11" data-semantic-complexity="1">&#x3C1;</mi>
+    <mo data-semantic-type="operator" data-semantic-role="multiplication" data-semantic-id="10" data-semantic-parent="11" data-semantic-added="true" data-semantic-operator="infixop,&#x2062;" data-semantic-complexity="1">&#x2062;</mo>
+    <maction id="MJX-Collapse-4" actiontype="toggle" selection="2" data-semantic-complexity="2">
+      <mtext data-semantic-complexity="2">&#x25C2;/&#x25B8;</mtext>
+      <mfrac data-semantic-type="fraction" data-semantic-role="division" data-semantic-id="9" data-semantic-children="5,8" data-semantic-parent="11" data-semantic-complexity="14.16">
+        <msub data-semantic-type="subscript" data-semantic-role="greekletter" data-semantic-id="5" data-semantic-children="3,4" data-semantic-parent="9" data-semantic-complexity="6.6">
+          <mi mathvariant="italic" data-semantic-type="identifier" data-semantic-role="greekletter" data-semantic-font="italic" data-semantic-id="3" data-semantic-parent="5" data-semantic-complexity="1">&#x3C3;</mi>
+          <mi data-semantic-type="identifier" data-semantic-role="latinletter" data-semantic-font="italic" data-semantic-id="4" data-semantic-parent="5" data-semantic-complexity="1">y</mi>
+        </msub>
+        <msub data-semantic-type="subscript" data-semantic-role="greekletter" data-semantic-id="8" data-semantic-children="6,7" data-semantic-parent="9" data-semantic-complexity="6.6">
+          <mi mathvariant="italic" data-semantic-type="identifier" data-semantic-role="greekletter" data-semantic-font="italic" data-semantic-id="6" data-semantic-parent="8" data-semantic-complexity="1">&#x3C3;</mi>
+          <mi data-semantic-type="identifier" data-semantic-role="latinletter" data-semantic-font="italic" data-semantic-id="7" data-semantic-parent="8" data-semantic-complexity="1">x</mi>
+        </msub>
+      </mfrac>
+    </maction>
+  </mrow>
+</math>
+. Expressed in words, the slope is the correlation coefficient of the son and father heights times the standard deviation of the sons' heights divided by the standard deviation of the fathers' heights.
+
+Why does the regression line simplify to a line with intercept zero and slope p when we standardize our x and y variables?
+
+When we standardize variables, both x and y will have a mean of zero and a standard deviation of one. When you substitute this into the formula for the regression line, the terms cancel out until we have the following equation: <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <maction id="MJX-Collapse-6" actiontype="toggle" selection="2" data-semantic-complexity="2">
+    <mtext data-semantic-complexity="2">&#x25C2;=&#x25B8;</mtext>
+    <mrow data-semantic-complexity="22.2" data-semantic-content="3" data-semantic-children="2,9" data-semantic-id="10" data-semantic-role="equality" data-semantic-type="relseq">
+      <mrow>
+        <msub data-semantic-type="subscript" data-semantic-role="latinletter" data-semantic-id="2" data-semantic-children="0,1" data-semantic-parent="10" data-semantic-complexity="6.6">
+          <mi data-semantic-type="identifier" data-semantic-role="latinletter" data-semantic-font="italic" data-semantic-id="0" data-semantic-parent="2" data-semantic-complexity="1">y</mi>
+          <mi data-semantic-type="identifier" data-semantic-role="latinletter" data-semantic-font="italic" data-semantic-id="1" data-semantic-parent="2" data-semantic-complexity="1">i</mi>
+        </msub>
+        <mo data-semantic-type="relation" data-semantic-role="equality" data-semantic-id="3" data-semantic-parent="10" data-semantic-operator="relseq,=" data-semantic-complexity="1">=</mo>
+        <mrow data-semantic-type="infixop" data-semantic-role="implicit" data-semantic-id="9" data-semantic-children="4,7" data-semantic-content="8" data-semantic-parent="10" data-semantic-complexity="11.6">
+          <mi mathvariant="italic" data-semantic-type="identifier" data-semantic-role="greekletter" data-semantic-font="italic" data-semantic-id="4" data-semantic-parent="9" data-semantic-complexity="1">&#x3C1;</mi>
+          <mo data-semantic-type="operator" data-semantic-role="multiplication" data-semantic-id="8" data-semantic-parent="9" data-semantic-added="true" data-semantic-operator="infixop,&#x2062;" data-semantic-complexity="1">&#x2062;</mo>
+          <msub data-semantic-type="subscript" data-semantic-role="latinletter" data-semantic-id="7" data-semantic-children="5,6" data-semantic-parent="9" data-semantic-complexity="6.6">
+            <mi data-semantic-type="identifier" data-semantic-role="latinletter" data-semantic-font="italic" data-semantic-id="5" data-semantic-parent="7" data-semantic-complexity="1">x</mi>
+            <mi data-semantic-type="identifier" data-semantic-role="latinletter" data-semantic-font="italic" data-semantic-id="6" data-semantic-parent="7" data-semantic-complexity="1">i</mi>
+          </msub>
+        </mrow>
+      </mrow>
+    </mrow>
+  </maction>
+</math> 
+
+What is a limitation of calculating conditional means?
+
+`Some limitations of calculating conditional means include: each specific stratum used for conditioning may not have data points, because there are limited data points for each stratum there may be large standard errors on the means, and conditional means are less stable than a regression line. Conditional means can be calculated, so it is not correct that they are only useful as a theoretical tool.`
+
+A regression line is the best prediction of Y given we know the value of X when:
+
+`X and Y follow a bivariate normal distribution.`
+
+Which one of the following scatterplots depicts an x and y distribution that is NOT well-approximated by the bivariate normal distribution?
+
+![](https://courses.edx.org/assets/courseware/v1/2d1bab5c357d2a3ffcba5a09c96dd8bc/asset-v1:HarvardX+PH125.7x+1T2021+type@asset+block/7_9_2_assessment_A_IDS.png)
+
+Explanation: The v-shaped distribution of points from the first plot means that the x and y variables do not follow a bivariate normal distribution. When a pair of random variables is approximated by a bivariate normal, the scatter plot looks like an oval (as in the 2nd, 3rd, and 4th plots) - it is okay if the oval is very round (as in the 3rd plot) or long and thin (as in the 4th plot).
+
+We previously calculated that the correlation coefficient  between fathers’ and sons’ heights is 0.5. Given this, what percent of the variation in sons’ heights is explained by fathers’ heights?
+
+`When two variables follow a bivariate normal distribution, the variation explained can be calculated as p^2 x 100
+
+```{r}
+set.seed(1989, sample.kind="Rounding") #if you are using R 3.6 or later
+library(HistData)
+data("GaltonFamilies")
+```
+```{r}
+female_heights <- GaltonFamilies %>%     
+    filter(gender == "female") %>%     
+    group_by(family) %>%     
+    sample_n(1) %>%     
+    ungroup() %>%     
+    select(mother, childHeight) %>%     
+    rename(daughter = childHeight)
+```
+
+```{r}
+female_heights <- GaltonFamilies %>%     
+    filter(gender == "female") %>%     
+    group_by(family) %>% 
+    sample_n(1) %>% 
+    ungroup() %>% 
+    select(mother,childHeight) %>% 
+    rename(daughter = childHeight)
+
+female_heights
+```
+```{r}
+summary(female_heights)
+sd(female_heights$mother)
+sd(female_heights$daughter)
+cor(female_heights$mother, female_heights$daughter)
+```
+
+
