@@ -391,5 +391,3 @@ plot(n, prob)
 lines(n, eprob, col = 'red')
 ```
 
-
-

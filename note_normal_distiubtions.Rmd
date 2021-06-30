@@ -1,0 +1,73 @@
+---
+title: "Normal Distributions and Standard Deviations"
+output: html_document
+---
+
+# Normal Distribution 
+
+Normal distributions are calculated based on the mean and standard deviation of the distribution. 
+
+The distribution is symmetric, centered at the average, and most values (about 95%) are within 2 SDs from the average. Here is what the normal distribution looks like when the average is 0 and the SD is 1
+
+![](https://rafalab.github.io/dsbook/book_files/figure-html/normal-distribution-density-1.png)
+
+The fact that the distribution is defined by just two parameters implies that if a dataset is approximated by a normal distribution, all the information needed to describe the distribution can be encoded in just two numbers: the average and the standard deviation. We now define these values for an arbitrary list of numbers.
+
+For a list of numbers contained in a vector x, the average is defined as:
+
+```{r}
+m <- sum(x) / length(x)
+```
+
+and the SD is defined as:
+
+```{r}
+s <- sqrt(sum((x-mu)^2) / length(x))
+```
+
+which can be interpreted as the average distance between values and their average.
+
+Let’s compute the values for the height for males which we will store in the object x:
+
+```{r}
+library(dslabs)
+data(heights)
+index <- heights$sex == "Male"
+x <- heights$height[index]
+```
+
+The pre-built functions mean and sd (note that for reasons explained in Section 16.2, sd divides by length(x)-1 rather than length(x)) can be used here:
+
+```{r}
+m <- mean(x)
+s <- sd(x)
+c(average = m, sd = s)
+```
+
+Here is a plot of the smooth density and the normal distribution with mean = 69.3 and SD = 3.6 plotted as a black line with our student height smooth density in blue:
+
+![](https://rafalab.github.io/dsbook/book_files/figure-html/data-and-normal-densities-1.png)
+
+The normal distribution does appear to be quite a good approximation here. We now will see how well this approximation works at predicting the proportion of values within intervals.
+
+## Standard Units
+
+For data that is approximately normally distributed, it is convenient to think in terms of standard units. The standard unit of a value tells us how many standard deviations away from the average it is. 
+
+In R, we can obtain standard units using the function `scale()`:
+
+```{r}
+z <- scale(x)
+```
+
+Now to see how many men are within 2 SDs from the average, we simply type:
+
+```{r}
+mean(abs(z) < 2)
+```
+
+The proportion is about 95%, which is what the normal distribution predicts! To further confirm that, in fact, the approximation is a good one, we can use quantile-quantile plots.
+
+# Quantile-quantile Plots
+
+A systematic way to assess how well the normal distribution fits the data is to check if the observed and predicted proportions match. In general, this is the approach of the quantile-quantile plot (QQ-plot).

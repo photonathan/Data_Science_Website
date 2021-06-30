@@ -18,10 +18,12 @@ library(Lahman)
 data(Teams)
 head(Teams)
 ```
+# Correlation Coefficient
 
 Load the Lahman library. Filter the Teams data frame to include years from 1961 to 2001.
 
 What is the correlation coefficient between number of runs per game and number of at bats per game?
+
 ```{r}
 filtered_teams <- Teams %>% 
   filter(yearID >= 1961 & yearID <= 2001)
@@ -178,6 +180,7 @@ Slope of regression line = (correlation coefficient of daughters' heights given 
 0.285 * (2.3154/2.289292)
 ```
 Compute a regression line to predict the daughter's height from the mother's height
+
 ```{r}
 mu_x <- mean(female_heights$mother)
 mu_y <- mean(female_heights$daughter)
@@ -194,35 +197,78 @@ b_2 <- mu_y - m_2*mu_x
 b_2
 ```
 
-Stratify HR per game to nearest 10, filter out strata with few points
+# Linear Models
+
+Regression allows us to find relationships between two variables while adjusting for others. This method is popular in fields where randomized experiments are hard to run such as economics and epidemiology. 
+
+When we are not able to randomly assign each individual to a treatment or control group, **confounding** is particularly prevalent. For example, consider estimating the effects of any fast foods on life expectancy using data collected from a random sample of people. Fast food consumers are more likely to be smokers, drinkers, and have lower incomes. Therefore, a naive regression model may lead to an overestimate of a negative health effect of fast foods. 
+
+So do we adjust for confounding in practice? We can use **regression**. If the data is bivariate normal, then the conditional expectation follow a regression line. However in practice it is common to explicitly wirte down a model that describes the relationship between two or more variables using what is called a linear **model**. Here, a linear model refers to the fact that the conditional expectation is a linear combination of known quantities.
+
+# Confounding
 
 ```{r}
-# 
+library(tidyverse)
+library(Lahman)
+get_slope <- function(x, y) cor(x, y) * sd(y) / sd(x)
+
+bb_slope <- Teams %>% 
+  filter(yearID %in% 1961:2001 ) %>% 
+  mutate(BB_per_game = BB/G, R_per_game = R/G) %>% 
+  summarize(slope = get_slope(BB_per_game, R_per_game))
+
+bb_slope 
+```
+
+
+So does this mean that if we go and hire low salary players with many BB, and who therefore increase the number of walks per game by 2, our team will score 1.5 more runs per game?
+
+We are again reminded that association is not causation. The data does provide strong evidence that a team with two more BB per game than the average team, scores 1.5 runs per game. But this does not mean that BB are the cause.
+
+Note that if we compute the regression line slope for singles we get:
+
+```{r}
+singles_slope <- Teams %>% 
+  filter(yearID %in% 1961:2001 ) %>%
+  mutate(Singles_per_game = (H-HR-X2B-X3B)/G, R_per_game = R/G) %>%
+  summarize(slope = get_slope(Singles_per_game, R_per_game))
+
+singles_slope 
+```
+
+Which is a lower value than what we obtain for BB.
+
+Also, notice that a single gets you to first base just like a BB. Those that know about baseball will tell you that with a single, runners on base have a better chance of scoring than with a BB. So how can BB be more predictive of runs? The reason this happen is because of confounding. Here we show the correlation between HR, BB, and singles:
+
+```{r}
+Teams %>% 
+  filter(yearID %in% 1961:2001 ) %>% 
+  mutate(Singles = (H-HR-X2B-X3B)/G, BB = BB/G, HR = HR/G) %>%  
+  summarize(cor(BB, HR), cor(Singles, HR), cor(BB, Singles))
+```
+
+It turns out that pitchers, afraid of HRs, will sometimes avoid throwing strikes to HR hitters. As a result, HR hitters tend to have more BBs and a team with many HRs will also have more BBs. Although it may appear that BBs cause runs, it is actually the HRs that cause most of these runs. We say that BBs are confounded with HRs. Nonetheless, could it be that BBs still help? To find out, we somehow have to adjust for the HR effect. Regression can help with this as well.
+
+# Understanding confounding through stratification
+
+A first approach is to keep HRs fixed at a certain value and then examine the relationship between BB and runs. As we did when we stratified fathers by rounding to the closest inch, here we can stratify HR per game to the closest ten. We filter out the strata with few points to avoid highly variable estimates:
+
+```{r}
 dat <- Teams %>% filter(yearID %in% 1961:2001) %>%
   mutate(HR_strata = round(HR/G, 1), 
          BB_per_game = BB / G,
          R_per_game = R / G) %>%
-  filter(HR_strata >= 0.4 & HR_strata <=1.2)
-
+  filter(HR_strata >= 0.4 & HR_strata <=1.2) 
 ```
 
-Create a scatterplot for each HR stratum
+and then make a scatterplot for each strata:
 
 ```{r}
 dat %>% 
   ggplot(aes(BB_per_game, R_per_game)) +  
   geom_point(alpha = 0.5) +
   geom_smooth(method = "lm") +
-  facet_wrap( ~ HR_strata)
-```
-
-
-
-Calculate the slope of regression line after stratifying by HR
-```{r}
-dat %>%  
-  group_by(HR_strata) %>%
-  summarize(slope = cor(BB_per_game, R_per_game)*sd(R_per_game)/sd(BB_per_game))
+  facet_wrap( ~ HR_strata) 
 ```
 
 
