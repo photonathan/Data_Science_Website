@@ -36,7 +36,7 @@ First, let's get some details on the Bikeometers in the database. There is a 'Bi
 ```{python, autodep=TRUE, cache.lazy=FALSE}
 import requests
 
-# Assign the url of the 
+# Assign the url to the variable 'url'
 url = 'http://webservices.commuterpage.com/counters.cfc?wsdl'
 # Defines the method in a dictionary used to make the request
 counter_reqest_methods = {'method': 'GetAllCounters'}

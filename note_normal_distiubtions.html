@@ -11,7 +11,7 @@
 
 
 
-<title>Nathan’s Projects</title>
+<title>Normal Distributions and Standard Deviations</title>
 
 <script src="site_libs/header-attrs-2.9/header-attrs.js"></script>
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
@@ -32,24 +32,6 @@
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
-<link rel="apple-touch-icon" sizes="180x180" href="~/assets/favicon/apple-touch-icon.png">
-<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon/favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon/favicon-16x16.png">
-<link rel="manifest" href="/assets/favicon/site.webmanifest">
-<link rel="mask-icon" href="/assets/favicon/safari-pinned-tab.svg" color="#5bbad5">
-<link rel="shortcut icon" href="/assets/favicon/favicon.ico">
-<meta name="msapplication-TileColor" content="#da532c">
-<meta name="msapplication-config" content="/assets/favicon/browserconfig.xml">
-<meta name="theme-color" content="#ffffff">
-<!-- Global site tag (gtag.js) - Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-4T1YMHR0Y3"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-4T1YMHR0Y3');
-</script>
 
 <style type="text/css">
   code{white-space: pre-wrap;}
@@ -378,30 +360,50 @@ $(document).ready(function () {
 
 
 
-<h1 class="title toc-ignore">Nathan’s Projects</h1>
+<h1 class="title toc-ignore">Normal Distributions and Standard Deviations</h1>
 
 </div>
 
 
-<style type="text/css">
-.title {
-  display: none;
-}
-
-#getting-started img {
-  margin-right: 10px;
-}
-
-</style>
-<div class="row">
-<div class="col-sm-6">
-<p><img src="images/Logo.jpg" width="100%" id=logo style="display: block; margin: auto;" /></p>
+<div id="normal-distribution" class="section level1">
+<h1>Normal Distribution</h1>
+<p>Normal distributions are calculated based on the mean and standard deviation of the distribution.</p>
+<p>The distribution is symmetric, centered at the average, and most values (about 95%) are within 2 SDs from the average. Here is what the normal distribution looks like when the average is 0 and the SD is 1</p>
+<p><img src="https://rafalab.github.io/dsbook/book_files/figure-html/normal-distribution-density-1.png" /></p>
+<p>The fact that the distribution is defined by just two parameters implies that if a dataset is approximated by a normal distribution, all the information needed to describe the distribution can be encoded in just two numbers: the average and the standard deviation. We now define these values for an arbitrary list of numbers.</p>
+<p>For a list of numbers contained in a vector x, the average is defined as:</p>
+<pre class="r"><code>m &lt;- sum(x) / length(x)</code></pre>
+<p>and the SD is defined as:</p>
+<pre class="r"><code>s &lt;- sqrt(sum((x-mu)^2) / length(x))</code></pre>
+<p>which can be interpreted as the average distance between values and their average.</p>
+<p>Let’s compute the values for the height for males which we will store in the object x:</p>
+<pre class="r"><code>library(dslabs)
+data(heights)
+index &lt;- heights$sex == &quot;Male&quot;
+x &lt;- heights$height[index]</code></pre>
+<p>The pre-built functions mean and sd (note that for reasons explained in Section 16.2, sd divides by length(x)-1 rather than length(x)) can be used here:</p>
+<pre class="r"><code>m &lt;- mean(x)
+s &lt;- sd(x)
+c(average = m, sd = s)</code></pre>
+<pre><code>##   average        sd 
+## 69.314755  3.611024</code></pre>
+<p>Here is a plot of the smooth density and the normal distribution with mean = 69.3 and SD = 3.6 plotted as a black line with our student height smooth density in blue:</p>
+<p><img src="https://rafalab.github.io/dsbook/book_files/figure-html/data-and-normal-densities-1.png" /></p>
+<p>The normal distribution does appear to be quite a good approximation here. We now will see how well this approximation works at predicting the proportion of values within intervals.</p>
+<div id="standard-units" class="section level2">
+<h2>Standard Units</h2>
+<p>For data that is approximately normally distributed, it is convenient to think in terms of standard units. The standard unit of a value tells us how many standard deviations away from the average it is.</p>
+<p>In R, we can obtain standard units using the function <code>scale()</code>:</p>
+<pre class="r"><code>z &lt;- scale(x)</code></pre>
+<p>Now to see how many men are within 2 SDs from the average, we simply type:</p>
+<pre class="r"><code>mean(abs(z) &lt; 2)</code></pre>
+<pre><code>## [1] 0.9495074</code></pre>
+<p>The proportion is about 95%, which is what the normal distribution predicts! To further confirm that, in fact, the approximation is a good one, we can use quantile-quantile plots.</p>
 </div>
-<div id="welcome" class="section level3 col-sm-6" style="padding-top: 50px;">
-<h3>Welcome</h3>
-<p>Data can be complicated, my homepage is not.</p>
-<p>Check out my <a href="https://nathansprojects.com/part_1_the_plan.html">Visualization of Arlington, Virginia’s bike usage during Covid-19</a>.</p>
 </div>
+<div id="quantile-quantile-plots" class="section level1">
+<h1>Quantile-quantile Plots</h1>
+<p>A systematic way to assess how well the normal distribution fits the data is to check if the observed and predicted proportions match. In general, this is the approach of the quantile-quantile plot (QQ-plot).</p>
 </div>
 
 

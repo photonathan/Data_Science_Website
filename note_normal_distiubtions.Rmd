@@ -15,13 +15,13 @@ The fact that the distribution is defined by just two parameters implies that if
 
 For a list of numbers contained in a vector x, the average is defined as:
 
-```{r}
+```{r eval=FALSE}
 m <- sum(x) / length(x)
 ```
 
 and the SD is defined as:
 
-```{r}
+```{r eval=FALSE}
 s <- sqrt(sum((x-mu)^2) / length(x))
 ```
 

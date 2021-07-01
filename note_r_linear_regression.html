@@ -13,7 +13,7 @@
 
 <title>Linear Regression</title>
 
-<script src="site_libs/header-attrs-2.8/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.9/header-attrs.js"></script>
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
@@ -29,9 +29,21 @@
        h6 {font-size: 12px;}
        code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
        pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
-<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
-<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<script src="site_libs/navigation-1.1/sourceembed.js"></script>
+<link rel="apple-touch-icon" sizes="180x180" href="~/assets/favicon/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon/favicon-16x16.png">
+<link rel="manifest" href="/assets/favicon/site.webmanifest">
+<link rel="mask-icon" href="/assets/favicon/safari-pinned-tab.svg" color="#5bbad5">
+<link rel="shortcut icon" href="/assets/favicon/favicon.ico">
+<meta name="msapplication-TileColor" content="#da532c">
+<meta name="msapplication-config" content="/assets/favicon/browserconfig.xml">
+<meta name="theme-color" content="#ffffff">
 
 <style type="text/css">
   code{white-space: pre-wrap;}
@@ -42,19 +54,108 @@
   ul.task-list{list-style: none;}
     </style>
 
-<style type="text/css">code{white-space: pre;}</style>
-<script type="text/javascript">
-if (window.hljs) {
-  hljs.configure({languages: []});
-  hljs.initHighlightingOnLoad();
-  if (document.readyState && document.readyState === "complete") {
-    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+
+<style type="text/css">
+  code {
+    white-space: pre;
   }
+  .sourceCode {
+    overflow: visible;
+  }
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
 }
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  { color: #cccccc; background-color: #303030; }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ffcfaf; } /* Alert */
+code span.an { color: #7f9f7f; font-weight: bold; } /* Annotation */
+code span.at { } /* Attribute */
+code span.bn { color: #dca3a3; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #f0dfaf; } /* ControlFlow */
+code span.ch { color: #dca3a3; } /* Char */
+code span.cn { color: #dca3a3; font-weight: bold; } /* Constant */
+code span.co { color: #7f9f7f; } /* Comment */
+code span.cv { color: #7f9f7f; font-weight: bold; } /* CommentVar */
+code span.do { color: #7f9f7f; } /* Documentation */
+code span.dt { color: #dfdfbf; } /* DataType */
+code span.dv { color: #dcdccc; } /* DecVal */
+code span.er { color: #c3bf9f; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #c0bed1; } /* Float */
+code span.fu { color: #efef8f; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #7f9f7f; font-weight: bold; } /* Information */
+code span.kw { color: #f0dfaf; } /* Keyword */
+code span.op { color: #f0efd0; } /* Operator */
+code span.ot { color: #efef8f; } /* Other */
+code span.pp { color: #ffcfaf; font-weight: bold; } /* Preprocessor */
+code span.sc { color: #dca3a3; } /* SpecialChar */
+code span.ss { color: #cc9393; } /* SpecialString */
+code span.st { color: #cc9393; } /* String */
+code span.va { } /* Variable */
+code span.vs { color: #cc9393; } /* VerbatimString */
+code span.wa { color: #7f9f7f; font-weight: bold; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
 </script>
 
 
-
+<style type="text/css">
+#rmd-source-code {
+  display: none;
+}
+</style>
 
 
 
@@ -215,7 +316,73 @@ $(document).ready(function () {
 </style>
 
 <!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
 
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
 
 
 
@@ -225,6 +392,16 @@ $(document).ready(function () {
 
 
 <div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
 
 
 
@@ -332,6 +509,12 @@ $(document).ready(function () {
     <li>
       <a href="note_studying_python_itertools.html">Studying Python itertools</a>
     </li>
+    <li>
+      <a href="note_r_probability.html">Studying R probability</a>
+    </li>
+    <li>
+      <a href="note_statistical_tests.html">Studying Statistical Tests</a>
+    </li>
   </ul>
 </li>
 <li>
@@ -352,6 +535,13 @@ $(document).ready(function () {
 
 <div id="header">
 
+<div class="btn-group pull-right float-right">
+<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
+<li><a id="rmd-download-source" href="#">Download Rmd</a></li>
+</ul>
+</div>
+
 
 
 <h1 class="title toc-ignore">Linear Regression</h1>
@@ -359,7 +549,7 @@ $(document).ready(function () {
 </div>
 
 
-<pre class="r"><code>library(dplyr)</code></pre>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span></code></pre></div>
 <pre><code>## 
 ## Attaching package: &#39;dplyr&#39;</code></pre>
 <pre><code>## The following objects are masked from &#39;package:stats&#39;:
@@ -368,10 +558,10 @@ $(document).ready(function () {
 <pre><code>## The following objects are masked from &#39;package:base&#39;:
 ## 
 ##     intersect, setdiff, setequal, union</code></pre>
-<pre class="r"><code>library(ggplot2)
-library(Lahman)
-data(Teams)
-head(Teams)</code></pre>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(Lahman)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(Teams)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(Teams)</span></code></pre></div>
 <pre><code>##   yearID lgID teamID franchID divID Rank  G Ghome  W  L DivWin WCWin LgWin
 ## 1   1871   NA    BS1      BNA  &lt;NA&gt;    3 31    NA 20 10   &lt;NA&gt;  &lt;NA&gt;     N
 ## 2   1871   NA    CH1      CNA  &lt;NA&gt;    2 28    NA 19  9   &lt;NA&gt;  &lt;NA&gt;     N
@@ -407,11 +597,13 @@ head(Teams)</code></pre>
 ## 4         FW1
 ## 5         NY2
 ## 6         PH1</code></pre>
+<div id="correlation-coefficient" class="section level1">
+<h1>Correlation Coefficient</h1>
 <p>Load the Lahman library. Filter the Teams data frame to include years from 1961 to 2001.</p>
 <p>What is the correlation coefficient between number of runs per game and number of at bats per game?</p>
-<pre class="r"><code>filtered_teams &lt;- Teams %&gt;% 
-  filter(yearID &gt;= 1961 &amp; yearID &lt;= 2001)
-head(filtered_teams)</code></pre>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>filtered_teams <span class="ot">&lt;-</span> Teams <span class="sc">%&gt;%</span> </span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(yearID <span class="sc">&gt;=</span> <span class="dv">1961</span> <span class="sc">&amp;</span> yearID <span class="sc">&lt;=</span> <span class="dv">2001</span>)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(filtered_teams)</span></code></pre></div>
 <pre><code>##   yearID lgID teamID franchID divID Rank   G Ghome  W  L DivWin WCWin LgWin
 ## 1   1961   AL    BAL      BAL  &lt;NA&gt;    3 163    82 95 67   &lt;NA&gt;  &lt;NA&gt;     N
 ## 2   1961   AL    BOS      BOS  &lt;NA&gt;    6 163    82 76 86   &lt;NA&gt;  &lt;NA&gt;     N
@@ -441,37 +633,174 @@ head(filtered_teams)</code></pre>
 ## 5    1117603 102 101      CIN            CIN         CIN
 ## 6     725547  97  98      CLE            CLE         CLE</code></pre>
 <p>What is the correlation coefficient between number of runs per game and number of at bats per game?</p>
-<pre class="r"><code>Teams_small &lt;- Teams %&gt;% filter(yearID %in% 1961:2001)
-
-cor(Teams_small$AB/Teams_small$G, Teams_small$R/Teams_small$G)</code></pre>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>Teams_small <span class="ot">&lt;-</span> Teams <span class="sc">%&gt;%</span> <span class="fu">filter</span>(yearID <span class="sc">%in%</span> <span class="dv">1961</span><span class="sc">:</span><span class="dv">2001</span>)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(Teams_small<span class="sc">$</span>AB<span class="sc">/</span>Teams_small<span class="sc">$</span>G, Teams_small<span class="sc">$</span>R<span class="sc">/</span>Teams_small<span class="sc">$</span>G)</span></code></pre></div>
 <pre><code>## [1] 0.6580976</code></pre>
 <p>What is the correlation coefficient between win rate (number of wins per game) and number of errors per game?</p>
-<pre class="r"><code>cor(Teams_small$W/Teams_small$G, Teams_small$E/Teams_small$G)</code></pre>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(Teams_small<span class="sc">$</span>W<span class="sc">/</span>Teams_small<span class="sc">$</span>G, Teams_small<span class="sc">$</span>E<span class="sc">/</span>Teams_small<span class="sc">$</span>G)</span></code></pre></div>
 <pre><code>## [1] -0.3396947</code></pre>
 <p>What is the correlation coefficient between win rate (number of wins per game) and number of errors per game?</p>
-<pre class="r"><code>cor(Teams_small$X2B/Teams_small$G, Teams_small$X3B/Teams_small$G)</code></pre>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(Teams_small<span class="sc">$</span>X2B<span class="sc">/</span>Teams_small<span class="sc">$</span>G, Teams_small<span class="sc">$</span>X3B<span class="sc">/</span>Teams_small<span class="sc">$</span>G)</span></code></pre></div>
 <pre><code>## [1] -0.01157404</code></pre>
-<pre class="r"><code>p &lt;- Teams %&gt;% filter(yearID %in% 1961:2001 ) %&gt;%
-  mutate(AB_per_game = AB/G, R_per_game = R/G) %&gt;%
-  ggplot(aes(AB_per_game, R_per_game)) + 
-  geom_point(alpha = 0.5)
-p</code></pre>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> Teams <span class="sc">%&gt;%</span> <span class="fu">filter</span>(yearID <span class="sc">%in%</span> <span class="dv">1961</span><span class="sc">:</span><span class="dv">2001</span> ) <span class="sc">%&gt;%</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">AB_per_game =</span> AB<span class="sc">/</span>G, <span class="at">R_per_game =</span> R<span class="sc">/</span>G) <span class="sc">%&gt;%</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(AB_per_game, R_per_game)) <span class="sc">+</span> </span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.5</span>)</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>p</span></code></pre></div>
 <p><img src="note_r_linear_regression_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
 <p>The qq-plots confirm that the normal approximation is useful here:</p>
-<pre class="r"><code>Teams %&gt;% filter(yearID %in% 1961:2001 ) %&gt;%
-  mutate(z_HR = round((HR - mean(HR))/sd(HR)), 
-         R_per_game = R/G) %&gt;%
-  filter(z_HR %in% -2:3) %&gt;%
-  ggplot() +  
-  stat_qq(aes(sample=R_per_game)) +
-  facet_wrap(~z_HR) </code></pre>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>Teams <span class="sc">%&gt;%</span> <span class="fu">filter</span>(yearID <span class="sc">%in%</span> <span class="dv">1961</span><span class="sc">:</span><span class="dv">2001</span> ) <span class="sc">%&gt;%</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">z_HR =</span> <span class="fu">round</span>((HR <span class="sc">-</span> <span class="fu">mean</span>(HR))<span class="sc">/</span><span class="fu">sd</span>(HR)), </span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">R_per_game =</span> R<span class="sc">/</span>G) <span class="sc">%&gt;%</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(z_HR <span class="sc">%in%</span> <span class="sc">-</span><span class="dv">2</span><span class="sc">:</span><span class="dv">3</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span>  </span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_qq</span>(<span class="fu">aes</span>(<span class="at">sample=</span>R_per_game)) <span class="sc">+</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>z_HR) </span></code></pre></div>
 <p><img src="note_r_linear_regression_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
 <p>Given the figure below, explain how to describe the slope of the regression line:</p>
 <p><img src="https://courses.edx.org/assets/courseware/v1/cb1e8417b358f9ae4eeabb130e1d5f93/asset-v1:HarvardX+PH125.7x+1T2021+type@asset+block/7_8_1_assessment_IDS.png" /></p>
 <p>The slope is <math xmlns="http://www.w3.org/1998/Math/MathML" data-semantic-type="relseq" data-semantic-role="equality" data-semantic-id="12" data-semantic-children="0,11" data-semantic-content="1" data-semantic-complexity="12"> <mi data-semantic-type="identifier" data-semantic-role="latinletter" data-semantic-font="italic" data-semantic-id="0" data-semantic-parent="12" data-semantic-complexity="1">m</mi> <mo data-semantic-type="relation" data-semantic-role="equality" data-semantic-id="1" data-semantic-parent="12" data-semantic-operator="relseq,=" data-semantic-complexity="1">=</mo> <mrow data-semantic-type="infixop" data-semantic-role="implicit" data-semantic-id="11" data-semantic-children="2,9" data-semantic-content="10" data-semantic-parent="12" data-semantic-complexity="7"> <mi mathvariant="italic" data-semantic-type="identifier" data-semantic-role="greekletter" data-semantic-font="italic" data-semantic-id="2" data-semantic-parent="11" data-semantic-complexity="1">ρ</mi> <mo data-semantic-type="operator" data-semantic-role="multiplication" data-semantic-id="10" data-semantic-parent="11" data-semantic-added="true" data-semantic-operator="infixop,&#x2062;" data-semantic-complexity="1">⁢</mo> <maction id="MJX-Collapse-4" actiontype="toggle" selection="2" data-semantic-complexity="2"> <mtext data-semantic-complexity="2">◂/▸</mtext> <mfrac data-semantic-type="fraction" data-semantic-role="division" data-semantic-id="9" data-semantic-children="5,8" data-semantic-parent="11" data-semantic-complexity="14.16"> <msub data-semantic-type="subscript" data-semantic-role="greekletter" data-semantic-id="5" data-semantic-children="3,4" data-semantic-parent="9" data-semantic-complexity="6.6"> <mi mathvariant="italic" data-semantic-type="identifier" data-semantic-role="greekletter" data-semantic-font="italic" data-semantic-id="3" data-semantic-parent="5" data-semantic-complexity="1">σ</mi> <mi data-semantic-type="identifier" data-semantic-role="latinletter" data-semantic-font="italic" data-semantic-id="4" data-semantic-parent="5" data-semantic-complexity="1">y</mi> </msub> <msub data-semantic-type="subscript" data-semantic-role="greekletter" data-semantic-id="8" data-semantic-children="6,7" data-semantic-parent="9" data-semantic-complexity="6.6"> <mi mathvariant="italic" data-semantic-type="identifier" data-semantic-role="greekletter" data-semantic-font="italic" data-semantic-id="6" data-semantic-parent="8" data-semantic-complexity="1">σ</mi> <mi data-semantic-type="identifier" data-semantic-role="latinletter" data-semantic-font="italic" data-semantic-id="7" data-semantic-parent="8" data-semantic-complexity="1">x</mi> </msub> </mfrac> </maction> </mrow> </math> . Expressed in words, the slope is the correlation coefficient of the son and father heights times the standard deviation of the sons’ heights divided by the standard deviation of the fathers’ heights.</p>
+<p>Why does the regression line simplify to a line with intercept zero and slope p when we standardize our x and y variables?</p>
+<p>When we standardize variables, both x and y will have a mean of zero and a standard deviation of one. When you substitute this into the formula for the regression line, the terms cancel out until we have the following equation: <math xmlns="http://www.w3.org/1998/Math/MathML"> <maction id="MJX-Collapse-6" actiontype="toggle" selection="2" data-semantic-complexity="2"> <mtext data-semantic-complexity="2">◂=▸</mtext> <mrow data-semantic-complexity="22.2" data-semantic-content="3" data-semantic-children="2,9" data-semantic-id="10" data-semantic-role="equality" data-semantic-type="relseq"> <mrow> <msub data-semantic-type="subscript" data-semantic-role="latinletter" data-semantic-id="2" data-semantic-children="0,1" data-semantic-parent="10" data-semantic-complexity="6.6"> <mi data-semantic-type="identifier" data-semantic-role="latinletter" data-semantic-font="italic" data-semantic-id="0" data-semantic-parent="2" data-semantic-complexity="1">y</mi> <mi data-semantic-type="identifier" data-semantic-role="latinletter" data-semantic-font="italic" data-semantic-id="1" data-semantic-parent="2" data-semantic-complexity="1">i</mi> </msub> <mo data-semantic-type="relation" data-semantic-role="equality" data-semantic-id="3" data-semantic-parent="10" data-semantic-operator="relseq,=" data-semantic-complexity="1">=</mo> <mrow data-semantic-type="infixop" data-semantic-role="implicit" data-semantic-id="9" data-semantic-children="4,7" data-semantic-content="8" data-semantic-parent="10" data-semantic-complexity="11.6"> <mi mathvariant="italic" data-semantic-type="identifier" data-semantic-role="greekletter" data-semantic-font="italic" data-semantic-id="4" data-semantic-parent="9" data-semantic-complexity="1">ρ</mi> <mo data-semantic-type="operator" data-semantic-role="multiplication" data-semantic-id="8" data-semantic-parent="9" data-semantic-added="true" data-semantic-operator="infixop,&#x2062;" data-semantic-complexity="1">⁢</mo> <msub data-semantic-type="subscript" data-semantic-role="latinletter" data-semantic-id="7" data-semantic-children="5,6" data-semantic-parent="9" data-semantic-complexity="6.6"> <mi data-semantic-type="identifier" data-semantic-role="latinletter" data-semantic-font="italic" data-semantic-id="5" data-semantic-parent="7" data-semantic-complexity="1">x</mi> <mi data-semantic-type="identifier" data-semantic-role="latinletter" data-semantic-font="italic" data-semantic-id="6" data-semantic-parent="7" data-semantic-complexity="1">i</mi> </msub> </mrow> </mrow> </mrow> </maction> </math></p>
+<p>What is a limitation of calculating conditional means?</p>
+<p><code>Some limitations of calculating conditional means include: each specific stratum used for conditioning may not have data points, because there are limited data points for each stratum there may be large standard errors on the means, and conditional means are less stable than a regression line. Conditional means can be calculated, so it is not correct that they are only useful as a theoretical tool.</code></p>
+<p>A regression line is the best prediction of Y given we know the value of X when:</p>
+<p><code>X and Y follow a bivariate normal distribution.</code></p>
+<p>Which one of the following scatterplots depicts an x and y distribution that is NOT well-approximated by the bivariate normal distribution?</p>
+<p><img src="https://courses.edx.org/assets/courseware/v1/2d1bab5c357d2a3ffcba5a09c96dd8bc/asset-v1:HarvardX+PH125.7x+1T2021+type@asset+block/7_9_2_assessment_A_IDS.png" /></p>
+<p>Explanation: The v-shaped distribution of points from the first plot means that the x and y variables do not follow a bivariate normal distribution. When a pair of random variables is approximated by a bivariate normal, the scatter plot looks like an oval (as in the 2nd, 3rd, and 4th plots) - it is okay if the oval is very round (as in the 3rd plot) or long and thin (as in the 4th plot).</p>
+<p>We previously calculated that the correlation coefficient between fathers’ and sons’ heights is 0.5. Given this, what percent of the variation in sons’ heights is explained by fathers’ heights?</p>
+<p>`When two variables follow a bivariate normal distribution, the variation explained can be calculated as p^2 x 100</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1989</span>, <span class="at">sample.kind=</span><span class="st">&quot;Rounding&quot;</span>) <span class="co">#if you are using R 3.6 or later</span></span></code></pre></div>
+<pre><code>## Warning in set.seed(1989, sample.kind = &quot;Rounding&quot;): non-uniform &#39;Rounding&#39;
+## sampler used</code></pre>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(HistData)</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;GaltonFamilies&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>female_heights <span class="ot">&lt;-</span> GaltonFamilies <span class="sc">%&gt;%</span>     </span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(gender <span class="sc">==</span> <span class="st">&quot;female&quot;</span>) <span class="sc">%&gt;%</span>     </span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(family) <span class="sc">%&gt;%</span>     </span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">sample_n</span>(<span class="dv">1</span>) <span class="sc">%&gt;%</span>     </span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span>     </span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(mother, childHeight) <span class="sc">%&gt;%</span>     </span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rename</span>(<span class="at">daughter =</span> childHeight)</span></code></pre></div>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>female_heights <span class="ot">&lt;-</span> GaltonFamilies <span class="sc">%&gt;%</span>     </span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(gender <span class="sc">==</span> <span class="st">&quot;female&quot;</span>) <span class="sc">%&gt;%</span>     </span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(family) <span class="sc">%&gt;%</span> </span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">sample_n</span>(<span class="dv">1</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(mother,childHeight) <span class="sc">%&gt;%</span> </span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rename</span>(<span class="at">daughter =</span> childHeight)</span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>female_heights</span></code></pre></div>
+<pre><code>## # A tibble: 176 x 2
+##    mother daughter
+##     &lt;dbl&gt;    &lt;dbl&gt;
+##  1   67       69  
+##  2   66.5     65.5
+##  3   64       68  
+##  4   64       64.5
+##  5   58.5     62.5
+##  6   68       69.5
+##  7   68       64  
+##  8   66.5     66  
+##  9   66       66  
+## 10   65.5     65.5
+## # ... with 166 more rows</code></pre>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>r <span class="ot">&lt;-</span> <span class="fu">cor</span>(female_heights<span class="sc">$</span>mother, female_heights<span class="sc">$</span>daughter)</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>s_y <span class="ot">&lt;-</span> <span class="fu">sd</span>(female_heights<span class="sc">$</span>daughter)</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>s_x <span class="ot">&lt;-</span> <span class="fu">sd</span>(female_heights<span class="sc">$</span>mother)</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>r <span class="sc">*</span> s_y<span class="sc">/</span>s_x</span></code></pre></div>
+<pre><code>## [1] 0.2885842</code></pre>
+<p>Slope of regression line = (correlation coefficient of daughters’ heights given mothers’ heights) * (standard deviation of daughters’ heights / standard deviation of mothers’ heights)</p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fl">0.285</span> <span class="sc">*</span> (<span class="fl">2.3154</span><span class="sc">/</span><span class="fl">2.289292</span>)</span></code></pre></div>
+<pre><code>## [1] 0.2882503</code></pre>
+<p>Compute a regression line to predict the daughter’s height from the mother’s height</p>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>mu_x <span class="ot">&lt;-</span> <span class="fu">mean</span>(female_heights<span class="sc">$</span>mother)</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>mu_y <span class="ot">&lt;-</span> <span class="fu">mean</span>(female_heights<span class="sc">$</span>daughter)</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>s_x <span class="ot">&lt;-</span> <span class="fu">sd</span>(female_heights<span class="sc">$</span>mother)</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>s_y <span class="ot">&lt;-</span> <span class="fu">sd</span>(female_heights<span class="sc">$</span>daughter)</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>r <span class="ot">&lt;-</span> <span class="fu">cor</span>(female_heights<span class="sc">$</span>mother, female_heights<span class="sc">$</span>daughter)</span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>m <span class="ot">&lt;-</span> r <span class="sc">*</span> s_y <span class="sc">/</span> s_x</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>b <span class="ot">&lt;-</span> mu_y <span class="sc">-</span> m<span class="sc">*</span>mu_x</span></code></pre></div>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>m_2 <span class="ot">&lt;-</span> r <span class="sc">*</span> s_y <span class="sc">/</span> s_x</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>b_2 <span class="ot">&lt;-</span> mu_y <span class="sc">-</span> m_2<span class="sc">*</span>mu_x</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>b_2</span></code></pre></div>
+<pre><code>## [1] 45.64795</code></pre>
+</div>
+<div id="linear-models" class="section level1">
+<h1>Linear Models</h1>
+<p>Regression allows us to find relationships between two variables while adjusting for others. This method is popular in fields where randomized experiments are hard to run such as economics and epidemiology.</p>
+<p>When we are not able to randomly assign each individual to a treatment or control group, <strong>confounding</strong> is particularly prevalent. For example, consider estimating the effects of any fast foods on life expectancy using data collected from a random sample of people. Fast food consumers are more likely to be smokers, drinkers, and have lower incomes. Therefore, a naive regression model may lead to an overestimate of a negative health effect of fast foods.</p>
+<p>So do we adjust for confounding in practice? We can use <strong>regression</strong>. If the data is bivariate normal, then the conditional expectation follow a regression line. However in practice it is common to explicitly wirte down a model that describes the relationship between two or more variables using what is called a linear <strong>model</strong>. Here, a linear model refers to the fact that the conditional expectation is a linear combination of known quantities.</p>
+</div>
+<div id="confounding" class="section level1">
+<h1>Confounding</h1>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code></pre></div>
+<pre><code>## Warning in (function (kind = NULL, normal.kind = NULL, sample.kind = NULL) :
+## non-uniform &#39;Rounding&#39; sampler used</code></pre>
+<pre><code>## -- Attaching packages --------------------------------------- tidyverse 1.3.1 --</code></pre>
+<pre><code>## v tibble  3.1.2     v purrr   0.3.4
+## v tidyr   1.1.3     v stringr 1.4.0
+## v readr   1.4.0     v forcats 0.5.1</code></pre>
+<pre><code>## -- Conflicts ------------------------------------------ tidyverse_conflicts() --
+## x dplyr::filter() masks stats::filter()
+## x dplyr::lag()    masks stats::lag()</code></pre>
+<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(Lahman)</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>get_slope <span class="ot">&lt;-</span> <span class="cf">function</span>(x, y) <span class="fu">cor</span>(x, y) <span class="sc">*</span> <span class="fu">sd</span>(y) <span class="sc">/</span> <span class="fu">sd</span>(x)</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>bb_slope <span class="ot">&lt;-</span> Teams <span class="sc">%&gt;%</span> </span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(yearID <span class="sc">%in%</span> <span class="dv">1961</span><span class="sc">:</span><span class="dv">2001</span> ) <span class="sc">%&gt;%</span> </span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">BB_per_game =</span> BB<span class="sc">/</span>G, <span class="at">R_per_game =</span> R<span class="sc">/</span>G) <span class="sc">%&gt;%</span> </span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">slope =</span> <span class="fu">get_slope</span>(BB_per_game, R_per_game))</span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a>bb_slope </span></code></pre></div>
+<pre><code>##       slope
+## 1 0.7353288</code></pre>
+<p>So does this mean that if we go and hire low salary players with many BB, and who therefore increase the number of walks per game by 2, our team will score 1.5 more runs per game?</p>
+<p>We are again reminded that association is not causation. The data does provide strong evidence that a team with two more BB per game than the average team, scores 1.5 runs per game. But this does not mean that BB are the cause.</p>
+<p>Note that if we compute the regression line slope for singles we get:</p>
+<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>singles_slope <span class="ot">&lt;-</span> Teams <span class="sc">%&gt;%</span> </span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(yearID <span class="sc">%in%</span> <span class="dv">1961</span><span class="sc">:</span><span class="dv">2001</span> ) <span class="sc">%&gt;%</span></span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Singles_per_game =</span> (H<span class="sc">-</span>HR<span class="sc">-</span>X2B<span class="sc">-</span>X3B)<span class="sc">/</span>G, <span class="at">R_per_game =</span> R<span class="sc">/</span>G) <span class="sc">%&gt;%</span></span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">slope =</span> <span class="fu">get_slope</span>(Singles_per_game, R_per_game))</span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>singles_slope </span></code></pre></div>
+<pre><code>##       slope
+## 1 0.4494253</code></pre>
+<p>Which is a lower value than what we obtain for BB.</p>
+<p>Also, notice that a single gets you to first base just like a BB. Those that know about baseball will tell you that with a single, runners on base have a better chance of scoring than with a BB. So how can BB be more predictive of runs? The reason this happen is because of confounding. Here we show the correlation between HR, BB, and singles:</p>
+<div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>Teams <span class="sc">%&gt;%</span> </span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(yearID <span class="sc">%in%</span> <span class="dv">1961</span><span class="sc">:</span><span class="dv">2001</span> ) <span class="sc">%&gt;%</span> </span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Singles =</span> (H<span class="sc">-</span>HR<span class="sc">-</span>X2B<span class="sc">-</span>X3B)<span class="sc">/</span>G, <span class="at">BB =</span> BB<span class="sc">/</span>G, <span class="at">HR =</span> HR<span class="sc">/</span>G) <span class="sc">%&gt;%</span>  </span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="fu">cor</span>(BB, HR), <span class="fu">cor</span>(Singles, HR), <span class="fu">cor</span>(BB, Singles))</span></code></pre></div>
+<pre><code>##   cor(BB, HR) cor(Singles, HR) cor(BB, Singles)
+## 1   0.4039313       -0.1737435      -0.05603822</code></pre>
+<p>It turns out that pitchers, afraid of HRs, will sometimes avoid throwing strikes to HR hitters. As a result, HR hitters tend to have more BBs and a team with many HRs will also have more BBs. Although it may appear that BBs cause runs, it is actually the HRs that cause most of these runs. We say that BBs are confounded with HRs. Nonetheless, could it be that BBs still help? To find out, we somehow have to adjust for the HR effect. Regression can help with this as well.</p>
+</div>
+<div id="understanding-confounding-through-stratification" class="section level1">
+<h1>Understanding confounding through stratification</h1>
+<p>A first approach is to keep HRs fixed at a certain value and then examine the relationship between BB and runs. As we did when we stratified fathers by rounding to the closest inch, here we can stratify HR per game to the closest ten. We filter out the strata with few points to avoid highly variable estimates:</p>
+<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> Teams <span class="sc">%&gt;%</span> <span class="fu">filter</span>(yearID <span class="sc">%in%</span> <span class="dv">1961</span><span class="sc">:</span><span class="dv">2001</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">HR_strata =</span> <span class="fu">round</span>(HR<span class="sc">/</span>G, <span class="dv">1</span>), </span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">BB_per_game =</span> BB <span class="sc">/</span> G,</span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">R_per_game =</span> R <span class="sc">/</span> G) <span class="sc">%&gt;%</span></span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(HR_strata <span class="sc">&gt;=</span> <span class="fl">0.4</span> <span class="sc">&amp;</span> HR_strata <span class="sc">&lt;=</span><span class="fl">1.2</span>) </span></code></pre></div>
+<p>and then make a scatterplot for each strata:</p>
+<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>dat <span class="sc">%&gt;%</span> </span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(BB_per_game, R_per_game)) <span class="sc">+</span>  </span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">&quot;lm&quot;</span>) <span class="sc">+</span></span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>( <span class="sc">~</span> HR_strata) </span></code></pre></div>
+<pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
+<p><img src="note_r_linear_regression_files/figure-html/unnamed-chunk-19-1.png" width="672" /></p>
+</div>
+
+<div id="rmd-source-code">LS0tDQp0aXRsZTogIkxpbmVhciBSZWdyZXNzaW9uIg0Kb3V0cHV0Og0KICBodG1sX2RvY3VtZW50OiANCiAgICB0b2M6IHllcw0KICAgIHRvY19kZXB0aDogMg0KICAgIHRvY19mbG9hdDogeWVzDQogICAgaGlnaGxpZ2h0OiB6ZW5idXJuDQogICAgY29kZV9kb3dubG9hZDogdHJ1ZQ0KICAgIGluY2x1ZGVzOg0KICAgICAgaW5faGVhZGVyOiBoZWFkZXIuaHRtbA0KLS0tDQoNCmBgYHtyfQ0KbGlicmFyeShkcGx5cikNCmxpYnJhcnkoZ2dwbG90MikNCmxpYnJhcnkoTGFobWFuKQ0KZGF0YShUZWFtcykNCmhlYWQoVGVhbXMpDQpgYGANCiMgQ29ycmVsYXRpb24gQ29lZmZpY2llbnQNCg0KTG9hZCB0aGUgTGFobWFuIGxpYnJhcnkuIEZpbHRlciB0aGUgVGVhbXMgZGF0YSBmcmFtZSB0byBpbmNsdWRlIHllYXJzIGZyb20gMTk2MSB0byAyMDAxLg0KDQpXaGF0IGlzIHRoZSBjb3JyZWxhdGlvbiBjb2VmZmljaWVudCBiZXR3ZWVuIG51bWJlciBvZiBydW5zIHBlciBnYW1lIGFuZCBudW1iZXIgb2YgYXQgYmF0cyBwZXIgZ2FtZT8NCg0KYGBge3J9DQpmaWx0ZXJlZF90ZWFtcyA8LSBUZWFtcyAlPiUgDQogIGZpbHRlcih5ZWFySUQgPj0gMTk2MSAmIHllYXJJRCA8PSAyMDAxKQ0KaGVhZChmaWx0ZXJlZF90ZWFtcykNCmBgYA0KDQpXaGF0IGlzIHRoZSBjb3JyZWxhdGlvbiBjb2VmZmljaWVudCBiZXR3ZWVuIG51bWJlciBvZiBydW5zIHBlciBnYW1lIGFuZCBudW1iZXIgb2YgYXQgYmF0cyBwZXIgZ2FtZT8NCg0KYGBge3J9DQpUZWFtc19zbWFsbCA8LSBUZWFtcyAlPiUgZmlsdGVyKHllYXJJRCAlaW4lIDE5NjE6MjAwMSkNCg0KY29yKFRlYW1zX3NtYWxsJEFCL1RlYW1zX3NtYWxsJEcsIFRlYW1zX3NtYWxsJFIvVGVhbXNfc21hbGwkRykNCmBgYA0KDQpXaGF0IGlzIHRoZSBjb3JyZWxhdGlvbiBjb2VmZmljaWVudCBiZXR3ZWVuIHdpbiByYXRlIChudW1iZXIgb2Ygd2lucyBwZXIgZ2FtZSkgYW5kIG51bWJlciBvZiBlcnJvcnMgcGVyIGdhbWU/DQoNCmBgYHtyfQ0KY29yKFRlYW1zX3NtYWxsJFcvVGVhbXNfc21hbGwkRywgVGVhbXNfc21hbGwkRS9UZWFtc19zbWFsbCRHKQ0KYGBgDQoNCldoYXQgaXMgdGhlIGNvcnJlbGF0aW9uIGNvZWZmaWNpZW50IGJldHdlZW4gd2luIHJhdGUgKG51bWJlciBvZiB3aW5zIHBlciBnYW1lKSBhbmQgbnVtYmVyIG9mIGVycm9ycyBwZXIgZ2FtZT8NCg0KYGBge3J9DQpjb3IoVGVhbXNfc21hbGwkWDJCL1RlYW1zX3NtYWxsJEcsIFRlYW1zX3NtYWxsJFgzQi9UZWFtc19zbWFsbCRHKQ0KYGBgDQoNCmBgYHtyfQ0KcCA8LSBUZWFtcyAlPiUgZmlsdGVyKHllYXJJRCAlaW4lIDE5NjE6MjAwMSApICU+JQ0KICBtdXRhdGUoQUJfcGVyX2dhbWUgPSBBQi9HLCBSX3Blcl9nYW1lID0gUi9HKSAlPiUNCiAgZ2dwbG90KGFlcyhBQl9wZXJfZ2FtZSwgUl9wZXJfZ2FtZSkpICsgDQogIGdlb21fcG9pbnQoYWxwaGEgPSAwLjUpDQpwDQpgYGANCg0KVGhlIHFxLXBsb3RzIGNvbmZpcm0gdGhhdCB0aGUgbm9ybWFsIGFwcHJveGltYXRpb24gaXMgdXNlZnVsIGhlcmU6DQoNCmBgYHtyfQ0KVGVhbXMgJT4lIGZpbHRlcih5ZWFySUQgJWluJSAxOTYxOjIwMDEgKSAlPiUNCiAgbXV0YXRlKHpfSFIgPSByb3VuZCgoSFIgLSBtZWFuKEhSKSkvc2QoSFIpKSwgDQogICAgICAgICBSX3Blcl9nYW1lID0gUi9HKSAlPiUNCiAgZmlsdGVyKHpfSFIgJWluJSAtMjozKSAlPiUNCiAgZ2dwbG90KCkgKyAgDQogIHN0YXRfcXEoYWVzKHNhbXBsZT1SX3Blcl9nYW1lKSkgKw0KICBmYWNldF93cmFwKH56X0hSKSANCmBgYA0KDQpHaXZlbiB0aGUgZmlndXJlIGJlbG93LCBleHBsYWluIGhvdyB0byBkZXNjcmliZSB0aGUgc2xvcGUgb2YgdGhlIHJlZ3Jlc3Npb24gbGluZToNCg0KIVtdKGh0dHBzOi8vY291cnNlcy5lZHgub3JnL2Fzc2V0cy9jb3Vyc2V3YXJlL3YxL2NiMWU4NDE3YjM1OGY5YWU0ZWVhYmIxMzBlMWQ1ZjkzL2Fzc2V0LXYxOkhhcnZhcmRYK1BIMTI1Ljd4KzFUMjAyMSt0eXBlQGFzc2V0K2Jsb2NrLzdfOF8xX2Fzc2Vzc21lbnRfSURTLnBuZykNCg0KDQpUaGUgc2xvcGUgaXMgPG1hdGggeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzE5OTgvTWF0aC9NYXRoTUwiIGRhdGEtc2VtYW50aWMtdHlwZT0icmVsc2VxIiBkYXRhLXNlbWFudGljLXJvbGU9ImVxdWFsaXR5IiBkYXRhLXNlbWFudGljLWlkPSIxMiIgZGF0YS1zZW1hbnRpYy1jaGlsZHJlbj0iMCwxMSIgZGF0YS1zZW1hbnRpYy1jb250ZW50PSIxIiBkYXRhLXNlbWFudGljLWNvbXBsZXhpdHk9IjEyIj4NCiAgPG1pIGRhdGEtc2VtYW50aWMtdHlwZT0iaWRlbnRpZmllciIgZGF0YS1zZW1hbnRpYy1yb2xlPSJsYXRpbmxldHRlciIgZGF0YS1zZW1hbnRpYy1mb250PSJpdGFsaWMiIGRhdGEtc2VtYW50aWMtaWQ9IjAiIGRhdGEtc2VtYW50aWMtcGFyZW50PSIxMiIgZGF0YS1zZW1hbnRpYy1jb21wbGV4aXR5PSIxIj5tPC9taT4NCiAgPG1vIGRhdGEtc2VtYW50aWMtdHlwZT0icmVsYXRpb24iIGRhdGEtc2VtYW50aWMtcm9sZT0iZXF1YWxpdHkiIGRhdGEtc2VtYW50aWMtaWQ9IjEiIGRhdGEtc2VtYW50aWMtcGFyZW50PSIxMiIgZGF0YS1zZW1hbnRpYy1vcGVyYXRvcj0icmVsc2VxLD0iIGRhdGEtc2VtYW50aWMtY29tcGxleGl0eT0iMSI+PTwvbW8+DQogIDxtcm93IGRhdGEtc2VtYW50aWMtdHlwZT0iaW5maXhvcCIgZGF0YS1zZW1hbnRpYy1yb2xlPSJpbXBsaWNpdCIgZGF0YS1zZW1hbnRpYy1pZD0iMTEiIGRhdGEtc2VtYW50aWMtY2hpbGRyZW49IjIsOSIgZGF0YS1zZW1hbnRpYy1jb250ZW50PSIxMCIgZGF0YS1zZW1hbnRpYy1wYXJlbnQ9IjEyIiBkYXRhLXNlbWFudGljLWNvbXBsZXhpdHk9IjciPg0KICAgIDxtaSBtYXRodmFyaWFudD0iaXRhbGljIiBkYXRhLXNlbWFudGljLXR5cGU9ImlkZW50aWZpZXIiIGRhdGEtc2VtYW50aWMtcm9sZT0iZ3JlZWtsZXR0ZXIiIGRhdGEtc2VtYW50aWMtZm9udD0iaXRhbGljIiBkYXRhLXNlbWFudGljLWlkPSIyIiBkYXRhLXNlbWFudGljLXBhcmVudD0iMTEiIGRhdGEtc2VtYW50aWMtY29tcGxleGl0eT0iMSI+JiN4M0MxOzwvbWk+DQogICAgPG1vIGRhdGEtc2VtYW50aWMtdHlwZT0ib3BlcmF0b3IiIGRhdGEtc2VtYW50aWMtcm9sZT0ibXVsdGlwbGljYXRpb24iIGRhdGEtc2VtYW50aWMtaWQ9IjEwIiBkYXRhLXNlbWFudGljLXBhcmVudD0iMTEiIGRhdGEtc2VtYW50aWMtYWRkZWQ9InRydWUiIGRhdGEtc2VtYW50aWMtb3BlcmF0b3I9ImluZml4b3AsJiN4MjA2MjsiIGRhdGEtc2VtYW50aWMtY29tcGxleGl0eT0iMSI+JiN4MjA2Mjs8L21vPg0KICAgIDxtYWN0aW9uIGlkPSJNSlgtQ29sbGFwc2UtNCIgYWN0aW9udHlwZT0idG9nZ2xlIiBzZWxlY3Rpb249IjIiIGRhdGEtc2VtYW50aWMtY29tcGxleGl0eT0iMiI+DQogICAgICA8bXRleHQgZGF0YS1zZW1hbnRpYy1jb21wbGV4aXR5PSIyIj4mI3gyNUMyOy8mI3gyNUI4OzwvbXRleHQ+DQogICAgICA8bWZyYWMgZGF0YS1zZW1hbnRpYy10eXBlPSJmcmFjdGlvbiIgZGF0YS1zZW1hbnRpYy1yb2xlPSJkaXZpc2lvbiIgZGF0YS1zZW1hbnRpYy1pZD0iOSIgZGF0YS1zZW1hbnRpYy1jaGlsZHJlbj0iNSw4IiBkYXRhLXNlbWFudGljLXBhcmVudD0iMTEiIGRhdGEtc2VtYW50aWMtY29tcGxleGl0eT0iMTQuMTYiPg0KICAgICAgICA8bXN1YiBkYXRhLXNlbWFudGljLXR5cGU9InN1YnNjcmlwdCIgZGF0YS1zZW1hbnRpYy1yb2xlPSJncmVla2xldHRlciIgZGF0YS1zZW1hbnRpYy1pZD0iNSIgZGF0YS1zZW1hbnRpYy1jaGlsZHJlbj0iMyw0IiBkYXRhLXNlbWFudGljLXBhcmVudD0iOSIgZGF0YS1zZW1hbnRpYy1jb21wbGV4aXR5PSI2LjYiPg0KICAgICAgICAgIDxtaSBtYXRodmFyaWFudD0iaXRhbGljIiBkYXRhLXNlbWFudGljLXR5cGU9ImlkZW50aWZpZXIiIGRhdGEtc2VtYW50aWMtcm9sZT0iZ3JlZWtsZXR0ZXIiIGRhdGEtc2VtYW50aWMtZm9udD0iaXRhbGljIiBkYXRhLXNlbWFudGljLWlkPSIzIiBkYXRhLXNlbWFudGljLXBhcmVudD0iNSIgZGF0YS1zZW1hbnRpYy1jb21wbGV4aXR5PSIxIj4mI3gzQzM7PC9taT4NCiAgICAgICAgICA8bWkgZGF0YS1zZW1hbnRpYy10eXBlPSJpZGVudGlmaWVyIiBkYXRhLXNlbWFudGljLXJvbGU9ImxhdGlubGV0dGVyIiBkYXRhLXNlbWFudGljLWZvbnQ9Iml0YWxpYyIgZGF0YS1zZW1hbnRpYy1pZD0iNCIgZGF0YS1zZW1hbnRpYy1wYXJlbnQ9IjUiIGRhdGEtc2VtYW50aWMtY29tcGxleGl0eT0iMSI+eTwvbWk+DQogICAgICAgIDwvbXN1Yj4NCiAgICAgICAgPG1zdWIgZGF0YS1zZW1hbnRpYy10eXBlPSJzdWJzY3JpcHQiIGRhdGEtc2VtYW50aWMtcm9sZT0iZ3JlZWtsZXR0ZXIiIGRhdGEtc2VtYW50aWMtaWQ9IjgiIGRhdGEtc2VtYW50aWMtY2hpbGRyZW49IjYsNyIgZGF0YS1zZW1hbnRpYy1wYXJlbnQ9IjkiIGRhdGEtc2VtYW50aWMtY29tcGxleGl0eT0iNi42Ij4NCiAgICAgICAgICA8bWkgbWF0aHZhcmlhbnQ9Iml0YWxpYyIgZGF0YS1zZW1hbnRpYy10eXBlPSJpZGVudGlmaWVyIiBkYXRhLXNlbWFudGljLXJvbGU9ImdyZWVrbGV0dGVyIiBkYXRhLXNlbWFudGljLWZvbnQ9Iml0YWxpYyIgZGF0YS1zZW1hbnRpYy1pZD0iNiIgZGF0YS1zZW1hbnRpYy1wYXJlbnQ9IjgiIGRhdGEtc2VtYW50aWMtY29tcGxleGl0eT0iMSI+JiN4M0MzOzwvbWk+DQogICAgICAgICAgPG1pIGRhdGEtc2VtYW50aWMtdHlwZT0iaWRlbnRpZmllciIgZGF0YS1zZW1hbnRpYy1yb2xlPSJsYXRpbmxldHRlciIgZGF0YS1zZW1hbnRpYy1mb250PSJpdGFsaWMiIGRhdGEtc2VtYW50aWMtaWQ9IjciIGRhdGEtc2VtYW50aWMtcGFyZW50PSI4IiBkYXRhLXNlbWFudGljLWNvbXBsZXhpdHk9IjEiPng8L21pPg0KICAgICAgICA8L21zdWI+DQogICAgICA8L21mcmFjPg0KICAgIDwvbWFjdGlvbj4NCiAgPC9tcm93Pg0KPC9tYXRoPg0KLiBFeHByZXNzZWQgaW4gd29yZHMsIHRoZSBzbG9wZSBpcyB0aGUgY29ycmVsYXRpb24gY29lZmZpY2llbnQgb2YgdGhlIHNvbiBhbmQgZmF0aGVyIGhlaWdodHMgdGltZXMgdGhlIHN0YW5kYXJkIGRldmlhdGlvbiBvZiB0aGUgc29ucycgaGVpZ2h0cyBkaXZpZGVkIGJ5IHRoZSBzdGFuZGFyZCBkZXZpYXRpb24gb2YgdGhlIGZhdGhlcnMnIGhlaWdodHMuDQoNCldoeSBkb2VzIHRoZSByZWdyZXNzaW9uIGxpbmUgc2ltcGxpZnkgdG8gYSBsaW5lIHdpdGggaW50ZXJjZXB0IHplcm8gYW5kIHNsb3BlIHAgd2hlbiB3ZSBzdGFuZGFyZGl6ZSBvdXIgeCBhbmQgeSB2YXJpYWJsZXM/DQoNCldoZW4gd2Ugc3RhbmRhcmRpemUgdmFyaWFibGVzLCBib3RoIHggYW5kIHkgd2lsbCBoYXZlIGEgbWVhbiBvZiB6ZXJvIGFuZCBhIHN0YW5kYXJkIGRldmlhdGlvbiBvZiBvbmUuIFdoZW4geW91IHN1YnN0aXR1dGUgdGhpcyBpbnRvIHRoZSBmb3JtdWxhIGZvciB0aGUgcmVncmVzc2lvbiBsaW5lLCB0aGUgdGVybXMgY2FuY2VsIG91dCB1bnRpbCB3ZSBoYXZlIHRoZSBmb2xsb3dpbmcgZXF1YXRpb246IDxtYXRoIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8xOTk4L01hdGgvTWF0aE1MIj4NCiAgPG1hY3Rpb24gaWQ9Ik1KWC1Db2xsYXBzZS02IiBhY3Rpb250eXBlPSJ0b2dnbGUiIHNlbGVjdGlvbj0iMiIgZGF0YS1zZW1hbnRpYy1jb21wbGV4aXR5PSIyIj4NCiAgICA8bXRleHQgZGF0YS1zZW1hbnRpYy1jb21wbGV4aXR5PSIyIj4mI3gyNUMyOz0mI3gyNUI4OzwvbXRleHQ+DQogICAgPG1yb3cgZGF0YS1zZW1hbnRpYy1jb21wbGV4aXR5PSIyMi4yIiBkYXRhLXNlbWFudGljLWNvbnRlbnQ9IjMiIGRhdGEtc2VtYW50aWMtY2hpbGRyZW49IjIsOSIgZGF0YS1zZW1hbnRpYy1pZD0iMTAiIGRhdGEtc2VtYW50aWMtcm9sZT0iZXF1YWxpdHkiIGRhdGEtc2VtYW50aWMtdHlwZT0icmVsc2VxIj4NCiAgICAgIDxtcm93Pg0KICAgICAgICA8bXN1YiBkYXRhLXNlbWFudGljLXR5cGU9InN1YnNjcmlwdCIgZGF0YS1zZW1hbnRpYy1yb2xlPSJsYXRpbmxldHRlciIgZGF0YS1zZW1hbnRpYy1pZD0iMiIgZGF0YS1zZW1hbnRpYy1jaGlsZHJlbj0iMCwxIiBkYXRhLXNlbWFudGljLXBhcmVudD0iMTAiIGRhdGEtc2VtYW50aWMtY29tcGxleGl0eT0iNi42Ij4NCiAgICAgICAgICA8bWkgZGF0YS1zZW1hbnRpYy10eXBlPSJpZGVudGlmaWVyIiBkYXRhLXNlbWFudGljLXJvbGU9ImxhdGlubGV0dGVyIiBkYXRhLXNlbWFudGljLWZvbnQ9Iml0YWxpYyIgZGF0YS1zZW1hbnRpYy1pZD0iMCIgZGF0YS1zZW1hbnRpYy1wYXJlbnQ9IjIiIGRhdGEtc2VtYW50aWMtY29tcGxleGl0eT0iMSI+eTwvbWk+DQogICAgICAgICAgPG1pIGRhdGEtc2VtYW50aWMtdHlwZT0iaWRlbnRpZmllciIgZGF0YS1zZW1hbnRpYy1yb2xlPSJsYXRpbmxldHRlciIgZGF0YS1zZW1hbnRpYy1mb250PSJpdGFsaWMiIGRhdGEtc2VtYW50aWMtaWQ9IjEiIGRhdGEtc2VtYW50aWMtcGFyZW50PSIyIiBkYXRhLXNlbWFudGljLWNvbXBsZXhpdHk9IjEiPmk8L21pPg0KICAgICAgICA8L21zdWI+DQogICAgICAgIDxtbyBkYXRhLXNlbWFudGljLXR5cGU9InJlbGF0aW9uIiBkYXRhLXNlbWFudGljLXJvbGU9ImVxdWFsaXR5IiBkYXRhLXNlbWFudGljLWlkPSIzIiBkYXRhLXNlbWFudGljLXBhcmVudD0iMTAiIGRhdGEtc2VtYW50aWMtb3BlcmF0b3I9InJlbHNlcSw9IiBkYXRhLXNlbWFudGljLWNvbXBsZXhpdHk9IjEiPj08L21vPg0KICAgICAgICA8bXJvdyBkYXRhLXNlbWFudGljLXR5cGU9ImluZml4b3AiIGRhdGEtc2VtYW50aWMtcm9sZT0iaW1wbGljaXQiIGRhdGEtc2VtYW50aWMtaWQ9IjkiIGRhdGEtc2VtYW50aWMtY2hpbGRyZW49IjQsNyIgZGF0YS1zZW1hbnRpYy1jb250ZW50PSI4IiBkYXRhLXNlbWFudGljLXBhcmVudD0iMTAiIGRhdGEtc2VtYW50aWMtY29tcGxleGl0eT0iMTEuNiI+DQogICAgICAgICAgPG1pIG1hdGh2YXJpYW50PSJpdGFsaWMiIGRhdGEtc2VtYW50aWMtdHlwZT0iaWRlbnRpZmllciIgZGF0YS1zZW1hbnRpYy1yb2xlPSJncmVla2xldHRlciIgZGF0YS1zZW1hbnRpYy1mb250PSJpdGFsaWMiIGRhdGEtc2VtYW50aWMtaWQ9IjQiIGRhdGEtc2VtYW50aWMtcGFyZW50PSI5IiBkYXRhLXNlbWFudGljLWNvbXBsZXhpdHk9IjEiPiYjeDNDMTs8L21pPg0KICAgICAgICAgIDxtbyBkYXRhLXNlbWFudGljLXR5cGU9Im9wZXJhdG9yIiBkYXRhLXNlbWFudGljLXJvbGU9Im11bHRpcGxpY2F0aW9uIiBkYXRhLXNlbWFudGljLWlkPSI4IiBkYXRhLXNlbWFudGljLXBhcmVudD0iOSIgZGF0YS1zZW1hbnRpYy1hZGRlZD0idHJ1ZSIgZGF0YS1zZW1hbnRpYy1vcGVyYXRvcj0iaW5maXhvcCwmI3gyMDYyOyIgZGF0YS1zZW1hbnRpYy1jb21wbGV4aXR5PSIxIj4mI3gyMDYyOzwvbW8+DQogICAgICAgICAgPG1zdWIgZGF0YS1zZW1hbnRpYy10eXBlPSJzdWJzY3JpcHQiIGRhdGEtc2VtYW50aWMtcm9sZT0ibGF0aW5sZXR0ZXIiIGRhdGEtc2VtYW50aWMtaWQ9IjciIGRhdGEtc2VtYW50aWMtY2hpbGRyZW49IjUsNiIgZGF0YS1zZW1hbnRpYy1wYXJlbnQ9IjkiIGRhdGEtc2VtYW50aWMtY29tcGxleGl0eT0iNi42Ij4NCiAgICAgICAgICAgIDxtaSBkYXRhLXNlbWFudGljLXR5cGU9ImlkZW50aWZpZXIiIGRhdGEtc2VtYW50aWMtcm9sZT0ibGF0aW5sZXR0ZXIiIGRhdGEtc2VtYW50aWMtZm9udD0iaXRhbGljIiBkYXRhLXNlbWFudGljLWlkPSI1IiBkYXRhLXNlbWFudGljLXBhcmVudD0iNyIgZGF0YS1zZW1hbnRpYy1jb21wbGV4aXR5PSIxIj54PC9taT4NCiAgICAgICAgICAgIDxtaSBkYXRhLXNlbWFudGljLXR5cGU9ImlkZW50aWZpZXIiIGRhdGEtc2VtYW50aWMtcm9sZT0ibGF0aW5sZXR0ZXIiIGRhdGEtc2VtYW50aWMtZm9udD0iaXRhbGljIiBkYXRhLXNlbWFudGljLWlkPSI2IiBkYXRhLXNlbWFudGljLXBhcmVudD0iNyIgZGF0YS1zZW1hbnRpYy1jb21wbGV4aXR5PSIxIj5pPC9taT4NCiAgICAgICAgICA8L21zdWI+DQogICAgICAgIDwvbXJvdz4NCiAgICAgIDwvbXJvdz4NCiAgICA8L21yb3c+DQogIDwvbWFjdGlvbj4NCjwvbWF0aD4gDQoNCldoYXQgaXMgYSBsaW1pdGF0aW9uIG9mIGNhbGN1bGF0aW5nIGNvbmRpdGlvbmFsIG1lYW5zPw0KDQpgU29tZSBsaW1pdGF0aW9ucyBvZiBjYWxjdWxhdGluZyBjb25kaXRpb25hbCBtZWFucyBpbmNsdWRlOiBlYWNoIHNwZWNpZmljIHN0cmF0dW0gdXNlZCBmb3IgY29uZGl0aW9uaW5nIG1heSBub3QgaGF2ZSBkYXRhIHBvaW50cywgYmVjYXVzZSB0aGVyZSBhcmUgbGltaXRlZCBkYXRhIHBvaW50cyBmb3IgZWFjaCBzdHJhdHVtIHRoZXJlIG1heSBiZSBsYXJnZSBzdGFuZGFyZCBlcnJvcnMgb24gdGhlIG1lYW5zLCBhbmQgY29uZGl0aW9uYWwgbWVhbnMgYXJlIGxlc3Mgc3RhYmxlIHRoYW4gYSByZWdyZXNzaW9uIGxpbmUuIENvbmRpdGlvbmFsIG1lYW5zIGNhbiBiZSBjYWxjdWxhdGVkLCBzbyBpdCBpcyBub3QgY29ycmVjdCB0aGF0IHRoZXkgYXJlIG9ubHkgdXNlZnVsIGFzIGEgdGhlb3JldGljYWwgdG9vbC5gDQoNCkEgcmVncmVzc2lvbiBsaW5lIGlzIHRoZSBiZXN0IHByZWRpY3Rpb24gb2YgWSBnaXZlbiB3ZSBrbm93IHRoZSB2YWx1ZSBvZiBYIHdoZW46DQoNCmBYIGFuZCBZIGZvbGxvdyBhIGJpdmFyaWF0ZSBub3JtYWwgZGlzdHJpYnV0aW9uLmANCg0KV2hpY2ggb25lIG9mIHRoZSBmb2xsb3dpbmcgc2NhdHRlcnBsb3RzIGRlcGljdHMgYW4geCBhbmQgeSBkaXN0cmlidXRpb24gdGhhdCBpcyBOT1Qgd2VsbC1hcHByb3hpbWF0ZWQgYnkgdGhlIGJpdmFyaWF0ZSBub3JtYWwgZGlzdHJpYnV0aW9uPw0KDQohW10oaHR0cHM6Ly9jb3Vyc2VzLmVkeC5vcmcvYXNzZXRzL2NvdXJzZXdhcmUvdjEvMmQxYmFiNWMzNTdkMmEzZmZjYmE1YTA5Yzk2ZGQ4YmMvYXNzZXQtdjE6SGFydmFyZFgrUEgxMjUuN3grMVQyMDIxK3R5cGVAYXNzZXQrYmxvY2svN185XzJfYXNzZXNzbWVudF9BX0lEUy5wbmcpDQoNCkV4cGxhbmF0aW9uOiBUaGUgdi1zaGFwZWQgZGlzdHJpYnV0aW9uIG9mIHBvaW50cyBmcm9tIHRoZSBmaXJzdCBwbG90IG1lYW5zIHRoYXQgdGhlIHggYW5kIHkgdmFyaWFibGVzIGRvIG5vdCBmb2xsb3cgYSBiaXZhcmlhdGUgbm9ybWFsIGRpc3RyaWJ1dGlvbi4gV2hlbiBhIHBhaXIgb2YgcmFuZG9tIHZhcmlhYmxlcyBpcyBhcHByb3hpbWF0ZWQgYnkgYSBiaXZhcmlhdGUgbm9ybWFsLCB0aGUgc2NhdHRlciBwbG90IGxvb2tzIGxpa2UgYW4gb3ZhbCAoYXMgaW4gdGhlIDJuZCwgM3JkLCBhbmQgNHRoIHBsb3RzKSAtIGl0IGlzIG9rYXkgaWYgdGhlIG92YWwgaXMgdmVyeSByb3VuZCAoYXMgaW4gdGhlIDNyZCBwbG90KSBvciBsb25nIGFuZCB0aGluIChhcyBpbiB0aGUgNHRoIHBsb3QpLg0KDQpXZSBwcmV2aW91c2x5IGNhbGN1bGF0ZWQgdGhhdCB0aGUgY29ycmVsYXRpb24gY29lZmZpY2llbnQgIGJldHdlZW4gZmF0aGVyc+KAmSBhbmQgc29uc+KAmSBoZWlnaHRzIGlzIDAuNS4gR2l2ZW4gdGhpcywgd2hhdCBwZXJjZW50IG9mIHRoZSB2YXJpYXRpb24gaW4gc29uc+KAmSBoZWlnaHRzIGlzIGV4cGxhaW5lZCBieSBmYXRoZXJz4oCZIGhlaWdodHM/DQoNCmBXaGVuIHR3byB2YXJpYWJsZXMgZm9sbG93IGEgYml2YXJpYXRlIG5vcm1hbCBkaXN0cmlidXRpb24sIHRoZSB2YXJpYXRpb24gZXhwbGFpbmVkIGNhbiBiZSBjYWxjdWxhdGVkIGFzIHBeMiB4IDEwMA0KDQpgYGB7cn0NCnNldC5zZWVkKDE5ODksIHNhbXBsZS5raW5kPSJSb3VuZGluZyIpICNpZiB5b3UgYXJlIHVzaW5nIFIgMy42IG9yIGxhdGVyDQpsaWJyYXJ5KEhpc3REYXRhKQ0KZGF0YSgiR2FsdG9uRmFtaWxpZXMiKQ0KYGBgDQpgYGB7cn0NCmZlbWFsZV9oZWlnaHRzIDwtIEdhbHRvbkZhbWlsaWVzICU+JSAgICAgDQogICAgZmlsdGVyKGdlbmRlciA9PSAiZmVtYWxlIikgJT4lICAgICANCiAgICBncm91cF9ieShmYW1pbHkpICU+JSAgICAgDQogICAgc2FtcGxlX24oMSkgJT4lICAgICANCiAgICB1bmdyb3VwKCkgJT4lICAgICANCiAgICBzZWxlY3QobW90aGVyLCBjaGlsZEhlaWdodCkgJT4lICAgICANCiAgICByZW5hbWUoZGF1Z2h0ZXIgPSBjaGlsZEhlaWdodCkNCmBgYA0KDQpgYGB7cn0NCmZlbWFsZV9oZWlnaHRzIDwtIEdhbHRvbkZhbWlsaWVzICU+JSAgICAgDQogICAgZmlsdGVyKGdlbmRlciA9PSAiZmVtYWxlIikgJT4lICAgICANCiAgICBncm91cF9ieShmYW1pbHkpICU+JSANCiAgICBzYW1wbGVfbigxKSAlPiUgDQogICAgdW5ncm91cCgpICU+JSANCiAgICBzZWxlY3QobW90aGVyLGNoaWxkSGVpZ2h0KSAlPiUgDQogICAgcmVuYW1lKGRhdWdodGVyID0gY2hpbGRIZWlnaHQpDQoNCmZlbWFsZV9oZWlnaHRzDQpgYGANCmBgYHtyfQ0KciA8LSBjb3IoZmVtYWxlX2hlaWdodHMkbW90aGVyLCBmZW1hbGVfaGVpZ2h0cyRkYXVnaHRlcikNCnNfeSA8LSBzZChmZW1hbGVfaGVpZ2h0cyRkYXVnaHRlcikNCnNfeCA8LSBzZChmZW1hbGVfaGVpZ2h0cyRtb3RoZXIpDQpyICogc195L3NfeA0KYGBgDQoNClNsb3BlIG9mIHJlZ3Jlc3Npb24gbGluZSA9IChjb3JyZWxhdGlvbiBjb2VmZmljaWVudCBvZiBkYXVnaHRlcnMnIGhlaWdodHMgZ2l2ZW4gbW90aGVycycgaGVpZ2h0cykgKiAoc3RhbmRhcmQgZGV2aWF0aW9uIG9mIGRhdWdodGVycycgaGVpZ2h0cyAvIHN0YW5kYXJkIGRldmlhdGlvbiBvZiBtb3RoZXJz4oCZIGhlaWdodHMpDQoNCmBgYHtyfQ0KMC4yODUgKiAoMi4zMTU0LzIuMjg5MjkyKQ0KYGBgDQpDb21wdXRlIGEgcmVncmVzc2lvbiBsaW5lIHRvIHByZWRpY3QgdGhlIGRhdWdodGVyJ3MgaGVpZ2h0IGZyb20gdGhlIG1vdGhlcidzIGhlaWdodA0KDQpgYGB7cn0NCm11X3ggPC0gbWVhbihmZW1hbGVfaGVpZ2h0cyRtb3RoZXIpDQptdV95IDwtIG1lYW4oZmVtYWxlX2hlaWdodHMkZGF1Z2h0ZXIpDQpzX3ggPC0gc2QoZmVtYWxlX2hlaWdodHMkbW90aGVyKQ0Kc195IDwtIHNkKGZlbWFsZV9oZWlnaHRzJGRhdWdodGVyKQ0KciA8LSBjb3IoZmVtYWxlX2hlaWdodHMkbW90aGVyLCBmZW1hbGVfaGVpZ2h0cyRkYXVnaHRlcikNCm0gPC0gciAqIHNfeSAvIHNfeA0KYiA8LSBtdV95IC0gbSptdV94DQpgYGANCg0KYGBge3J9DQptXzIgPC0gciAqIHNfeSAvIHNfeA0KYl8yIDwtIG11X3kgLSBtXzIqbXVfeA0KYl8yDQpgYGANCg0KIyBMaW5lYXIgTW9kZWxzDQoNClJlZ3Jlc3Npb24gYWxsb3dzIHVzIHRvIGZpbmQgcmVsYXRpb25zaGlwcyBiZXR3ZWVuIHR3byB2YXJpYWJsZXMgd2hpbGUgYWRqdXN0aW5nIGZvciBvdGhlcnMuIFRoaXMgbWV0aG9kIGlzIHBvcHVsYXIgaW4gZmllbGRzIHdoZXJlIHJhbmRvbWl6ZWQgZXhwZXJpbWVudHMgYXJlIGhhcmQgdG8gcnVuIHN1Y2ggYXMgZWNvbm9taWNzIGFuZCBlcGlkZW1pb2xvZ3kuIA0KDQpXaGVuIHdlIGFyZSBub3QgYWJsZSB0byByYW5kb21seSBhc3NpZ24gZWFjaCBpbmRpdmlkdWFsIHRvIGEgdHJlYXRtZW50IG9yIGNvbnRyb2wgZ3JvdXAsICoqY29uZm91bmRpbmcqKiBpcyBwYXJ0aWN1bGFybHkgcHJldmFsZW50LiBGb3IgZXhhbXBsZSwgY29uc2lkZXIgZXN0aW1hdGluZyB0aGUgZWZmZWN0cyBvZiBhbnkgZmFzdCBmb29kcyBvbiBsaWZlIGV4cGVjdGFuY3kgdXNpbmcgZGF0YSBjb2xsZWN0ZWQgZnJvbSBhIHJhbmRvbSBzYW1wbGUgb2YgcGVvcGxlLiBGYXN0IGZvb2QgY29uc3VtZXJzIGFyZSBtb3JlIGxpa2VseSB0byBiZSBzbW9rZXJzLCBkcmlua2VycywgYW5kIGhhdmUgbG93ZXIgaW5jb21lcy4gVGhlcmVmb3JlLCBhIG5haXZlIHJlZ3Jlc3Npb24gbW9kZWwgbWF5IGxlYWQgdG8gYW4gb3ZlcmVzdGltYXRlIG9mIGEgbmVnYXRpdmUgaGVhbHRoIGVmZmVjdCBvZiBmYXN0IGZvb2RzLiANCg0KU28gZG8gd2UgYWRqdXN0IGZvciBjb25mb3VuZGluZyBpbiBwcmFjdGljZT8gV2UgY2FuIHVzZSAqKnJlZ3Jlc3Npb24qKi4gSWYgdGhlIGRhdGEgaXMgYml2YXJpYXRlIG5vcm1hbCwgdGhlbiB0aGUgY29uZGl0aW9uYWwgZXhwZWN0YXRpb24gZm9sbG93IGEgcmVncmVzc2lvbiBsaW5lLiBIb3dldmVyIGluIHByYWN0aWNlIGl0IGlzIGNvbW1vbiB0byBleHBsaWNpdGx5IHdpcnRlIGRvd24gYSBtb2RlbCB0aGF0IGRlc2NyaWJlcyB0aGUgcmVsYXRpb25zaGlwIGJldHdlZW4gdHdvIG9yIG1vcmUgdmFyaWFibGVzIHVzaW5nIHdoYXQgaXMgY2FsbGVkIGEgbGluZWFyICoqbW9kZWwqKi4gSGVyZSwgYSBsaW5lYXIgbW9kZWwgcmVmZXJzIHRvIHRoZSBmYWN0IHRoYXQgdGhlIGNvbmRpdGlvbmFsIGV4cGVjdGF0aW9uIGlzIGEgbGluZWFyIGNvbWJpbmF0aW9uIG9mIGtub3duIHF1YW50aXRpZXMuDQoNCiMgQ29uZm91bmRpbmcNCg0KYGBge3J9DQpsaWJyYXJ5KHRpZHl2ZXJzZSkNCmxpYnJhcnkoTGFobWFuKQ0KZ2V0X3Nsb3BlIDwtIGZ1bmN0aW9uKHgsIHkpIGNvcih4LCB5KSAqIHNkKHkpIC8gc2QoeCkNCg0KYmJfc2xvcGUgPC0gVGVhbXMgJT4lIA0KICBmaWx0ZXIoeWVhcklEICVpbiUgMTk2MToyMDAxICkgJT4lIA0KICBtdXRhdGUoQkJfcGVyX2dhbWUgPSBCQi9HLCBSX3Blcl9nYW1lID0gUi9HKSAlPiUgDQogIHN1bW1hcml6ZShzbG9wZSA9IGdldF9zbG9wZShCQl9wZXJfZ2FtZSwgUl9wZXJfZ2FtZSkpDQoNCmJiX3Nsb3BlIA0KYGBgDQoNCg0KU28gZG9lcyB0aGlzIG1lYW4gdGhhdCBpZiB3ZSBnbyBhbmQgaGlyZSBsb3cgc2FsYXJ5IHBsYXllcnMgd2l0aCBtYW55IEJCLCBhbmQgd2hvIHRoZXJlZm9yZSBpbmNyZWFzZSB0aGUgbnVtYmVyIG9mIHdhbGtzIHBlciBnYW1lIGJ5IDIsIG91ciB0ZWFtIHdpbGwgc2NvcmUgMS41IG1vcmUgcnVucyBwZXIgZ2FtZT8NCg0KV2UgYXJlIGFnYWluIHJlbWluZGVkIHRoYXQgYXNzb2NpYXRpb24gaXMgbm90IGNhdXNhdGlvbi4gVGhlIGRhdGEgZG9lcyBwcm92aWRlIHN0cm9uZyBldmlkZW5jZSB0aGF0IGEgdGVhbSB3aXRoIHR3byBtb3JlIEJCIHBlciBnYW1lIHRoYW4gdGhlIGF2ZXJhZ2UgdGVhbSwgc2NvcmVzIDEuNSBydW5zIHBlciBnYW1lLiBCdXQgdGhpcyBkb2VzIG5vdCBtZWFuIHRoYXQgQkIgYXJlIHRoZSBjYXVzZS4NCg0KTm90ZSB0aGF0IGlmIHdlIGNvbXB1dGUgdGhlIHJlZ3Jlc3Npb24gbGluZSBzbG9wZSBmb3Igc2luZ2xlcyB3ZSBnZXQ6DQoNCmBgYHtyfQ0Kc2luZ2xlc19zbG9wZSA8LSBUZWFtcyAlPiUgDQogIGZpbHRlcih5ZWFySUQgJWluJSAxOTYxOjIwMDEgKSAlPiUNCiAgbXV0YXRlKFNpbmdsZXNfcGVyX2dhbWUgPSAoSC1IUi1YMkItWDNCKS9HLCBSX3Blcl9nYW1lID0gUi9HKSAlPiUNCiAgc3VtbWFyaXplKHNsb3BlID0gZ2V0X3Nsb3BlKFNpbmdsZXNfcGVyX2dhbWUsIFJfcGVyX2dhbWUpKQ0KDQpzaW5nbGVzX3Nsb3BlIA0KYGBgDQoNCldoaWNoIGlzIGEgbG93ZXIgdmFsdWUgdGhhbiB3aGF0IHdlIG9idGFpbiBmb3IgQkIuDQoNCkFsc28sIG5vdGljZSB0aGF0IGEgc2luZ2xlIGdldHMgeW91IHRvIGZpcnN0IGJhc2UganVzdCBsaWtlIGEgQkIuIFRob3NlIHRoYXQga25vdyBhYm91dCBiYXNlYmFsbCB3aWxsIHRlbGwgeW91IHRoYXQgd2l0aCBhIHNpbmdsZSwgcnVubmVycyBvbiBiYXNlIGhhdmUgYSBiZXR0ZXIgY2hhbmNlIG9mIHNjb3JpbmcgdGhhbiB3aXRoIGEgQkIuIFNvIGhvdyBjYW4gQkIgYmUgbW9yZSBwcmVkaWN0aXZlIG9mIHJ1bnM/IFRoZSByZWFzb24gdGhpcyBoYXBwZW4gaXMgYmVjYXVzZSBvZiBjb25mb3VuZGluZy4gSGVyZSB3ZSBzaG93IHRoZSBjb3JyZWxhdGlvbiBiZXR3ZWVuIEhSLCBCQiwgYW5kIHNpbmdsZXM6DQoNCmBgYHtyfQ0KVGVhbXMgJT4lIA0KICBmaWx0ZXIoeWVhcklEICVpbiUgMTk2MToyMDAxICkgJT4lIA0KICBtdXRhdGUoU2luZ2xlcyA9IChILUhSLVgyQi1YM0IpL0csIEJCID0gQkIvRywgSFIgPSBIUi9HKSAlPiUgIA0KICBzdW1tYXJpemUoY29yKEJCLCBIUiksIGNvcihTaW5nbGVzLCBIUiksIGNvcihCQiwgU2luZ2xlcykpDQpgYGANCg0KSXQgdHVybnMgb3V0IHRoYXQgcGl0Y2hlcnMsIGFmcmFpZCBvZiBIUnMsIHdpbGwgc29tZXRpbWVzIGF2b2lkIHRocm93aW5nIHN0cmlrZXMgdG8gSFIgaGl0dGVycy4gQXMgYSByZXN1bHQsIEhSIGhpdHRlcnMgdGVuZCB0byBoYXZlIG1vcmUgQkJzIGFuZCBhIHRlYW0gd2l0aCBtYW55IEhScyB3aWxsIGFsc28gaGF2ZSBtb3JlIEJCcy4gQWx0aG91Z2ggaXQgbWF5IGFwcGVhciB0aGF0IEJCcyBjYXVzZSBydW5zLCBpdCBpcyBhY3R1YWxseSB0aGUgSFJzIHRoYXQgY2F1c2UgbW9zdCBvZiB0aGVzZSBydW5zLiBXZSBzYXkgdGhhdCBCQnMgYXJlIGNvbmZvdW5kZWQgd2l0aCBIUnMuIE5vbmV0aGVsZXNzLCBjb3VsZCBpdCBiZSB0aGF0IEJCcyBzdGlsbCBoZWxwPyBUbyBmaW5kIG91dCwgd2Ugc29tZWhvdyBoYXZlIHRvIGFkanVzdCBmb3IgdGhlIEhSIGVmZmVjdC4gUmVncmVzc2lvbiBjYW4gaGVscCB3aXRoIHRoaXMgYXMgd2VsbC4NCg0KIyBVbmRlcnN0YW5kaW5nIGNvbmZvdW5kaW5nIHRocm91Z2ggc3RyYXRpZmljYXRpb24NCg0KQSBmaXJzdCBhcHByb2FjaCBpcyB0byBrZWVwIEhScyBmaXhlZCBhdCBhIGNlcnRhaW4gdmFsdWUgYW5kIHRoZW4gZXhhbWluZSB0aGUgcmVsYXRpb25zaGlwIGJldHdlZW4gQkIgYW5kIHJ1bnMuIEFzIHdlIGRpZCB3aGVuIHdlIHN0cmF0aWZpZWQgZmF0aGVycyBieSByb3VuZGluZyB0byB0aGUgY2xvc2VzdCBpbmNoLCBoZXJlIHdlIGNhbiBzdHJhdGlmeSBIUiBwZXIgZ2FtZSB0byB0aGUgY2xvc2VzdCB0ZW4uIFdlIGZpbHRlciBvdXQgdGhlIHN0cmF0YSB3aXRoIGZldyBwb2ludHMgdG8gYXZvaWQgaGlnaGx5IHZhcmlhYmxlIGVzdGltYXRlczoNCg0KYGBge3J9DQpkYXQgPC0gVGVhbXMgJT4lIGZpbHRlcih5ZWFySUQgJWluJSAxOTYxOjIwMDEpICU+JQ0KICBtdXRhdGUoSFJfc3RyYXRhID0gcm91bmQoSFIvRywgMSksIA0KICAgICAgICAgQkJfcGVyX2dhbWUgPSBCQiAvIEcsDQogICAgICAgICBSX3Blcl9nYW1lID0gUiAvIEcpICU+JQ0KICBmaWx0ZXIoSFJfc3RyYXRhID49IDAuNCAmIEhSX3N0cmF0YSA8PTEuMikgDQpgYGANCg0KYW5kIHRoZW4gbWFrZSBhIHNjYXR0ZXJwbG90IGZvciBlYWNoIHN0cmF0YToNCg0KYGBge3J9DQpkYXQgJT4lIA0KICBnZ3Bsb3QoYWVzKEJCX3Blcl9nYW1lLCBSX3Blcl9nYW1lKSkgKyAgDQogIGdlb21fcG9pbnQoYWxwaGEgPSAwLjUpICsNCiAgZ2VvbV9zbW9vdGgobWV0aG9kID0gImxtIikgKw0KICBmYWNldF93cmFwKCB+IEhSX3N0cmF0YSkgDQpgYGANCg0KDQo=</div>
 
 
-
+</div>
+</div>
 
 </div>
 
@@ -503,7 +832,41 @@ $(document).ready(function () {
 </script>
 
 <!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeSourceEmbed("note_r_linear_regression.Rmd");
+});
+</script>
 
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
 <script>
