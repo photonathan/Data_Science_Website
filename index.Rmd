@@ -30,9 +30,9 @@ knitr::include_graphics("images/logo.jpg")
 
 ### Welcome
 
-Data can be complicated, my homepage is not. 
+Data analysis doesn't need to be complicated. 
 
-Check out my [Visualization of Arlington, Virginia's bike usage during Covid-19](https://nathansprojects.com/part_1_the_plan.html).
+Check out my tutorial to [Visualize Arlington, Virginia's bike usage during Covid-19](https://nathansprojects.com/part_1_the_plan.html).
 
 </div>
 </div>
