@@ -1,0 +1,83 @@
+---
+title: "R Problems"
+output: html_document
+---
+
+Take the numbers 1 to 100, square them, and add all the even numbers while subtracting the odd ones!
+
+```{r}
+numbers <- c(1:100)
+```
+
+Define functions that will do what is needed, then sapply(numbers, function)
+
+```{r}
+is.even <- function(numbers) {
+  numbers %% 2 == 0
+}
+```
+
+```{r}
+sq_numbers <- numbers^2
+```
+
+When you use brackets [], it only lets numbers through that are TRUE
+
+```{r}
+even_numbers <- sq_numbers[is.even(numbers)]
+even_numbers
+```
+
+```{r}
+odd_numbers <- sq_numbers[!is.even(numbers)]
+odd_numbers
+```
+
+```{r}
+answer <- sum(even_numbers) - sum(odd_numbers)
+answer
+```
+
+You can also use `which()` to see which are TRUE
+
+```{r}
+which(is.even(numbers))
+which(!is.even(numbers))
+```
+
+Scalers = numbers
+Vectors = series of numbers
+
+To make a Matrix, you can use the `cbind()` function
+
+```{r}
+n <- 25
+tt <- seq(0,3.4,len=n)
+x <- cbind(x1=tt, x2=tt^2)
+head(x)
+dim(x)
+```
+
+To create a matrix with 100 rows and 10 columns
+
+```{r}
+x <- matrix(1:1000, 100, 10)
+head(x)
+```
+To return a specific entry, use []. [25,3] will return the 25th row and the 3rd column
+```{r}
+x[25,3]
+```
+
+Using the function cbind(), create a 10 x 5 matrix with first column x=1:10. Then use `2*x, 3*x, 4*x and 5*x` respectively in columns 2 through 5.
+
+What is the sum of the elements of the 7th row?
+
+```{r}
+x = 1:10
+X=cbind(x, 2*x, 3*x, 4*x, 5*x)
+sum(X[7,])
+```
+
+Matrix Operations
+
