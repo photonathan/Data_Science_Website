@@ -56,6 +56,8 @@ navbar:
           href: note_r_probability.html
         - text: "Studying Statistical Tests"
           href: note_statistical_tests.html
+        - text: "Bash Commands"
+          href: note_bash_commands.html
         
     - text: "Photography"
       href: photography.html

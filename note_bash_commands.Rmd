@@ -1,0 +1,75 @@
+---
+title: "Bash Commands"
+output: html_document
+---
+```
+# Activate conda env 'bioinfo'
+conda activate bioinfo
+
+# View text of a file
+more <filename>
+
+# Download a file
+curl <url> --output <filename>
+
+# Print the number of lines, words, characters 
+cat <filename> | wc
+
+# Print the first part of a file
+cat <filename> | head
+
+# Find a certain phrase
+cat <filename> | grep <phrase>
+
+# Count how many lines DON'T match (-v reverses the action of grep, -l is lines)
+cat <filename> | grep -v <phrase> | wc -l
+
+# Store the results in a new file
+cat <filename> | grep YAL060W > match.tab
+
+# Slice into a line and extracts text (-f is field separated with a tab) (2 is 2nd field)
+cat <filename> | cut -f 2 | head
+
+# Count the number of items matching 'ORF'
+cat <filename> | cut -f 2 | grep ORF | wc -l
+
+# Regex multiple fields, Print multiple fields 
+cat <filename> | cut -f 2,3,4 | grep ORF | head
+
+# Sort places identical consecutive entries next to one another
+cat <filename> | sort | head
+
+# Sort -rn prints decending order
+cat types.txt | sort | uniq -c | sort -rn | head
+
+# uniq collapses consecutive identical words into one
+cat <filename> | sort | uniq | head
+
+# uniq -c also prints their count
+cat <filename> | sort | uniq -c | head
+
+# There is one fundamental flaw with the way the sort | uniq -c | sort -rn pattern works. 
+# The output is space delimited and padded. The spaces and padding make operating on the 
+# results surprisingly challenging.
+# The good news is that the pattern is common and useful that the entrez-direct 
+# package offers two commands that streamline the “sort-uniq-sort” pattern. 
+# The commands are called:
+
+sort-uniq-count # performs <sort | uniq -c | sort -rn> and outputs tab delimited
+# and
+sort-uniq-count-rank
+
+# You can print the names of programs like sort-uniq-count-rank by 
+# typing sort then hitting <tab> twice
+
+# To create a makefile
+touch makefile
+
+# Editing file
+nano <filename>
+# OR edit in VS code
+code .
+
+```
+
+
